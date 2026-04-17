@@ -1,0 +1,89 @@
+---
+import BaseLayout from './BaseLayout.astro';
+
+interface Props {
+  title: string;
+  eyebrow: string;
+}
+const { title, eyebrow } = Astro.props;
+---
+
+<BaseLayout title={`${title} – Phönix Maklerverbund`}>
+  <section class="hero-legal">
+    <div class="container">
+      <span class="eyebrow">{eyebrow}</span>
+      <h1>{title}</h1>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container legal-content">
+      <slot />
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .hero-legal {
+    padding-block: clamp(2.5rem, 6vw, 4rem);
+    background: var(--color-bg-light);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .legal-content {
+    max-width: 780px;
+  }
+
+  .legal-content :global(h2) {
+    margin-top: 2.5rem;
+    margin-bottom: 1rem;
+    font-size: 1.4rem;
+  }
+
+  .legal-content :global(h2:first-child) {
+    margin-top: 0;
+  }
+
+  .legal-content :global(h3) {
+    margin-top: 1.75rem;
+    margin-bottom: 0.75rem;
+    font-size: 1.1rem;
+    color: var(--color-primary-dark);
+  }
+
+  .legal-content :global(p) {
+    margin-bottom: 1rem;
+    max-width: none;
+  }
+
+  .legal-content :global(ul) {
+    margin-bottom: 1rem;
+    padding-left: 1.5rem;
+  }
+
+  .legal-content :global(li) {
+    margin-bottom: 0.4rem;
+  }
+
+  .legal-content :global(strong) {
+    color: var(--color-dark);
+  }
+
+  .legal-content :global(a) {
+    color: var(--color-primary-dark);
+    text-decoration: underline;
+  }
+
+  .legal-content :global(.legal-note) {
+    padding: 1rem 1.25rem;
+    background: #fef3c7;
+    border-left: 4px solid #f59e0b;
+    border-radius: var(--radius-sm);
+    margin-block: 1.5rem;
+  }
+
+  .legal-content :global(address) {
+    font-style: normal;
+    margin-bottom: 1rem;
+  }
+</style>

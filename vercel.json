@@ -1,0 +1,28 @@
+{
+  "cleanUrls": true,
+  "trailingSlash": false,
+  "redirects": [
+    { "source": "/altersvorsorge-2", "destination": "/kunde/altersvorsorge", "permanent": true },
+    { "source": "/altersvorsorge-2/", "destination": "/kunde/altersvorsorge", "permanent": true },
+    { "source": "/einkommenssicherung", "destination": "/kunde/einkommenssicherung", "permanent": true },
+    { "source": "/einkommenssicherung/", "destination": "/kunde/einkommenssicherung", "permanent": true },
+    { "source": "/zahnzusatzversicherung", "destination": "/kunde/zahnzusatzversicherung", "permanent": true },
+    { "source": "/zahnzusatzversicherung/", "destination": "/kunde/zahnzusatzversicherung", "permanent": true },
+    { "source": "/krankenhauszusatzversicherung", "destination": "/kunde/krankenhauszusatzversicherung", "permanent": true },
+    { "source": "/krankenhauszusatzversicherung/", "destination": "/kunde/krankenhauszusatzversicherung", "permanent": true },
+    { "source": "/dein-haustier", "destination": "/kunde/haustier", "permanent": true },
+    { "source": "/dein-haustier/", "destination": "/kunde/haustier", "permanent": true },
+    { "source": "/haus-wohnen", "destination": "/kunde/haus-wohnen", "permanent": true },
+    { "source": "/haus-wohnen/", "destination": "/kunde/haus-wohnen", "permanent": true },
+    { "source": "/vermoegensaufbau", "destination": "/kunde/vermoegensaufbau", "permanent": true },
+    { "source": "/vermoegensaufbau/", "destination": "/kunde/vermoegensaufbau", "permanent": true },
+    { "source": "/privatkunden/altersvorsorge-2", "destination": "/kunde/altersvorsorge", "permanent": true },
+    { "source": "/privatkunden/altersvorsorge-2/", "destination": "/kunde/altersvorsorge", "permanent": true },
+    { "source": "/privatkunden/einkommensicherung", "destination": "/kunde/einkommenssicherung", "permanent": true },
+    { "source": "/privatkunden/einkommensicherung/", "destination": "/kunde/einkommenssicherung", "permanent": true },
+    { "source": "/privatkunden/vermoegensaufbau", "destination": "/kunde/vermoegensaufbau", "permanent": true },
+    { "source": "/privatkunden/vermoegensaufbau/", "destination": "/kunde/vermoegensaufbau", "permanent": true },
+    { "source": "/privatkunden__trashed/zahnzusatzversicherung", "destination": "/kunde/zahnzusatzversicherung", "permanent": true },
+    { "source": "/privatkunden__trashed/zahnzusatzversicherung/", "destination": "/kunde/zahnzusatzversicherung", "permanent": true }
+  ]
+}

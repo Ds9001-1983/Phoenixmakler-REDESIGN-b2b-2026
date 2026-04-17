@@ -1,0 +1,88 @@
+---
+// Wird nur gerendert, wenn die Seite mit <ErstinformationModal /> im /kunde/* Scope eingebunden wird.
+// Trigger: beim Laden der Seite, wenn sessionStorage-Key nicht gesetzt ist.
+---
+
+<dialog class="erst-modal" data-erst-modal aria-labelledby="erst-title">
+  <div class="erst-modal-inner">
+    <h2 id="erst-title">Erstinformation zum Vermittlerstatus</h2>
+    <p>
+      Bevor Sie unsere Kundenangebote nutzen, möchten wir Sie gemäß §15 VersVermV
+      über unseren Vermittlerstatus informieren.
+    </p>
+    <div class="erst-modal-actions">
+      <a href="/erstinformation" class="btn btn-outline">Mehr erfahren</a>
+      <a href="/docs/Phoenix_Erstinformation.pdf" class="btn btn-outline" target="_blank" rel="noopener">
+        PDF herunterladen
+      </a>
+      <button type="button" class="btn btn-primary" data-erst-close>Bereits gelesen</button>
+    </div>
+  </div>
+</dialog>
+
+<style>
+  .erst-modal {
+    border: 0;
+    padding: 0;
+    max-width: 540px;
+    width: calc(100% - 2rem);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+    background: #fff;
+    color: var(--color-text);
+  }
+
+  .erst-modal::backdrop {
+    background: rgba(26, 26, 46, 0.6);
+    backdrop-filter: blur(4px);
+  }
+
+  .erst-modal-inner {
+    padding: 2rem;
+  }
+
+  .erst-modal-inner h2 {
+    margin-bottom: 1rem;
+    font-size: 1.4rem;
+  }
+
+  .erst-modal-inner p {
+    margin-bottom: 1.5rem;
+    color: var(--color-text-muted);
+  }
+
+  .erst-modal-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    justify-content: flex-end;
+  }
+
+  @media (max-width: 480px) {
+    .erst-modal-actions {
+      flex-direction: column;
+    }
+    .erst-modal-actions .btn {
+      width: 100%;
+    }
+  }
+</style>
+
+<script>
+  const STORAGE_KEY = 'phoenix_erstinfo_ack_v1';
+  const modal = document.querySelector<HTMLDialogElement>('[data-erst-modal]');
+  const closeBtn = document.querySelector<HTMLButtonElement>('[data-erst-close]');
+
+  if (modal && !sessionStorage.getItem(STORAGE_KEY)) {
+    requestAnimationFrame(() => modal.showModal());
+  }
+
+  closeBtn?.addEventListener('click', () => {
+    sessionStorage.setItem(STORAGE_KEY, '1');
+    modal?.close();
+  });
+
+  modal?.addEventListener('close', () => {
+    sessionStorage.setItem(STORAGE_KEY, '1');
+  });
+</script>

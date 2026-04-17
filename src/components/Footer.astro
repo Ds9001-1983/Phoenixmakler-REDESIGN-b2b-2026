@@ -1,0 +1,179 @@
+---
+import navigation from '../data/navigation.json';
+const k = navigation.kontakt;
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer">
+  <div class="container footer-grid">
+    <div class="footer-brand">
+      <img src="/images/logo.png" alt="Phönix Maklerverbund" width="180" height="48" class="footer-logo" />
+      <p class="footer-intro">
+        Durch unsere Netzwerkorganisation bieten wir Ihnen Zugang zu exklusiven Ressourcen,
+        Weiterbildungsprogrammen und einer starken Verhandlungsposition gegenüber Anbietern.
+      </p>
+    </div>
+
+    <div>
+      <h3 class="footer-heading">Unsere Leistungen</h3>
+      <ul class="footer-list">
+        {navigation.footer.leistungen.map((item) => (
+          <li><a href={item.href}>{item.label}</a></li>
+        ))}
+      </ul>
+    </div>
+
+    <div>
+      <h3 class="footer-heading">Kontakt</h3>
+      <ul class="footer-list">
+        <li>Tel: <a href={k.telefon_href}>{k.telefon}</a></li>
+        <li>Fax: {k.fax}</li>
+        <li><a href={`mailto:${k.email}`}>{k.email}</a></li>
+      </ul>
+    </div>
+
+    <div>
+      <h3 class="footer-heading">Adresse</h3>
+      <address class="footer-address">
+        {k.firma}<br />
+        {k.strasse}<br />
+        {k.plz_ort}
+      </address>
+      <a href={k.maps} target="_blank" rel="noopener" class="maps-link" aria-label="Standort auf Google Maps öffnen">
+        <img src="/images/maps-preview.png" alt="Karte: Standort Phönix Maklerverbund" width="220" height="120" />
+      </a>
+    </div>
+  </div>
+
+  <div class="container footer-bottom">
+    <p class="footer-credit">
+      Deine Webseite von <a href="https://superbrand.marketing" target="_blank" rel="noopener">Superbrand.marketing</a>
+    </p>
+    <ul class="footer-legal">
+      {navigation.footer.rechtlich.map((item) => (
+        <li><a href={item.href}>{item.label}</a></li>
+      ))}
+    </ul>
+    <p class="footer-copy">© {year} Phönix Maklerverbund GmbH</p>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    margin-top: var(--section-gap);
+    padding-block: var(--section-gap);
+    background: var(--color-dark);
+    color: #cfd2dc;
+  }
+
+  .footer-grid {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr 1fr 1fr;
+    gap: 2.5rem;
+  }
+
+  @media (max-width: 959px) {
+    .footer-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  @media (max-width: 560px) {
+    .footer-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .footer-logo {
+    filter: brightness(0) invert(1);
+    height: 40px;
+    width: auto;
+    margin-bottom: 1rem;
+  }
+
+  .footer-intro {
+    color: #9ba2b3;
+    font-size: 0.95rem;
+  }
+
+  .footer-heading {
+    color: #fff;
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+  }
+
+  .footer-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    font-size: 0.95rem;
+  }
+
+  .footer-list a {
+    color: #cfd2dc;
+    border-bottom: 1px solid transparent;
+    transition: color 120ms ease, border-color 120ms ease;
+  }
+
+  .footer-list a:hover {
+    color: var(--color-primary);
+    border-bottom-color: var(--color-primary);
+  }
+
+  .footer-address {
+    font-style: normal;
+    color: #cfd2dc;
+    margin-bottom: 1rem;
+    font-size: 0.95rem;
+  }
+
+  .maps-link img {
+    border-radius: var(--radius-sm);
+    opacity: 0.9;
+    transition: opacity 150ms ease;
+  }
+
+  .maps-link:hover img {
+    opacity: 1;
+  }
+
+  .footer-bottom {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    font-size: 0.85rem;
+  }
+
+  .footer-legal {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    list-style: none;
+  }
+
+  .footer-legal a {
+    color: #9ba2b3;
+    transition: color 120ms ease;
+  }
+
+  .footer-legal a:hover {
+    color: #fff;
+  }
+
+  .footer-credit a {
+    color: var(--color-primary);
+  }
+
+  .footer-copy {
+    color: #6b7280;
+  }
+</style>

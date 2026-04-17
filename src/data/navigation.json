@@ -1,0 +1,39 @@
+{
+  "primary": [
+    { "label": "Über uns", "href": "/ueber-uns" },
+    { "label": "Leistungen", "href": "/kunde" },
+    { "label": "Kontakt", "href": "/kontakt" }
+  ],
+  "cta": [
+    { "label": "Makler finden", "href": "/makler-suche", "variant": "outline" },
+    { "label": "Makler werden", "href": "/makler-werden", "variant": "primary" }
+  ],
+  "footer": {
+    "leistungen": [
+      { "label": "Altersvorsorge", "href": "/kunde/altersvorsorge" },
+      { "label": "Einkommenssicherung", "href": "/kunde/einkommenssicherung" },
+      { "label": "Zahnzusatzversicherung", "href": "/kunde/zahnzusatzversicherung" },
+      { "label": "Krankenhauszusatz", "href": "/kunde/krankenhauszusatzversicherung" },
+      { "label": "Haustier", "href": "/kunde/haustier" },
+      { "label": "Haus & Wohnen", "href": "/kunde/haus-wohnen" },
+      { "label": "Vermögensaufbau", "href": "/kunde/vermoegensaufbau" }
+    ],
+    "rechtlich": [
+      { "label": "Impressum", "href": "/impressum" },
+      { "label": "Datenschutz", "href": "/datenschutz" },
+      { "label": "Erstinformation", "href": "/erstinformation" },
+      { "label": "Beschwerdemanagement", "href": "/beschwerdemanagement" },
+      { "label": "Barrierefreiheit", "href": "/barrierefreiheit" }
+    ]
+  },
+  "kontakt": {
+    "firma": "Phönix Maklerverbund GmbH",
+    "strasse": "Zum weißen Stein 17",
+    "plz_ort": "56587 Oberhonnefeld-Gierend",
+    "telefon": "02634 659858-0",
+    "telefon_href": "tel:+4926346598580",
+    "fax": "02634 659858-9",
+    "email": "info@phoenix-maklerverbund.de",
+    "maps": "https://maps.app.goo.gl/LuPCMLrRu2hMo2LPA"
+  }
+}

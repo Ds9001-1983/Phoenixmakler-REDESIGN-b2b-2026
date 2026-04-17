@@ -1,0 +1,184 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Über uns – Phönix Maklerverbund">
+  <section class="hero-about">
+    <div class="container">
+      <span class="eyebrow">Über uns</span>
+      <h1>Zu uns und der Geschäftsleitung</h1>
+      <p class="lead">
+        Phönix Maklerverbund: Ihr ungebundener Partner in der Assekuranz.
+      </p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container prose">
+      <h2>Wer wir sind</h2>
+      <p>
+        Seit unserer Gründung im Jahr 2012 hat sich der Phönix Maklerverbund als ungebundener
+        und inhabergeführter Verbund im Versicherungsbereich etabliert. Mit über 120 Partnern
+        bieten wir ein Netzwerk von Fachwissen und Dienstleistungen, das seinesgleichen sucht.
+      </p>
+
+      <h2>Unsere Geschichte</h2>
+      <p>
+        Angefangen mit einer Handvoll Kollegen am 20. Juni 2012, können wir heute stolz auf ein
+        starkes Netzwerk von über 120 Partnern blicken.
+      </p>
+
+      <h2>Ungebundenheit als Kernwert</h2>
+      <p>
+        Anders als viele andere Maklerverbünde sind wir 100 % inhabergeführt. Dies garantiert
+        unsere vollkommene Ungebundenheit von Kapitalgebern und Versicherungsgesellschaften.
+      </p>
+    </div>
+  </section>
+
+  <section class="section section-bg">
+    <div class="container">
+      <div class="section-header">
+        <span class="eyebrow">Geschäftsführung</span>
+        <h2>Unsere Geschäftsführung</h2>
+      </div>
+      <div class="gf-grid">
+        <article class="gf-card">
+          <img src="/images/torsten-deterding.jpg" alt="Torsten Deterding" width="256" height="256" loading="lazy" />
+          <div>
+            <h3>Torsten Deterding</h3>
+            <p class="gf-role">Geschäftsführer</p>
+            <p>
+              Versicherungsfachwirt mit umfangreicher Erfahrung in der Assekuranz seit 1997.
+            </p>
+          </div>
+        </article>
+        <article class="gf-card">
+          <img src="/images/lothar-nast.jpg" alt="Lothar Nast" width="256" height="256" loading="lazy" />
+          <div>
+            <h3>Lothar Nast</h3>
+            <p class="gf-role">Geschäftsführer</p>
+            <p>
+              Versicherungsfachwirt und gelernter Versicherungskaufmann, tätig in der
+              Assekuranz seit 1988.
+            </p>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container prose">
+      <h2>Beruf und Berufung</h2>
+      <p>
+        Für uns ist die Versicherungsbranche nicht nur ein Beruf, sondern eine Berufung. Unsere
+        Expertise und Leidenschaft fließen in jeden Aspekt unserer Arbeit ein, um für unsere
+        Partner und Kunden den bestmöglichen Service zu bieten.
+      </p>
+      <p>
+        Mit dem Phönix Maklerverbund wählen Sie einen Partner, der auf allen Ebenen
+        Ungebundenheit, Expertise und eine individuelle Herangehensweise garantiert. Wir freuen
+        uns auf eine erfolgreiche Zusammenarbeit.
+      </p>
+    </div>
+  </section>
+
+  <section class="section section-quote">
+    <div class="container text-center">
+      <blockquote>
+        „Unser Beruf ist uns auch Berufung."
+      </blockquote>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .hero-about {
+    padding-block: clamp(3rem, 7vw, 5.5rem);
+    background: linear-gradient(135deg, var(--color-primary-light) 0%, #ffffff 100%);
+  }
+
+  .prose {
+    max-width: 780px;
+  }
+
+  .prose h2 {
+    margin-top: 2.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .prose h2:first-child {
+    margin-top: 0;
+  }
+
+  .prose p {
+    margin-bottom: 1.25rem;
+    max-width: none;
+  }
+
+  .section-header {
+    max-width: 720px;
+    margin-bottom: 2.5rem;
+  }
+
+  .gf-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+  }
+
+  @media (max-width: 768px) {
+    .gf-grid { grid-template-columns: 1fr; }
+  }
+
+  .gf-card {
+    display: grid;
+    grid-template-columns: 140px 1fr;
+    gap: 1.5rem;
+    align-items: center;
+    background: #fff;
+    padding: 1.5rem;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-border);
+  }
+
+  @media (max-width: 560px) {
+    .gf-card { grid-template-columns: 1fr; text-align: center; }
+  }
+
+  .gf-card img {
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid var(--color-primary-light);
+  }
+
+  @media (max-width: 560px) {
+    .gf-card img { margin-inline: auto; }
+  }
+
+  .gf-card h3 {
+    margin-bottom: 0.25rem;
+  }
+
+  .gf-role {
+    color: var(--color-primary-dark);
+    font-weight: 600;
+    font-size: 0.9rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .section-quote {
+    background: var(--color-dark);
+    color: #fff;
+  }
+
+  .section-quote blockquote {
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    font-weight: 500;
+    max-width: 700px;
+    margin: 0 auto;
+  }
+</style>

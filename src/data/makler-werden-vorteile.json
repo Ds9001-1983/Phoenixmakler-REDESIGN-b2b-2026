@@ -1,0 +1,43 @@
+{
+  "leistungen": [
+    {
+      "title": "Branchen-Spezialisierung",
+      "text": "Fachliche Unterstützung in Altersvorsorge, Krankenabsicherung und Finanzierung."
+    },
+    {
+      "title": "Persönliche Beratung",
+      "text": "Maßgeschneiderte Lösungen für optimale Kundenbetreuung."
+    },
+    {
+      "title": "Transparenz und Qualität",
+      "text": "Unsere Grundprinzipien für eine erfolgreiche Partnerschaft."
+    }
+  ],
+  "alleinstellung": [
+    "Exklusive Vereinbarungen mit Versicherern",
+    "Umfassendes Courtagemodell",
+    "Professionelle rechtliche Unterstützung"
+  ],
+  "unterstuetzung": [
+    {
+      "title": "Verwaltungsvereinfachung",
+      "text": "Wir stellen Ihnen ein professionelles Maklerverwaltungsprogramm mit umfassender Digitalisierung und weiteren Tools."
+    },
+    {
+      "title": "Individuelle Instrumente",
+      "text": "Wir stellen Werkzeuge bereit, die Sie wirklich brauchen."
+    }
+  ],
+  "networking": [
+    "Spezielle Deckungskonzepte",
+    "Regelmäßige Online-Meetings und Marktaktualisierungen"
+  ],
+  "wechsel_beachten": [
+    "Überprüfen Sie Ihren bestehenden Vertrag.",
+    "Klären Sie rechtliche Fragen zur Kundenakquise und Kundendaten."
+  ],
+  "wechsel_hilfe": [
+    "Unterstützung bei Vertragsauflösung",
+    "Hilfestellung bei der Bestandsumdeckung"
+  ]
+}

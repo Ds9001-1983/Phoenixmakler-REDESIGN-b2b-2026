@@ -1,0 +1,174 @@
+{
+  "altersvorsorge": {
+    "title": "Eine Auswahl für Ihre Altersvorsorge",
+    "eyebrow": "Altersvorsorge",
+    "intro": "Sicher in die Rente: unsere Empfehlungen für den langfristigen Vermögensaufbau und die private Altersvorsorge.",
+    "pots": [
+      { "headline": "Vorteile bei Ihrer Absicherung & Vorsorge sichern", "url": "https://deterding.phoenix-makler.info/kundenmagazin_anmeldung.html" },
+      { "headline": "Clevere ETF-Anlage ohne Abgeltungsteuer", "url": "https://deterding.phoenix-makler.info/kundenmagazin_anmeldung.html" },
+      { "headline": "Absicherung für Frauen", "url": "https://deterding.phoenix-makler.info/kundenmagazin_anmeldung.html" }
+    ],
+    "produkte": []
+  },
+  "einkommenssicherung": {
+    "title": "Eine Auswahl für Ihre Einkommenssicherung",
+    "eyebrow": "Einkommenssicherung",
+    "intro": "Ihr Einkommen ist Ihre wichtigste Ressource – schützen Sie es mit passgenauen Versicherungen.",
+    "pots": [
+      { "headline": "Die mentale Gesundheit fördern", "url": "https://deterding.phoenix-makler.info/kundenmagazin_anmeldung.html" },
+      { "headline": "Schützen Sie Ihre wichtigsten Fähigkeiten ganz individuell!", "url": "https://deterding.phoenix-makler.info/kundenmagazin_anmeldung.html" },
+      { "headline": "Versicherungsschutz im Homeoffice", "url": "https://deterding.phoenix-makler.info/kundenmagazin_anmeldung.html" }
+    ],
+    "produkte": [
+      {
+        "name": "DELA Risikolebensversicherung",
+        "text": "Die Dela ist ein niederländischer Spezialversicherer mit Schwerpunkt auf Risikolebensversicherungen und Sterbegeldversicherungen. Wir empfehlen sie wegen eines sehr guten Preis-Leistungs-Verhältnisses.",
+        "logo": "/images/logos/dela.jpg",
+        "url": "https://ssl.barmenia.de/"
+      },
+      {
+        "name": "IDEAL Risikolebensversicherung Familie",
+        "text": "Das Berliner Unternehmen bietet seit über 100 Jahren innovative Absicherungsprodukte für unterschiedliche Zielgruppen. Hier können Sie eine Risikolebensversicherung für Familien berechnen und online abschließen.",
+        "logo": "/images/logos/ideal.webp",
+        "url": "https://ssl.barmenia.de/"
+      },
+      {
+        "name": "IDEAL Risikolebensversicherung Kreditabsicherung",
+        "text": "Berechnen und schließen Sie eine Risikolebensversicherung speziell zur Absicherung eines Immobilienkredits ab.",
+        "logo": "/images/logos/ideal.webp",
+        "url": "https://ssl.barmenia.de/"
+      }
+    ]
+  },
+  "zahnzusatzversicherung": {
+    "title": "Eine Auswahl für Ihre Zahnzusatzversicherung",
+    "eyebrow": "Zahnzusatzversicherung",
+    "intro": "Gesunde Zähne, ohne böse Überraschungen bei der Rechnung. Unsere Empfehlungen im Überblick.",
+    "pots": [
+      { "headline": "Der neue ZAHN SORGLOS-Tarif", "url": "https://deterding.phoenix-makler.info/kundenmagazin_anmeldung.html" },
+      { "headline": "Schöne Zähne für kaum mehr als ein Lächeln …", "url": "https://deterding.phoenix-makler.info/kundenmagazin_anmeldung.html" },
+      { "headline": "Es ist nie zu spät für ein gesundes Lächeln", "url": "https://deterding.phoenix-makler.info/kundenmagazin_anmeldung.html" }
+    ],
+    "produkte": [
+      {
+        "name": "Zahnzusatzversicherung (SDK)",
+        "text": "Die Süddeutsche Krankenversicherung bietet mit ihrer Zahnzusatzversicherung wahrscheinlich das flexibelste Produkt ihres Portfolios. Starten Sie mit einem kleinen Beitrag und erhöhen Sie je nach Bedarf alle 5 Jahre den Versicherungsschutz.",
+        "logo": "/images/logos/sdk.png",
+        "url": "https://ssl.barmenia.de/"
+      },
+      {
+        "name": "Zahnzusatzversicherung (HanseMerkur)",
+        "text": "Als einer der ältesten privaten Krankenversicherer in Deutschland bietet die HanseMerkur ein gutes Preis-Leistungs-Verhältnis. Jetzt hier berechnen und abschließen.",
+        "logo": "/images/logos/hansemerkur.png",
+        "url": "https://ssl.barmenia.de/"
+      },
+      {
+        "name": "Zahnzusatzversicherung (Barmenia)",
+        "text": "Die Barmenia glänzt mit einem hervorragenden Preis-Leistungs-Verhältnis. Berechnen Sie hier ohne Wartezeit und ohne Gesundheitsfragen. Jetzt auch mit Leistung für Kieferorthopädie für Erwachsene.",
+        "logo": "/images/logos/barmenia.png",
+        "url": "https://ssl.barmenia.de/"
+      }
+    ]
+  },
+  "krankenhauszusatzversicherung": {
+    "title": "Eine Auswahl für die Krankenhauszusatzversicherung",
+    "eyebrow": "Krankenhauszusatz",
+    "intro": "Chefarztbehandlung, Einzelzimmer und die Wahl der Klinik – mehr Komfort, wenn es darauf ankommt.",
+    "pots": [
+      { "headline": "Mehr Komfort für schnelle Genesung", "url": "https://deterding.phoenix-makler.info/kundenmagazin_anmeldung.html" },
+      { "headline": "Mein Kind muss ins Krankenhaus – was nun?", "url": "https://deterding.phoenix-makler.info/kundenmagazin_anmeldung.html" },
+      { "headline": "Weil mir Ihre Gesundheit am Herzen liegt!", "url": "https://deterding.phoenix-makler.info/kundenmagazin_anmeldung.html" }
+    ],
+    "produkte": [
+      {
+        "name": "Krankenhauszusatzversicherung (Barmenia)",
+        "text": "Arzthonorare ohne Begrenzung, einfache Gesundheitsprüfung und ein attraktives Preis-Leistungs-Verhältnis. Jetzt hier informieren und berechnen.",
+        "logo": "/images/logos/barmenia.png",
+        "url": "https://ssl.barmenia.de/"
+      },
+      {
+        "name": "Krankenhauszusatzversicherung (ARAG)",
+        "text": "Einer der am schnellsten wachsenden privaten Krankenversicherer der letzten Jahre. Keine Begrenzung auf die Höchstsätze der Gebührenordnung, Unterstützung bei der Klinikwahl und vieles mehr.",
+        "logo": "/images/logos/arag.png",
+        "url": "https://ssl.barmenia.de/"
+      },
+      {
+        "name": "Krankenhauszusatzversicherung (SDK)",
+        "text": "Die besten Ärzte und beste Unterbringung im Krankenhaus – auch ohne Gesundheitsfragen in der Variante ‚Klinik bei Unfall'. Persönliches Angebot mit wenigen Klicks.",
+        "logo": "/images/logos/sdk.png",
+        "url": "https://ssl.barmenia.de/"
+      }
+    ]
+  },
+  "haustier": {
+    "title": "Eine Auswahl für Ihre Tierversicherungen",
+    "eyebrow": "Haustier",
+    "intro": "Tierarzt-Kosten können schnell 3.000 € übersteigen. Sichern Sie sich und Ihre Vierbeiner ab.",
+    "pots": [
+      { "headline": "Katzenversicherung", "url": "https://deterding.phoenix-makler.info/kundenmagazin_anmeldung.html" },
+      { "headline": "Haftpflicht Hunde", "url": "https://deterding.phoenix-makler.info/kundenmagazin_anmeldung.html" },
+      { "headline": "Hundeversicherung", "url": "https://deterding.phoenix-makler.info/kundenmagazin_anmeldung.html" }
+    ],
+    "produkte": [
+      {
+        "name": "Tierkrankenversicherung (Barmenia)",
+        "text": "Versichern Sie Ihr Tier so umfassend, wie Sie es sich wünschen – damit Sie sich unabhängig von den Kosten jederzeit für das Wohl Ihres Tieres entscheiden können. Hier für Hund, Katze und Pferd berechnen und abschließen.",
+        "logo": "/images/logos/barmenia.png",
+        "url": "https://ssl.barmenia.de/"
+      },
+      {
+        "name": "Katzen-OP-Versicherung (HanseMerkur)",
+        "text": "Tierarztrechnungen von über 3.000 € sind keine Seltenheit. Jetzt besser für ein gutes Gefühl vorsorgen. Hier berechnen und abschließen.",
+        "logo": "/images/logos/hansemerkur.png",
+        "url": "https://ssl.barmenia.de/"
+      },
+      {
+        "name": "Tierkrankenversicherung (ARAG)",
+        "text": "Wahlweise als OP- oder Krankenvollversicherung. Genießen Sie ein unbesorgtes Leben mit Ihrem Vierbeiner. Hier berechnen und abschließen.",
+        "logo": "/images/logos/arag.png",
+        "url": "https://ssl.barmenia.de/"
+      }
+    ]
+  },
+  "haus-wohnen": {
+    "title": "Eine Auswahl für Haus und Wohnen",
+    "eyebrow": "Haus & Wohnen",
+    "intro": "Vom Hausrat bis zur Wohngebäudeversicherung und zur E-Bike-Police: Schutz für Ihr Zuhause.",
+    "pots": [
+      { "headline": "Starker Schutz bei Extremwetter", "url": "https://deterding.phoenix-makler.info/kundenmagazin_anmeldung.html" },
+      { "headline": "Wärmepumpe, Photovoltaik-Anlage und Co. absichern", "url": "https://deterding.phoenix-makler.info/kundenmagazin_anmeldung.html" },
+      { "headline": "Ist Ihre Hausratversicherung up to date?", "url": "https://deterding.phoenix-makler.info/kundenmagazin_anmeldung.html" }
+    ],
+    "produkte": [
+      {
+        "name": "Neodigital Hausrat Wechseltarif",
+        "text": "Schnell und unkompliziert garantiert 5 % des Beitrages sparen. Es sind mindestens die Leistungen Ihrer Vorversicherung abgesichert und vieles mehr. Jetzt informieren und abschließen.",
+        "logo": "/images/logos/neodigital.png",
+        "url": "https://ssl.barmenia.de/"
+      },
+      {
+        "name": "Neodigital Wohngebäude Wechseltarif",
+        "text": "Ungewöhnliches Angebot der HUK-Tochter Neodigital: Für viele Wohngebäudeversicherungen wird der Beitrag noch einmal um 5 % reduziert. Hier informieren.",
+        "logo": "/images/logos/neodigital.png",
+        "url": "https://ssl.barmenia.de/"
+      },
+      {
+        "name": "Ammerländer E-Bike Versicherung",
+        "text": "Egal ob Dienstrad oder privates E-Bike: Die Ammerländer war einer der ersten Anbieter mit Fahrradvollkaskoversicherungen. Jetzt berechnen und abschließen.",
+        "logo": "/images/logos/ammerlaender.png",
+        "url": "https://ssl.barmenia.de/"
+      }
+    ]
+  },
+  "vermoegensaufbau": {
+    "title": "Eine Auswahl für Ihren Vermögensaufbau",
+    "eyebrow": "Vermögensaufbau",
+    "intro": "Gezielt sparen, anlegen und finanzieren. Unsere Empfehlungen für Ihren langfristigen Vermögensaufbau.",
+    "pots": [
+      { "headline": "Anschlussfinanzierung: Kann ich steigende Zinsen stoppen?", "url": "https://deterding.phoenix-makler.info/kundenmagazin_anmeldung.html" },
+      { "headline": "Nachhaltigkeits-Trends", "url": "https://deterding.phoenix-makler.info/kundenmagazin_anmeldung.html" },
+      { "headline": "Sparstrumpf war gestern!", "url": "https://deterding.phoenix-makler.info/kundenmagazin_anmeldung.html" }
+    ],
+    "produkte": []
+  }
+}

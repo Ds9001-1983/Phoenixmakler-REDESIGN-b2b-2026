@@ -1,0 +1,210 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import makler from '../data/makler.json';
+
+const q = Astro.url.searchParams.get('q') ?? '';
+---
+
+<BaseLayout title="Maklerfinder – Phönix Maklerverbund">
+  <section class="hero-suche">
+    <div class="container">
+      <span class="eyebrow">Maklerfinder</span>
+      <h1>Finden Sie Ihren Versicherungsmakler</h1>
+      <p class="lead">
+        Alle Partner des Phönix Maklerverbunds auf einen Blick. Suchen Sie nach Ort, PLZ oder
+        Namen und nehmen Sie direkt Kontakt auf.
+      </p>
+      <form class="search-bar" role="search" method="get">
+        <label for="q" class="visually-hidden">PLZ, Ort oder Name</label>
+        <input
+          id="q"
+          name="q"
+          type="search"
+          placeholder="PLZ, Ort oder Name eingeben"
+          value={q}
+          data-search-input
+        />
+        <button type="submit" class="btn btn-primary">Suchen →</button>
+      </form>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <p class="results-hint" data-results-hint>
+        Zeigt aktuell {makler.length} Phönix-Partner. (Hinweis: Die vollständige Liste mit 120+
+        Vermittlern wird nach Anbindung des CRM-Systems dynamisch geladen.)
+      </p>
+      <ul class="makler-list" data-makler-list>
+        {makler.map((m) => (
+          <li
+            class="makler-card"
+            data-name={m.name.toLowerCase()}
+            data-ort={m.ort.toLowerCase()}
+            data-plz={m.plz}
+          >
+            <div class="makler-avatar" aria-hidden="true">
+              {m.name.split(' ').map((n) => n[0]).slice(0, 2).join('').toUpperCase()}
+            </div>
+            <div class="makler-info">
+              <h3>{m.name}</h3>
+              {m.ort !== '—' && <p class="makler-ort">{m.plz} {m.ort}</p>}
+              <div class="makler-actions">
+                <a href={`tel:${m.telefon.replace(/[\s\-]/g, '')}`} class="btn btn-outline">Anrufen</a>
+                <a href={`mailto:${m.email}`} class="btn btn-outline">E-Mail</a>
+              </div>
+            </div>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .hero-suche {
+    padding-block: clamp(3rem, 7vw, 5rem);
+    background: linear-gradient(135deg, var(--color-primary-light) 0%, #ffffff 100%);
+  }
+
+  .hero-suche h1 {
+    max-width: 22ch;
+  }
+
+  .hero-suche .lead {
+    margin-block: 1rem 2rem;
+  }
+
+  .search-bar {
+    display: flex;
+    gap: 0.5rem;
+    max-width: 560px;
+  }
+
+  .search-bar input {
+    flex: 1;
+    min-height: var(--min-touch-target);
+    padding: 0.75rem 1rem;
+    border: 1.5px solid var(--color-border);
+    border-radius: var(--radius-md);
+    font-size: 1rem;
+    background: #fff;
+  }
+
+  .search-bar input:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px var(--color-primary-light);
+  }
+
+  .visually-hidden {
+    position: absolute;
+    width: 1px; height: 1px;
+    padding: 0; margin: -1px;
+    overflow: hidden;
+    clip: rect(0,0,0,0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  .results-hint {
+    font-size: 0.9rem;
+    color: var(--color-text-muted);
+    margin-bottom: 1.5rem;
+  }
+
+  .makler-list {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1rem;
+  }
+
+  .makler-card {
+    display: grid;
+    grid-template-columns: 56px 1fr;
+    gap: 1rem;
+    align-items: center;
+    padding: 1.25rem;
+    background: #fff;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    transition: border-color 150ms ease, box-shadow 150ms ease;
+  }
+
+  .makler-card[hidden] {
+    display: none;
+  }
+
+  .makler-card:hover {
+    border-color: var(--color-primary);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .makler-avatar {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: var(--color-primary-light);
+    color: var(--color-primary-dark);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 1.1rem;
+  }
+
+  .makler-info h3 {
+    font-size: 1.05rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .makler-ort {
+    font-size: 0.9rem;
+    color: var(--color-text-muted);
+    margin-bottom: 0.75rem;
+  }
+
+  .makler-actions {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .makler-actions .btn {
+    padding: 0.5rem 1rem;
+    font-size: 0.85rem;
+    min-height: 36px;
+  }
+</style>
+
+<script>
+  // TODO(Phase 2): Liste aus PW-API laden, sobald CRM-Zugang vorliegt.
+  // Aktuell Client-seitige Filterung über die 8 Bestands-Makler.
+  const input = document.querySelector<HTMLInputElement>('[data-search-input]');
+  const list = document.querySelectorAll<HTMLLIElement>('.makler-card');
+
+  const applyFilter = (q: string) => {
+    const term = q.trim().toLowerCase();
+    list.forEach((item) => {
+      const haystack = [
+        item.dataset.name,
+        item.dataset.ort,
+        item.dataset.plz,
+      ].join(' ');
+      item.hidden = term.length > 0 && !haystack.includes(term);
+    });
+  };
+
+  // Bei statischem Build wird ?q= nicht server-seitig gelesen.
+  // URL-Query client-seitig übernehmen:
+  const urlQ = new URLSearchParams(window.location.search).get('q');
+  if (input && urlQ) {
+    input.value = urlQ;
+    applyFilter(urlQ);
+  }
+
+  input?.addEventListener('input', (e) => {
+    applyFilter((e.target as HTMLInputElement).value);
+  });
+</script>

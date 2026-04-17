@@ -1,0 +1,98 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ErstinformationModal from '../../components/ErstinformationModal.astro';
+import TeaserCard from '../../components/TeaserCard.astro';
+import ProductBlock from '../../components/ProductBlock.astro';
+import MaklerFindenCTA from '../../components/MaklerFindenCTA.astro';
+import produkteData from '../../data/produkte.json';
+
+type ProduktSlug = keyof typeof produkteData;
+
+export async function getStaticPaths() {
+  const { default: data } = await import('../../data/produkte.json');
+  return Object.keys(data).map((slug) => ({ params: { slug } }));
+}
+
+const { slug } = Astro.params as { slug: ProduktSlug };
+const produkt = produkteData[slug];
+
+if (!produkt) {
+  return Astro.redirect('/kunde');
+}
+---
+
+<BaseLayout title={produkt.title}>
+  <ErstinformationModal />
+
+  <section class="hero-produkt">
+    <div class="container">
+      <span class="eyebrow">{produkt.eyebrow}</span>
+      <h1>{produkt.title}</h1>
+      <p class="lead">{produkt.intro}</p>
+    </div>
+  </section>
+
+  {produkt.pots.length > 0 && (
+    <section class="section">
+      <div class="container">
+        <div class="section-header">
+          <span class="eyebrow">Themen & Tipps</span>
+          <h2>Wissenswertes auf einen Blick</h2>
+        </div>
+        <div class="grid grid-3 pots-grid">
+          {produkt.pots.map((pot) => (
+            <TeaserCard headline={pot.headline} url={pot.url} />
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  {produkt.produkte.length > 0 && (
+    <section class="section section-bg">
+      <div class="container">
+        <div class="section-header">
+          <span class="eyebrow">Empfohlene Produkte</span>
+          <h2>Direkt berechnen und abschließen</h2>
+        </div>
+        <div class="product-stack">
+          {produkt.produkte.map((p) => (
+            <ProductBlock name={p.name} text={p.text} logo={p.logo} url={p.url} />
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  <MaklerFindenCTA />
+</BaseLayout>
+
+<style>
+  .hero-produkt {
+    padding-block: clamp(3rem, 7vw, 5.5rem);
+    background: linear-gradient(135deg, var(--color-primary-light) 0%, #ffffff 100%);
+  }
+
+  .hero-produkt h1 {
+    max-width: 20ch;
+  }
+
+  .hero-produkt .lead {
+    margin-top: 1rem;
+  }
+
+  .section-header {
+    max-width: 720px;
+    margin-bottom: 2rem;
+  }
+
+  .pots-grid {
+    gap: 1.5rem;
+  }
+
+  .product-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+</style>

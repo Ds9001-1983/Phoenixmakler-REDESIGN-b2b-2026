@@ -1,0 +1,73 @@
+---
+interface Props {
+  headline: string;
+  url: string;
+  image?: string;
+}
+const { headline, url, image } = Astro.props;
+---
+
+<a href={url} class="teaser-card" target="_blank" rel="noopener">
+  {image && (
+    <div class="teaser-image">
+      <img src={image} alt="" loading="lazy" />
+    </div>
+  )}
+  <div class="teaser-body">
+    <h3>{headline}</h3>
+    <span class="teaser-arrow" aria-hidden="true">Mehr erfahren →</span>
+  </div>
+</a>
+
+<style>
+  .teaser-card {
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    color: var(--color-text);
+    transition: transform 200ms ease, box-shadow 200ms ease, border-color 200ms ease;
+    height: 100%;
+  }
+
+  .teaser-card:hover,
+  .teaser-card:focus-visible {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--color-primary);
+  }
+
+  .teaser-image {
+    aspect-ratio: 16/9;
+    background: var(--color-bg-light);
+    overflow: hidden;
+  }
+
+  .teaser-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .teaser-body {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 1rem;
+    flex: 1;
+  }
+
+  .teaser-body h3 {
+    font-size: 1.1rem;
+    line-height: 1.35;
+  }
+
+  .teaser-arrow {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--color-primary-dark);
+  }
+</style>
