@@ -2,29 +2,55 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import ErstinformationModal from '../../components/ErstinformationModal.astro';
 import kacheln from '../../data/kunde-kacheln.json';
+
+const kachelImage: Record<string, string> = {
+  altersvorsorge: '/images/hero/pot-altersvorsorge.png',
+  einkommenssicherung: '/images/hero/pot-einkommen.png',
+  zahnzusatzversicherung: '/images/hero/pot-zahn.png',
+  krankenhauszusatzversicherung: '/images/hero/pot-zahn.png',
+  haustier: '/images/hero/pot-haustier.png',
+  'haus-wohnen': '/images/hero/pot-haus.png',
+  vermoegensaufbau: '/images/hero/pot-vermoegen.png',
+};
 ---
 
 <BaseLayout title="Für Kunden – Phönix Maklerverbund">
   <ErstinformationModal />
 
+  {/* HERO */}
   <section class="hero-kunde">
-    <div class="container">
-      <span class="eyebrow">Willkommen</span>
-      <h1>Willkommen beim Phönix Maklerverbund</h1>
-      <p class="lead">
-        Der Phönix Maklerverbund unterstützt ungebundene Versicherungsmakler bei der Abwicklung
-        ihrer Geschäfte. Ihr persönlicher Ansprechpartner ist Ihr Versicherungsmakler.
-      </p>
+    <div class="container hero-grid">
+      <div class="hero-text" data-reveal>
+        <span class="eyebrow">Für Kundinnen &amp; Kunden</span>
+        <h1 data-split>
+          Ihr persönlicher Makler — <em>unser</em> Netzwerk.
+        </h1>
+        <p class="lead" data-reveal data-reveal-delay="2">
+          Der Phönix Maklerverbund unterstützt ungebundene Versicherungsmakler bei der Abwicklung
+          ihrer Geschäfte. Ihr persönlicher Ansprechpartner bleibt Ihr Versicherungsmakler.
+        </p>
+      </div>
+      <figure class="hero-media" data-parallax-wrapper data-reveal data-reveal-delay="2">
+        <img
+          src="/images/hero/hero-kunde.png"
+          alt="Warmes Wohnzimmer – Geborgenheit"
+          width="1024"
+          height="1024"
+          loading="eager"
+          fetchpriority="high"
+          data-parallax="0.1"
+        />
+      </figure>
     </div>
   </section>
 
-  <section class="section section-search">
+  {/* SUCH-BAND */}
+  <section class="section-sm search-band">
     <div class="container">
-      <div class="search-card">
+      <div class="search-wrap" data-reveal>
         <div>
           <span class="eyebrow">Maklersuche</span>
-          <h2>Finden Sie Ihren Versicherungsmakler</h2>
-          <p>Geben Sie Ihre PLZ oder den Namen ein – wir finden den passenden Ansprechpartner.</p>
+          <h2>Finden Sie Ihren Versicherungsmakler.</h2>
         </div>
         <form class="search-form" action="/makler-suche" method="get" role="search">
           <label for="search-query" class="visually-hidden">PLZ oder Name</label>
@@ -41,55 +67,84 @@ import kacheln from '../../data/kunde-kacheln.json';
     </div>
   </section>
 
-  <section class="section">
+  {/* LEISTUNGSBEREICHE */}
+  <section class="section bg-cream">
     <div class="container">
-      <div class="section-header text-center">
+      <div class="sec-head" data-reveal>
         <span class="eyebrow">Leistungsbereiche</span>
-        <h2>Informieren Sie sich über unsere Produkte</h2>
+        <h2 data-split>
+          Sieben <em>Bereiche</em>, in denen wir Sie begleiten.
+        </h2>
       </div>
-      <div class="grid kachel-grid">
-        {kacheln.map((k) => (
-          <a href={`/kunde/${k.slug}`} class="kachel">
-            <div class="kachel-icon" aria-hidden="true">{k.icon}</div>
-            <h3>{k.title}</h3>
-            <p>{k.text}</p>
-            <span class="kachel-arrow" aria-hidden="true">→</span>
-          </a>
+      <ul class="kachel-list">
+        {kacheln.map((k, i) => (
+          <li data-reveal data-reveal-delay={(i % 3) + 1}>
+            <a href={`/kunde/${k.slug}`} class="kachel">
+              <div class="kachel-media">
+                <img src={kachelImage[k.slug]} alt="" loading="lazy" />
+              </div>
+              <div class="kachel-body">
+                <span class="kachel-num">{String(i + 1).padStart(2, '0')}</span>
+                <h3>{k.title}</h3>
+                <p>{k.text}</p>
+                <span class="kachel-arrow">Ansehen →</span>
+              </div>
+            </a>
+          </li>
         ))}
-      </div>
+      </ul>
     </div>
   </section>
 </BaseLayout>
 
 <style>
+  /* Hero */
   .hero-kunde {
-    padding-block: clamp(3rem, 7vw, 5.5rem);
-    background: linear-gradient(135deg, var(--color-primary-light) 0%, #ffffff 100%);
+    padding-block: clamp(3rem, 6vw, 5rem) clamp(4rem, 7vw, 6rem);
+    background: var(--color-cream);
+    overflow: hidden;
   }
 
-  .section-search {
-    padding-top: 0;
+  .hero-grid {
+    display: grid;
+    grid-template-columns: 1.05fr 0.95fr;
+    gap: clamp(2rem, 5vw, 5rem);
+    align-items: center;
   }
 
-  .search-card {
+  @media (max-width: 900px) { .hero-grid { grid-template-columns: 1fr; gap: 2.5rem; } }
+
+  .hero-text h1 em { font-style: italic; color: var(--color-accent-dark); font-weight: 400; }
+
+  .hero-media {
+    position: relative;
+    overflow: hidden;
+    aspect-ratio: 4/5;
+  }
+
+  @media (max-width: 900px) { .hero-media { aspect-ratio: 4/3; } }
+
+  .hero-media img {
+    width: 100%;
+    height: 115%;
+    object-fit: cover;
+    transform: translateY(-7%);
+  }
+
+  /* Search band */
+  .search-band {
+    background: var(--color-cream-warm);
+    border-block: 1px solid var(--color-border);
+  }
+
+  .search-wrap {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 2.5rem;
+    gap: 3rem;
     align-items: center;
-    background: #fff;
-    padding: clamp(1.5rem, 4vw, 3rem);
-    border-radius: var(--radius-lg);
-    border: 1px solid var(--color-border);
-    box-shadow: var(--shadow-md);
-    margin-top: -3rem;
   }
 
-  @media (max-width: 768px) {
-    .search-card {
-      grid-template-columns: 1fr;
-      gap: 1.5rem;
-    }
-  }
+  @media (max-width: 800px) { .search-wrap { grid-template-columns: 1fr; gap: 1.5rem; } }
 
   .search-form {
     display: flex;
@@ -99,16 +154,17 @@ import kacheln from '../../data/kunde-kacheln.json';
   .search-form input {
     flex: 1;
     min-height: var(--min-touch-target);
-    padding: 0.75rem 1rem;
-    border: 1.5px solid var(--color-border);
-    border-radius: var(--radius-md);
+    padding: 0.9rem 1.25rem;
+    background: var(--color-cream);
+    border: 1px solid var(--color-border);
+    border-radius: 0;
     font-size: 1rem;
   }
 
   .search-form input:focus {
     outline: none;
     border-color: var(--color-primary);
-    box-shadow: 0 0 0 3px var(--color-primary-light);
+    background: #fff;
   }
 
   .visually-hidden {
@@ -121,59 +177,89 @@ import kacheln from '../../data/kunde-kacheln.json';
     border: 0;
   }
 
-  .section-header {
-    max-width: 720px;
-    margin: 0 auto 3rem;
+  /* Section Head */
+  .sec-head {
+    max-width: 640px;
+    margin-bottom: clamp(2.5rem, 5vw, 4rem);
   }
 
-  .kachel-grid {
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: 1.25rem;
+  .sec-head h2 em { font-style: italic; color: var(--color-accent-dark); font-weight: 400; }
+
+  /* Kacheln als editorial list */
+  .kachel-list {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 2rem 1.5rem;
   }
 
   .kachel {
-    display: block;
-    position: relative;
-    padding: 2rem 1.75rem;
-    background: #fff;
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-lg);
-    color: var(--color-text);
-    transition: transform 200ms ease, box-shadow 200ms ease, border-color 200ms ease;
+    display: flex;
+    flex-direction: column;
+    color: var(--color-dark);
+    height: 100%;
   }
 
-  .kachel:hover,
-  .kachel:focus-visible {
-    transform: translateY(-4px);
-    box-shadow: var(--shadow-md);
-    border-color: var(--color-primary);
+  .kachel-media {
+    aspect-ratio: 4/3;
+    overflow: hidden;
+    background: var(--color-cream-warm);
+    margin-bottom: 1.5rem;
   }
 
-  .kachel-icon {
-    font-size: 2.25rem;
-    margin-bottom: 1rem;
+  .kachel-media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 900ms var(--ease-out);
+  }
+
+  .kachel:hover .kachel-media img { transform: scale(1.04); }
+
+  .kachel-body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding-inline: 0.25rem;
+  }
+
+  .kachel-num {
+    font-family: var(--font-display);
+    font-size: 0.9rem;
+    color: var(--color-accent-dark);
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    margin-bottom: 0.25rem;
   }
 
   .kachel h3 {
+    font-size: clamp(1.25rem, 2vw, 1.5rem);
     margin-bottom: 0.4rem;
-    font-size: 1.15rem;
+    transition: color 200ms ease;
   }
+
+  .kachel:hover h3 { color: var(--color-primary); }
 
   .kachel p {
     color: var(--color-text-muted);
-    font-size: 0.95rem;
+    font-size: 0.98rem;
+    margin-bottom: 0.75rem;
   }
 
   .kachel-arrow {
-    position: absolute;
-    right: 1.5rem;
-    bottom: 1.5rem;
-    font-size: 1.25rem;
-    color: var(--color-primary-dark);
-    transition: transform 150ms ease;
+    font-family: var(--font-body);
+    font-size: 0.88rem;
+    font-weight: 500;
+    color: var(--color-primary);
+    letter-spacing: 0.02em;
+    border-bottom: 1px solid transparent;
+    align-self: flex-start;
+    transition: border-color 220ms ease, transform 320ms var(--ease-out);
+    padding-bottom: 2px;
   }
 
   .kachel:hover .kachel-arrow {
+    border-bottom-color: var(--color-primary);
     transform: translateX(4px);
   }
 </style>

@@ -1,37 +1,60 @@
 :root {
-  /* Farben */
-  --color-primary: #6cbe45;
-  --color-primary-dark: #4a9e2f;
-  --color-primary-light: #e8f5e0;
-  --color-dark: #1a1a2e;
-  --color-text: #2d2d44;
-  --color-text-muted: #6b7280;
+  /* Phönix CI — Navy + Cream + Gold */
+  --color-primary: #1e3a8a;
+  --color-primary-dark: #0a1940;
+  --color-primary-darker: #050d26;
+  --color-primary-light: #e8eaf5;
+  --color-primary-softer: #c3cae6;
+
+  /* Warme Sekundär-/Akzentfarbe */
+  --color-accent: #c9a66b;
+  --color-accent-dark: #9f7e49;
+  --color-accent-light: #f0e4cc;
+
+  /* Neutrale Palette */
+  --color-cream: #faf7f2;
+  --color-cream-warm: #f3ede2;
+  --color-dark: #0a1940;
+  --color-text: #1a1f36;
+  --color-text-muted: #5b6378;
   --color-bg: #ffffff;
-  --color-bg-light: #f3f4f6;
-  --color-border: #e5e7eb;
+  --color-bg-cream: #faf7f2;
+  --color-border: #e4ddd0;
+  --color-border-subtle: #efe9dc;
 
   /* Typografie */
-  --font-heading: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-display: 'Fraunces', 'Playfair Display', Georgia, serif;
   --font-body: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
   --font-size-base: 16px;
-  --line-height: 1.6;
+  --line-height: 1.65;
 
-  /* Spacing */
-  --section-gap: 80px;
-  --section-gap-sm: 48px;
-  --content-max-width: 1200px;
+  /* Spacing & Layout */
+  --section-gap: 120px;
+  --section-gap-sm: 72px;
+  --content-max-width: 1240px;
+  --content-max-narrow: 780px;
   --padding-x: 24px;
-  --radius-sm: 6px;
-  --radius-md: 10px;
-  --radius-lg: 16px;
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
 
   /* Barrierefreiheit */
-  --focus-outline: 3px solid var(--color-primary);
-  --focus-offset: 2px;
+  --focus-outline: 3px solid var(--color-accent);
+  --focus-offset: 3px;
   --min-touch-target: 44px;
 
-  /* Schatten */
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
-  --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.12);
+  /* Schatten — sehr subtil, editorial */
+  --shadow-sm: 0 1px 3px rgba(10, 25, 64, 0.04);
+  --shadow-md: 0 8px 24px rgba(10, 25, 64, 0.06);
+  --shadow-lg: 0 24px 60px rgba(10, 25, 64, 0.12);
+
+  /* Easing */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+@media (min-width: 960px) {
+  :root {
+    --section-gap: 160px;
+  }
 }

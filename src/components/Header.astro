@@ -5,7 +5,7 @@ const { pathname } = Astro.url;
 const isActive = (href: string) => pathname === href || (href !== '/' && pathname.startsWith(href));
 ---
 
-<header class="site-header">
+<header class="site-header" data-header>
   <div class="container header-inner">
     <a href="/" class="logo" aria-label="Phönix Maklerverbund – Startseite">
       <img src="/images/logo.png" alt="Phönix Maklerverbund" width="180" height="48" />
@@ -19,7 +19,7 @@ const isActive = (href: string) => pathname === href || (href !== '/' && pathnam
       aria-controls="primary-nav"
       data-burger
     >
-      <span></span><span></span><span></span>
+      <span></span><span></span>
     </button>
 
     <nav id="primary-nav" class="nav" aria-label="Hauptnavigation" data-nav>
@@ -27,81 +27,116 @@ const isActive = (href: string) => pathname === href || (href !== '/' && pathnam
         {navigation.primary.map((item) => (
           <li>
             <a href={item.href} class:list={['nav-link', { active: isActive(item.href) }]}>
-              {item.label}
+              <span>{item.label}</span>
             </a>
           </li>
         ))}
       </ul>
       <div class="nav-cta">
-        {navigation.cta.map((cta) => (
-          <a href={cta.href} class:list={['btn', cta.variant === 'primary' ? 'btn-primary' : 'btn-outline']}>
-            {cta.variant === 'primary' && <span aria-hidden="true">★</span>}
-            {cta.label}
-          </a>
-        ))}
+        <a href="/makler-suche" class="nav-cta-link">Makler finden</a>
+        <a href="/makler-werden" class="btn btn-primary">Partner werden</a>
       </div>
     </nav>
   </div>
 </header>
 
-<a href="/makler-werden" class="mobile-sticky-cta">★ Makler werden</a>
+<a href="/makler-werden" class="mobile-sticky-cta">Partner werden</a>
 
 <style>
   .site-header {
     position: sticky;
     top: 0;
     z-index: 100;
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: saturate(180%) blur(8px);
-    border-bottom: 1px solid var(--color-border);
+    background: var(--color-cream);
+    border-bottom: 1px solid var(--color-border-subtle);
+    transition: background-color 300ms ease, border-color 300ms ease;
+  }
+
+  .site-header.is-scrolled {
+    background: rgba(250, 247, 242, 0.92);
+    backdrop-filter: saturate(150%) blur(10px);
   }
 
   .header-inner {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 1.5rem;
-    padding-block: 1rem;
+    gap: 2rem;
+    padding-block: 1.1rem;
   }
 
-  .logo {
-    flex-shrink: 0;
-  }
-
-  .logo img {
-    height: 40px;
-    width: auto;
-  }
+  .logo { flex-shrink: 0; }
+  .logo img { height: 40px; width: auto; }
 
   .nav {
     display: flex;
     align-items: center;
-    gap: 2rem;
+    gap: 2.5rem;
   }
 
   .nav-list {
     display: flex;
-    gap: 1.75rem;
+    gap: 2.25rem;
     list-style: none;
   }
 
   .nav-link {
+    position: relative;
+    display: inline-block;
+    font-family: var(--font-body);
     font-weight: 500;
-    color: var(--color-text);
-    padding: 0.5rem 0;
-    border-bottom: 2px solid transparent;
-    transition: color 120ms ease, border-color 120ms ease;
+    font-size: 0.95rem;
+    color: var(--color-dark);
+    padding: 0.35rem 0;
+    overflow: hidden;
   }
 
-  .nav-link:hover,
+  .nav-link span {
+    display: inline-block;
+    transition: transform 420ms var(--ease-out);
+    position: relative;
+  }
+
+  .nav-link::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 1px;
+    background: var(--color-primary);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 420ms var(--ease-out);
+  }
+
+  .nav-link:hover::after,
+  .nav-link.active::after {
+    transform: scaleX(1);
+  }
+
   .nav-link.active {
-    color: var(--color-primary-dark);
-    border-bottom-color: var(--color-primary);
+    color: var(--color-primary);
   }
 
   .nav-cta {
     display: flex;
-    gap: 0.75rem;
+    align-items: center;
+    gap: 1.5rem;
+  }
+
+  .nav-cta-link {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--color-dark);
+    border-bottom: 1px solid transparent;
+    transition: border-color 300ms ease, color 300ms ease;
+    padding-block: 0.25rem;
+  }
+
+  .nav-cta-link:hover {
+    color: var(--color-primary);
+    border-bottom-color: var(--color-primary);
   }
 
   .burger {
@@ -113,7 +148,7 @@ const isActive = (href: string) => pathname === href || (href !== '/' && pathnam
     min-width: var(--min-touch-target);
     min-height: var(--min-touch-target);
     flex-direction: column;
-    gap: 5px;
+    gap: 6px;
     align-items: center;
     justify-content: center;
   }
@@ -121,48 +156,34 @@ const isActive = (href: string) => pathname === href || (href !== '/' && pathnam
   .burger span {
     display: block;
     width: 24px;
-    height: 2px;
+    height: 1.5px;
     background: var(--color-dark);
-    border-radius: 2px;
-    transition: transform 200ms ease, opacity 200ms ease;
+    transition: transform 280ms var(--ease-out), opacity 280ms ease;
   }
 
-  .burger[aria-expanded="true"] span:nth-child(1) {
-    transform: translateY(7px) rotate(45deg);
-  }
-  .burger[aria-expanded="true"] span:nth-child(2) {
-    opacity: 0;
-  }
-  .burger[aria-expanded="true"] span:nth-child(3) {
-    transform: translateY(-7px) rotate(-45deg);
-  }
+  .burger[aria-expanded="true"] span:nth-child(1) { transform: translateY(4px) rotate(45deg); }
+  .burger[aria-expanded="true"] span:nth-child(2) { transform: translateY(-4px) rotate(-45deg); }
 
-  .mobile-sticky-cta {
-    display: none;
-  }
+  .mobile-sticky-cta { display: none; }
 
   @media (max-width: 959px) {
-    .burger {
-      display: flex;
-    }
+    .burger { display: flex; }
 
     .nav {
       position: fixed;
-      inset: 72px 0 0 0;
+      inset: 68px 0 0 0;
       flex-direction: column;
       align-items: stretch;
       justify-content: flex-start;
-      background: #fff;
-      padding: 2rem var(--padding-x) 8rem;
-      gap: 1.5rem;
+      background: var(--color-cream);
+      padding: 3rem var(--padding-x) 8rem;
+      gap: 2.5rem;
       overflow-y: auto;
       transform: translateX(100%);
-      transition: transform 260ms ease;
+      transition: transform 380ms var(--ease-out);
     }
 
-    .nav[data-open="true"] {
-      transform: translateX(0);
-    }
+    .nav[data-open="true"] { transform: translateX(0); }
 
     .nav-list {
       flex-direction: column;
@@ -175,25 +196,25 @@ const isActive = (href: string) => pathname === href || (href !== '/' && pathnam
 
     .nav-link {
       display: block;
-      padding: 1rem 0;
-      font-size: 1.125rem;
+      padding: 1.25rem 0;
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      font-weight: 500;
     }
 
     .nav-cta {
       flex-direction: column;
-      gap: 0.75rem;
+      gap: 1rem;
       margin-top: 1rem;
+      align-items: stretch;
     }
 
-    .nav-cta .btn {
-      width: 100%;
-    }
+    .nav-cta .btn { width: 100%; }
 
     .mobile-sticky-cta {
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 0.5rem;
       position: fixed;
       bottom: 1rem;
       left: 1rem;
@@ -201,9 +222,10 @@ const isActive = (href: string) => pathname === href || (href !== '/' && pathnam
       z-index: 90;
       padding: 1rem;
       background: var(--color-primary);
-      color: #fff;
-      font-weight: 600;
-      border-radius: var(--radius-md);
+      color: var(--color-cream);
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      border-radius: 2px;
       box-shadow: var(--shadow-lg);
     }
   }
@@ -212,6 +234,7 @@ const isActive = (href: string) => pathname === href || (href !== '/' && pathnam
 <script>
   const burger = document.querySelector<HTMLButtonElement>('[data-burger]');
   const nav = document.querySelector<HTMLElement>('[data-nav]');
+  const header = document.querySelector<HTMLElement>('[data-header]');
 
   burger?.addEventListener('click', () => {
     const open = burger.getAttribute('aria-expanded') === 'true';
@@ -228,4 +251,12 @@ const isActive = (href: string) => pathname === href || (href !== '/' && pathnam
       document.body.style.overflow = '';
     });
   });
+
+  // Scroll state
+  let lastY = 0;
+  window.addEventListener('scroll', () => {
+    const y = window.scrollY;
+    header?.classList.toggle('is-scrolled', y > 20);
+    lastY = y;
+  }, { passive: true });
 </script>

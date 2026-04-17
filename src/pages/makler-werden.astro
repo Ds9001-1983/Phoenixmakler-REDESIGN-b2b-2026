@@ -3,49 +3,77 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import vorteile from '../data/makler-werden-vorteile.json';
 ---
 
-<BaseLayout title="Makler werden – Partner im Phönix Maklerverbund">
+<BaseLayout title="Partner werden – Phönix Maklerverbund">
+  {/* HERO split */}
   <section class="hero-b2b">
-    <div class="container">
-      <span class="eyebrow">Für Versicherungsmakler</span>
-      <h1>Ihr Mehrwert-Verbund für Finanz- und Versicherungslösungen</h1>
-      <p class="lead">
-        Seit 2012 bietet der Phönix Maklerverbund individuelle Unterstützung für Finanz- und
-        Versicherungsmakler. Über 120 Partner profitieren von unseren Diensten in Altersvorsorge,
-        Krankenversicherung und mehr.
-      </p>
-      <a href="#partner-werden" class="btn btn-primary">Jetzt Partner werden <span aria-hidden="true">↓</span></a>
+    <div class="container hero-grid">
+      <div class="hero-text" data-reveal>
+        <span class="eyebrow">Für Versicherungsmakler</span>
+        <h1 data-split>
+          Ein Verbund, der <em>für Sie</em> arbeitet — nicht umgekehrt.
+        </h1>
+        <p class="lead" data-reveal data-reveal-delay="2">
+          Seit 2012 begleiten wir Vermittlerinnen und Vermittler in die Ungebundenheit.
+          Mit exklusiven Courtagen, rechtssicheren Rahmenverträgen und einem Team,
+          das Sie persönlich kennt.
+        </p>
+        <div class="hero-cta" data-reveal data-reveal-delay="3">
+          <a href="#partner-werden" class="btn btn-primary btn-lg">Jetzt Partner werden</a>
+          <a href="#vorteile" class="btn btn-ghost">Vorteile ansehen →</a>
+        </div>
+      </div>
+      <figure class="hero-media" data-parallax-wrapper data-reveal data-reveal-delay="2">
+        <img
+          src="/images/hero/hero-makler.png"
+          alt="Phönix-Makler Portrait"
+          width="1024"
+          height="1024"
+          loading="eager"
+          fetchpriority="high"
+          data-parallax="0.1"
+        />
+      </figure>
     </div>
   </section>
 
-  <section class="section">
+  {/* VORTEILE editorial list */}
+  <section class="section bg-cream" id="vorteile">
     <div class="container">
-      <div class="section-header">
-        <span class="eyebrow">Dienstleistungen & Vorteile</span>
-        <h2>Was Sie bei Phönix erwartet</h2>
+      <div class="sec-head" data-reveal>
+        <span class="eyebrow">Dienstleistungen &amp; Vorteile</span>
+        <h2 data-split>
+          Drei Versprechen, <em>keine</em> Kompromisse.
+        </h2>
       </div>
-      <div class="grid grid-3">
-        {vorteile.leistungen.map((item) => (
-          <article class="info-card">
-            <h3>{item.title}</h3>
-            <p>{item.text}</p>
-          </article>
+      <ul class="editorial-list">
+        {vorteile.leistungen.map((item, i) => (
+          <li class="editorial-item" data-reveal data-reveal-delay={i + 1}>
+            <span class="editorial-num">0{i + 1}</span>
+            <div>
+              <h3>{item.title}</h3>
+              <p>{item.text}</p>
+            </div>
+          </li>
         ))}
-      </div>
+      </ul>
     </div>
   </section>
 
-  <section class="section section-bg">
-    <div class="container two-col">
-      <div>
-        <span class="eyebrow">Unser Versprechen</span>
-        <h2>Ihre Selbständigkeit, unsere Priorität</h2>
-        <p>
+  {/* SELBSTÄNDIGKEIT */}
+  <section class="section split-feature bg-dark">
+    <div class="container split-grid">
+      <div data-reveal>
+        <span class="eyebrow" style="color:var(--color-accent)">Ihre Selbständigkeit</span>
+        <h2 data-split>
+          Ihre Selbständigkeit, <em>unsere</em> Priorität.
+        </h2>
+        <p class="lead" style="color:rgba(250,247,242,0.78)">
           Wir fördern Ihre Selbständigkeit durch rechtlich eigenständige Vereinbarungen,
           damit Sie flexibel und sicher agieren können.
         </p>
       </div>
-      <div>
-        <h3>Unsere Alleinstellungsmerkmale</h3>
+      <div class="check-col" data-reveal data-reveal-delay="2">
+        <h3 style="color:var(--color-cream)">Alleinstellungsmerkmale</h3>
         <ul class="check-list">
           {vorteile.alleinstellung.map((item) => (
             <li>{item}</li>
@@ -55,15 +83,18 @@ import vorteile from '../data/makler-werden-vorteile.json';
     </div>
   </section>
 
-  <section class="section">
+  {/* PRAKTISCHE UNTERSTÜTZUNG */}
+  <section class="section bg-cream">
     <div class="container">
-      <div class="section-header">
+      <div class="sec-head" data-reveal>
         <span class="eyebrow">Praktische Unterstützung</span>
-        <h2>Tools, die Ihre Arbeit vereinfachen</h2>
+        <h2 data-split>
+          Tools, die <em>wirklich</em> helfen.
+        </h2>
       </div>
-      <div class="grid grid-2">
-        {vorteile.unterstuetzung.map((item) => (
-          <article class="info-card info-card-light">
+      <div class="grid grid-2 editorial-grid">
+        {vorteile.unterstuetzung.map((item, i) => (
+          <article class="editorial-card" data-reveal data-reveal-delay={i + 1}>
             <h3>{item.title}</h3>
             <p>{item.text}</p>
           </article>
@@ -72,32 +103,38 @@ import vorteile from '../data/makler-werden-vorteile.json';
     </div>
   </section>
 
-  <section class="section section-bg">
+  {/* NETWORKING */}
+  <section class="section networking">
     <div class="container">
-      <div class="section-header">
-        <span class="eyebrow">Networking & Weiterbildung</span>
-        <h2>Gemeinsam stark im Markt</h2>
+      <div class="networking-head" data-reveal>
+        <span class="eyebrow">Networking &amp; Weiterbildung</span>
+        <h2 data-split>
+          Gemeinsam <em>stark</em> im Markt.
+        </h2>
       </div>
-      <ul class="check-list">
-        {vorteile.networking.map((item) => (
-          <li>{item}</li>
+      <ul class="check-list check-list-large">
+        {vorteile.networking.map((item, i) => (
+          <li data-reveal data-reveal-delay={i + 1}>{item}</li>
         ))}
       </ul>
     </div>
   </section>
 
-  <section class="section">
-    <div class="container two-col">
-      <div>
+  {/* WECHSEL AUS DER AUSSCHLIESSLICHKEIT */}
+  <section class="section bg-cream-warm wechsel">
+    <div class="container">
+      <div class="sec-head" data-reveal>
         <span class="eyebrow">Wechsel aus der Ausschließlichkeit</span>
-        <h2>Schritt für Schritt in die Ungebundenheit</h2>
-        <p>
-          Wenn Sie einen Wechsel in Erwägung ziehen, berücksichtigen Sie vertragliche Details
-          und Kündigungsfristen. Wir unterstützen Sie bei jedem Schritt.
+        <h2 data-split>
+          Schritt für Schritt in die <em>Ungebundenheit</em>.
+        </h2>
+        <p class="lead">
+          Wenn Sie einen Wechsel in Erwägung ziehen, berücksichtigen Sie vertragliche
+          Details und Kündigungsfristen. Wir unterstützen Sie bei jedem Schritt.
         </p>
       </div>
-      <div class="wechsel-lists">
-        <div>
+      <div class="wechsel-grid">
+        <div class="wechsel-col" data-reveal>
           <h3>Was zu beachten ist</h3>
           <ul class="check-list">
             {vorteile.wechsel_beachten.map((item) => (
@@ -105,7 +142,7 @@ import vorteile from '../data/makler-werden-vorteile.json';
             ))}
           </ul>
         </div>
-        <div>
+        <div class="wechsel-col" data-reveal data-reveal-delay="1">
           <h3>Wie wir Ihnen helfen</h3>
           <ul class="check-list">
             {vorteile.wechsel_hilfe.map((item) => (
@@ -117,27 +154,30 @@ import vorteile from '../data/makler-werden-vorteile.json';
     </div>
   </section>
 
-  <section class="section section-quote">
-    <div class="container text-center">
-      <blockquote>
-        „Der Phönix Maklerverbund steht für Transparenz, Qualität und die Förderung Ihrer
-        Selbständigkeit. Wir sind Ihr persönlicher Dienstleister im Bereich Finanz- und
-        Versicherungsmakler."
+  {/* MANIFESTO */}
+  <section class="section bg-dark manifesto-b2b">
+    <div class="container container-narrow">
+      <blockquote data-reveal data-split>
+        Der Phönix Maklerverbund steht für Transparenz, Qualität und die Förderung
+        <em> Ihrer Selbständigkeit.</em>
       </blockquote>
     </div>
   </section>
 
+  {/* FORMULAR */}
   <section class="section section-form" id="partner-werden">
     <div class="container">
-      <div class="section-header text-center">
+      <div class="form-head" data-reveal>
         <span class="eyebrow">Jetzt loslegen</span>
-        <h2>Jetzt Partner werden</h2>
-        <p class="lead" style="margin-inline:auto;">
-          Tragen Sie Ihre Daten ein – wir melden uns persönlich bei Ihnen.
+        <h2>
+          Ihre Partnerschaft <em>beginnt hier</em>.
+        </h2>
+        <p class="lead">
+          Tragen Sie Ihre Daten ein — wir melden uns persönlich bei Ihnen.
         </p>
       </div>
 
-      <form class="registrierung-form" data-registrierung novalidate>
+      <form class="registrierung-form" data-registrierung novalidate data-reveal data-reveal-delay="1">
         <div class="form-row">
           <div class="form-field">
             <label for="anrede">Anrede *</label>
@@ -163,7 +203,7 @@ import vorteile from '../data/makler-werden-vorteile.json';
 
         <div class="form-row">
           <div class="form-field">
-            <label for="strasse">Straße & Hausnummer *</label>
+            <label for="strasse">Straße &amp; Hausnummer *</label>
             <input type="text" id="strasse" name="strasse" autocomplete="street-address" required />
           </div>
         </div>
@@ -228,13 +268,13 @@ import vorteile from '../data/makler-werden-vorteile.json';
         <div class="form-submit">
           <button type="submit" class="btn btn-primary btn-lg">Jetzt Partner werden →</button>
           <p class="form-hint">
-            Ihre Daten werden nach Eingang des CRM-Zugangs (Phase 2) direkt an unser System übermittelt.
+            Hinweis: Die automatische Übermittlung wird nach Freischaltung des CRM-Zugangs aktiviert.
           </p>
         </div>
 
         <div class="form-success" data-form-success hidden>
           <h3>Vielen Dank für Ihr Interesse!</h3>
-          <p>Wir melden uns in Kürze bei Ihnen.</p>
+          <p>Wir melden uns in Kürze persönlich bei Ihnen.</p>
         </div>
       </form>
     </div>
@@ -242,142 +282,237 @@ import vorteile from '../data/makler-werden-vorteile.json';
 </BaseLayout>
 
 <style>
+  /* HERO */
   .hero-b2b {
-    padding-block: clamp(3rem, 7vw, 5.5rem);
-    background: linear-gradient(135deg, var(--color-primary-light) 0%, #ffffff 100%);
+    padding-block: clamp(3rem, 6vw, 5rem) clamp(4rem, 7vw, 7rem);
+    background: var(--color-cream);
+    overflow: hidden;
   }
 
-  .hero-b2b h1 {
-    max-width: 20ch;
-    margin-bottom: 1.5rem;
-  }
-
-  .hero-b2b .lead {
-    margin-bottom: 2rem;
-  }
-
-  .section-header {
-    max-width: 720px;
-    margin-bottom: 2.5rem;
-  }
-
-  .section-header.text-center {
-    margin-inline: auto;
-  }
-
-  .info-card {
-    background: #fff;
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-lg);
-    padding: 2rem;
-    transition: border-color 200ms ease, box-shadow 200ms ease, transform 200ms ease;
-  }
-
-  .info-card:hover {
-    border-color: var(--color-primary);
-    box-shadow: var(--shadow-md);
-    transform: translateY(-3px);
-  }
-
-  .info-card-light {
-    background: #fff;
-  }
-
-  .info-card h3 {
-    margin-bottom: 0.75rem;
-    color: var(--color-primary-dark);
-    font-size: 1.15rem;
-  }
-
-  .info-card p {
-    color: var(--color-text-muted);
-  }
-
-  .two-col {
+  .hero-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 3rem;
+    grid-template-columns: 1.05fr 0.95fr;
+    gap: clamp(2rem, 5vw, 5rem);
+    align-items: center;
+  }
+
+  @media (max-width: 900px) {
+    .hero-grid { grid-template-columns: 1fr; gap: 2.5rem; }
+  }
+
+  .hero-text h1 { margin-bottom: 1.5rem; }
+  .hero-text h1 em { font-style: italic; color: var(--color-accent-dark); font-weight: 400; }
+
+  .hero-cta {
+    display: flex;
+    gap: 2rem;
+    align-items: center;
+    margin-top: 2.5rem;
+    flex-wrap: wrap;
+  }
+
+  .hero-media {
+    position: relative;
+    overflow: hidden;
+    aspect-ratio: 4/5;
+    background: var(--color-cream-warm);
+  }
+
+  @media (max-width: 900px) {
+    .hero-media { aspect-ratio: 4/3; }
+  }
+
+  .hero-media img {
+    width: 100%;
+    height: 115%;
+    object-fit: cover;
+    transform: translateY(-7%);
+  }
+
+  /* Section-Head */
+  .sec-head {
+    max-width: 640px;
+    margin-bottom: clamp(2.5rem, 5vw, 4.5rem);
+  }
+
+  .sec-head h2 em { font-style: italic; color: var(--color-accent-dark); font-weight: 400; }
+
+  /* Editorial List */
+  .editorial-list { list-style: none; }
+
+  .editorial-item {
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    gap: clamp(1.5rem, 4vw, 4rem);
+    padding: 2.5rem 0;
+    border-top: 1px solid var(--color-border);
+    align-items: baseline;
+  }
+
+  .editorial-item:last-child { border-bottom: 1px solid var(--color-border); }
+
+  @media (max-width: 560px) {
+    .editorial-item { grid-template-columns: 1fr; gap: 0.75rem; padding: 2rem 0; }
+  }
+
+  .editorial-num {
+    font-family: var(--font-display);
+    font-size: 1.1rem;
+    color: var(--color-accent-dark);
+    font-weight: 500;
+    letter-spacing: 0.05em;
+  }
+
+  .editorial-item h3 {
+    font-size: clamp(1.35rem, 2.4vw, 1.75rem);
+    margin-bottom: 0.75rem;
+  }
+
+  .editorial-item p {
+    color: var(--color-text-muted);
+    max-width: 58ch;
+    font-size: 1.02rem;
+  }
+
+  /* Split-Feature dark */
+  .split-feature { padding-block: clamp(4rem, 8vw, 7rem); }
+
+  .split-grid {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: clamp(2rem, 6vw, 6rem);
     align-items: start;
   }
 
-  @media (max-width: 768px) {
-    .two-col {
-      grid-template-columns: 1fr;
-      gap: 2rem;
-    }
-  }
+  @media (max-width: 900px) { .split-grid { grid-template-columns: 1fr; } }
 
-  .check-list {
-    list-style: none;
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-  }
+  .split-feature h2 em { font-style: italic; color: var(--color-accent); font-weight: 400; }
+  .split-feature h2 { color: var(--color-cream); }
+  .split-feature .lead { margin-top: 1.5rem; }
+
+  .check-col h3 { color: var(--color-cream); margin-bottom: 1.5rem; font-size: 1.1rem; }
+
+  /* Check List */
+  .check-list { list-style: none; display: flex; flex-direction: column; gap: 1rem; }
 
   .check-list li {
-    padding-left: 2rem;
+    padding-left: 2.25rem;
     position: relative;
+    padding-block: 0.25rem;
+    line-height: 1.5;
   }
 
   .check-list li::before {
     content: '';
     position: absolute;
     left: 0;
-    top: 0.4em;
-    width: 1.25rem;
-    height: 1.25rem;
-    background: var(--color-primary);
-    mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23fff' d='M9.55 17.577L4 12.027l1.4-1.4 4.15 4.15 9.05-9.05 1.4 1.4z'/%3E%3C/svg%3E");
-    mask-size: contain;
-    mask-repeat: no-repeat;
-    -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23fff' d='M9.55 17.577L4 12.027l1.4-1.4 4.15 4.15 9.05-9.05 1.4 1.4z'/%3E%3C/svg%3E");
-    -webkit-mask-size: contain;
-    -webkit-mask-repeat: no-repeat;
+    top: 0.55em;
+    width: 18px;
+    height: 1px;
+    background: var(--color-accent);
   }
 
-  .wechsel-lists {
-    display: flex;
-    flex-direction: column;
-    gap: 2rem;
-  }
+  .bg-dark .check-list li { color: rgba(250, 247, 242, 0.85); }
 
-  .wechsel-lists h3 {
-    margin-bottom: 1rem;
-    font-size: 1.1rem;
-    color: var(--color-primary-dark);
-  }
-
-  .section-quote {
-    background: var(--color-dark);
-    color: #fff;
-  }
-
-  .section-quote blockquote {
-    font-size: clamp(1.25rem, 2.5vw, 1.65rem);
-    line-height: 1.5;
-    max-width: 800px;
-    margin: 0 auto;
+  .check-list-large li {
+    font-family: var(--font-display);
+    font-size: clamp(1.15rem, 2vw, 1.5rem);
     font-weight: 500;
+    letter-spacing: -0.01em;
+    color: var(--color-dark);
+    padding-block: 0.75rem;
   }
 
-  /* Formular */
-  .section-form {
-    background: var(--color-bg-light);
+  .check-list-large li::before { top: 1em; width: 24px; }
+
+  /* Editorial Cards */
+  .editorial-grid { gap: 0; }
+
+  .editorial-card {
+    padding: clamp(2rem, 4vw, 3rem);
+    background: var(--color-cream);
+    border: 1px solid var(--color-border);
+    border-right-width: 0;
+    transition: background-color 300ms ease;
   }
+
+  .editorial-card:last-child { border-right-width: 1px; }
+
+  @media (max-width: 540px) {
+    .editorial-card { border-right-width: 1px; border-bottom-width: 0; }
+    .editorial-card:last-child { border-bottom-width: 1px; }
+  }
+
+  .editorial-card:hover { background: var(--color-cream-warm); }
+
+  .editorial-card h3 {
+    font-size: clamp(1.25rem, 2vw, 1.5rem);
+    margin-bottom: 0.9rem;
+    color: var(--color-primary);
+  }
+
+  .editorial-card p {
+    color: var(--color-text-muted);
+  }
+
+  /* Networking */
+  .networking { background: var(--color-cream); }
+  .networking-head { max-width: 640px; margin-bottom: 3rem; }
+  .networking-head h2 em { font-style: italic; color: var(--color-accent-dark); font-weight: 400; }
+
+  /* Wechsel */
+  .wechsel-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+  }
+
+  @media (max-width: 768px) { .wechsel-grid { grid-template-columns: 1fr; } }
+
+  .wechsel-col h3 {
+    font-size: 1.1rem;
+    color: var(--color-primary);
+    margin-bottom: 1.5rem;
+  }
+
+  .wechsel h2 em { font-style: italic; color: var(--color-accent-dark); font-weight: 400; }
+
+  /* Manifesto B2B */
+  .manifesto-b2b { padding-block: clamp(4rem, 8vw, 7rem); }
+
+  .manifesto-b2b blockquote {
+    font-family: var(--font-display);
+    font-size: clamp(1.75rem, 3.5vw, 3rem);
+    font-weight: 400;
+    line-height: 1.2;
+    color: var(--color-cream);
+    letter-spacing: -0.025em;
+    text-align: center;
+  }
+
+  .manifesto-b2b blockquote em { font-style: italic; color: var(--color-accent); }
+
+  /* FORMULAR */
+  .section-form { background: var(--color-cream-warm); }
+
+  .form-head {
+    max-width: 620px;
+    margin: 0 auto clamp(2rem, 4vw, 3rem);
+    text-align: center;
+  }
+
+  .form-head h2 em { font-style: italic; color: var(--color-accent-dark); font-weight: 400; }
+  .form-head .lead { margin-inline: auto; margin-top: 1rem; }
 
   .registrierung-form {
     max-width: 720px;
     margin: 0 auto;
-    background: #fff;
-    padding: clamp(1.5rem, 4vw, 2.5rem);
-    border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-sm);
+    background: var(--color-cream);
+    padding: clamp(1.75rem, 4vw, 3rem);
+    border: 1px solid var(--color-border);
   }
 
-  .form-row {
-    margin-bottom: 1.25rem;
-  }
-
+  .form-row { margin-bottom: 1.5rem; }
   .form-row.grid-2 {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -385,50 +520,50 @@ import vorteile from '../data/makler-werden-vorteile.json';
   }
 
   @media (max-width: 540px) {
-    .form-row.grid-2 {
-      grid-template-columns: 1fr;
-    }
+    .form-row.grid-2 { grid-template-columns: 1fr; }
   }
 
   .form-field {
     display: flex;
     flex-direction: column;
-    gap: 0.4rem;
+    gap: 0.5rem;
   }
 
   .form-field label {
-    font-size: 0.9rem;
-    font-weight: 600;
-    color: var(--color-dark);
+    font-size: 0.78rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
   }
 
-  .optional {
-    color: var(--color-text-muted);
-    font-weight: 400;
-  }
+  .optional { color: var(--color-text-muted); font-weight: 400; text-transform: none; letter-spacing: 0; }
 
   .form-field input,
   .form-field select {
     min-height: var(--min-touch-target);
-    padding: 0.625rem 0.875rem;
-    border: 1.5px solid var(--color-border);
-    border-radius: var(--radius-sm);
-    background: #fff;
-    transition: border-color 120ms ease, box-shadow 120ms ease;
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--color-border);
+    border-radius: 0;
+    background: var(--color-cream);
+    font-size: 1rem;
+    transition: border-color 220ms ease, background-color 220ms ease;
   }
 
   .form-field input:focus,
   .form-field select:focus {
-    border-color: var(--color-primary);
     outline: none;
-    box-shadow: 0 0 0 3px var(--color-primary-light);
+    border-color: var(--color-primary);
+    background: #fff;
   }
 
   .form-checks {
     display: flex;
     flex-direction: column;
-    gap: 0.75rem;
-    margin-block: 1.5rem;
+    gap: 0.85rem;
+    margin-block: 2rem;
+    padding-block: 1.5rem;
+    border-block: 1px solid var(--color-border);
   }
 
   .check {
@@ -440,48 +575,31 @@ import vorteile from '../data/makler-werden-vorteile.json';
   }
 
   .check input {
-    margin-top: 0.25rem;
-    width: 1.15rem;
-    height: 1.15rem;
+    margin-top: 0.2rem;
+    width: 1.1rem;
+    height: 1.1rem;
     accent-color: var(--color-primary);
   }
 
-  .check a {
-    color: var(--color-primary-dark);
-    text-decoration: underline;
-  }
+  .check a { color: var(--color-primary); text-decoration: underline; }
 
-  .form-submit {
-    text-align: center;
-    margin-top: 1.5rem;
-  }
-
-  .form-submit .btn {
-    min-width: 260px;
-  }
+  .form-submit { text-align: center; }
+  .form-submit .btn { min-width: 260px; }
 
   .form-hint {
-    margin-top: 1rem;
+    margin-top: 1.25rem;
     font-size: 0.85rem;
     color: var(--color-text-muted);
-    max-width: 40ch;
+    max-width: 42ch;
     margin-inline: auto;
   }
 
-  .form-success {
-    text-align: center;
-    padding: 2rem;
-  }
-
-  .form-success h3 {
-    color: var(--color-primary-dark);
-    margin-bottom: 0.5rem;
-  }
+  .form-success { text-align: center; padding: 2rem; }
+  .form-success h3 { color: var(--color-primary); margin-bottom: 0.5rem; }
 </style>
 
 <script>
   // TODO(Phase 2): PW-API "Nutzer erstellen" anbinden, sobald CRM-Zugang vorliegt.
-  // Endpoint + Auth von Torsten (entwicklung@superbrand.marketing).
   const form = document.querySelector<HTMLFormElement>('[data-registrierung]');
   const success = document.querySelector<HTMLElement>('[data-form-success]');
 
@@ -491,7 +609,6 @@ import vorteile from '../data/makler-werden-vorteile.json';
       form.reportValidity();
       return;
     }
-    // Platzhalter: In Phase 2 wird hier ein fetch() an die PW-API ausgeführt.
     form.style.display = 'none';
     if (success) {
       success.hidden = false;

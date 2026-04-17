@@ -7,12 +7,14 @@ interface Props {
   title: string;
   description?: string;
   ogImage?: string;
+  darkHeader?: boolean;
 }
 
 const {
   title,
   description = 'Phönix Maklerverbund – Ihr ungebundener Partner für Finanz- und Versicherungslösungen. Inhabergeführt seit 2012.',
-  ogImage = '/images/partner-netzwerk.webp',
+  ogImage = '/images/hero/hero-home.png',
+  darkHeader = false,
 } = Astro.props;
 
 const siteTitle = title.includes('Phönix') ? title : `${title} | Phönix Maklerverbund`;
@@ -30,6 +32,8 @@ const canonical = new URL(Astro.url.pathname, Astro.site).toString();
     <link rel="icon" type="image/png" href="/images/logo.png" />
     <link rel="preload" href="/fonts/Inter-Regular.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/Inter-SemiBold.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/Fraunces-Regular.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/Fraunces-SemiBold.woff2" as="font" type="font/woff2" crossorigin />
     <meta property="og:title" content={siteTitle} />
     <meta property="og:description" content={description} />
     <meta property="og:image" content={ogImage} />
@@ -37,14 +41,17 @@ const canonical = new URL(Astro.url.pathname, Astro.site).toString();
     <meta property="og:type" content="website" />
     <meta property="og:locale" content="de_DE" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="theme-color" content="#6cbe45" />
+    <meta name="theme-color" content="#1e3a8a" />
   </head>
-  <body>
+  <body data-dark-header={darkHeader ? 'true' : 'false'}>
     <a href="#main" class="skip-link">Zum Inhalt springen</a>
     <Header />
     <main id="main">
       <slot />
     </main>
     <Footer />
+    <script>
+      import '../scripts/motion.ts';
+    </script>
   </body>
 </html>
