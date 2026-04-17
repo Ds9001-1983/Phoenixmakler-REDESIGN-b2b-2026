@@ -14,9 +14,8 @@ const { headline, url, image } = Astro.props;
     </div>
   )}
   <div class="teaser-body">
-    <span class="teaser-marker">▸</span>
     <h3>{headline}</h3>
-    <span class="teaser-arrow">Mehr erfahren</span>
+    <span class="teaser-arrow" aria-hidden="true">Mehr erfahren →</span>
   </div>
 </a>
 
@@ -24,36 +23,36 @@ const { headline, url, image } = Astro.props;
   .teaser-card {
     display: flex;
     flex-direction: column;
-    background: var(--color-cream);
+    background: #fff;
     border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    color: var(--color-text);
+    transition: transform 200ms ease, box-shadow 200ms ease, border-color 200ms ease;
     height: 100%;
-    color: var(--color-dark);
-    transition: background-color 380ms var(--ease-out), border-color 380ms ease;
   }
 
   .teaser-card:hover,
   .teaser-card:focus-visible {
-    background: #fff;
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-md);
     border-color: var(--color-primary);
   }
 
   .teaser-image {
-    aspect-ratio: 16/10;
+    aspect-ratio: 16/9;
+    background: var(--color-bg-light);
     overflow: hidden;
-    background: var(--color-cream-warm);
   }
 
   .teaser-image img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: transform 800ms var(--ease-out);
   }
 
-  .teaser-card:hover .teaser-image img { transform: scale(1.04); }
-
   .teaser-body {
-    padding: 1.75rem;
+    padding: 1.5rem;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -61,33 +60,14 @@ const { headline, url, image } = Astro.props;
     flex: 1;
   }
 
-  .teaser-marker {
-    font-family: var(--font-display);
-    color: var(--color-accent-dark);
-    font-size: 0.9rem;
-  }
-
   .teaser-body h3 {
-    font-size: clamp(1.1rem, 1.8vw, 1.3rem);
-    font-weight: 500;
-    line-height: 1.25;
-    letter-spacing: -0.015em;
-    margin-block: 0.25rem 1rem;
+    font-size: 1.1rem;
+    line-height: 1.35;
   }
 
   .teaser-arrow {
-    font-family: var(--font-body);
-    font-size: 0.85rem;
-    font-weight: 500;
-    color: var(--color-primary);
-    padding-bottom: 2px;
-    border-bottom: 1px solid transparent;
-    align-self: flex-start;
-    transition: border-color 220ms ease, transform 280ms var(--ease-out);
-  }
-
-  .teaser-card:hover .teaser-arrow {
-    border-bottom-color: var(--color-primary);
-    transform: translateX(4px);
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--color-primary-dark);
   }
 </style>

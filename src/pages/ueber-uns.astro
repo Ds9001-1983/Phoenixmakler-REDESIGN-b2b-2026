@@ -3,91 +3,72 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 ---
 
 <BaseLayout title="Über uns – Phönix Maklerverbund">
-  {/* HERO FULLBLEED */}
-  <section class="hero-about" data-parallax-wrapper>
-    <div class="hero-about-bg">
-      <img
-        src="/images/hero/hero-about.png"
-        alt=""
-        loading="eager"
-        fetchpriority="high"
-        data-parallax="0.08"
-      />
-    </div>
-    <div class="container hero-about-content">
-      <span class="eyebrow" style="color:var(--color-accent)">Über uns · gegründet 2012</span>
-      <h1 data-split>
-        Zu uns und der <em>Geschäftsleitung</em>.
-      </h1>
-      <p class="lead" style="color:rgba(250,247,242,0.84); max-width:52ch" data-reveal data-reveal-delay="2">
-        Phönix Maklerverbund — Ihr ungebundener Partner in der Assekuranz, inhabergeführt und
-        gewachsen aus einer einfachen Idee: Makler stark machen.
+  <section class="hero-about">
+    <div class="container">
+      <span class="eyebrow">Über uns</span>
+      <h1>Zu uns und der Geschäftsleitung</h1>
+      <p class="lead">
+        Phönix Maklerverbund: Ihr ungebundener Partner in der Assekuranz.
       </p>
     </div>
   </section>
 
-  {/* INTRO / GESCHICHTE */}
-  <section class="section bg-cream">
-    <div class="container story-grid">
-      <div class="story-sticky" data-reveal>
-        <span class="eyebrow">Unsere Geschichte</span>
-        <h2 data-split>
-          Eine Idee, die <em>nicht</em> klein bleiben wollte.
-        </h2>
-      </div>
-      <div class="story-body">
-        <p data-reveal>
-          Seit unserer Gründung im Jahr 2012 hat sich der Phönix Maklerverbund als
-          ungebundener und inhabergeführter Verbund im Versicherungsbereich etabliert.
-          Mit über 120 Partnern bieten wir ein Netzwerk von Fachwissen und
-          Dienstleistungen, das seinesgleichen sucht.
-        </p>
-        <p data-reveal data-reveal-delay="1">
-          Angefangen mit einer Handvoll Kollegen am 20. Juni 2012, können wir heute
-          stolz auf ein starkes Netzwerk von über 120 Partnern blicken.
-        </p>
-        <p data-reveal data-reveal-delay="2">
-          <strong>Ungebundenheit als Kernwert.</strong> Anders als viele andere Maklerverbünde
-          sind wir 100 % inhabergeführt. Dies garantiert unsere vollkommene Ungebundenheit
-          von Kapitalgebern und Versicherungsgesellschaften.
-        </p>
-      </div>
+  <section class="hero-visual">
+    <div class="container" data-reveal>
+      <figure class="hero-visual-frame">
+        <img src="/images/hero/hero-about.png" alt="Architektur-Detail" width="1920" height="1080" loading="eager" />
+      </figure>
     </div>
   </section>
 
-  {/* GESCHÄFTSFÜHRUNG */}
-  <section class="section bg-cream-warm">
+  <section class="section">
+    <div class="container prose" data-reveal>
+      <h2>Wer wir sind</h2>
+      <p>
+        Seit unserer Gründung im Jahr 2012 hat sich der Phönix Maklerverbund als ungebundener
+        und inhabergeführter Verbund im Versicherungsbereich etabliert. Mit über 120 Partnern
+        bieten wir ein Netzwerk von Fachwissen und Dienstleistungen, das seinesgleichen sucht.
+      </p>
+
+      <h2>Unsere Geschichte</h2>
+      <p>
+        Angefangen mit einer Handvoll Kollegen am 20. Juni 2012, können wir heute stolz auf ein
+        starkes Netzwerk von über 120 Partnern blicken.
+      </p>
+
+      <h2>Ungebundenheit als Kernwert</h2>
+      <p>
+        Anders als viele andere Maklerverbünde sind wir 100 % inhabergeführt. Dies garantiert
+        unsere vollkommene Ungebundenheit von Kapitalgebern und Versicherungsgesellschaften.
+      </p>
+    </div>
+  </section>
+
+  <section class="section section-bg">
     <div class="container">
-      <div class="sec-head" data-reveal>
+      <div class="section-header">
         <span class="eyebrow">Geschäftsführung</span>
-        <h2 data-split>
-          Zwei Geschäftsführer. <em>Eine</em> Haltung.
-        </h2>
+        <h2>Unsere Geschäftsführung</h2>
       </div>
       <div class="gf-grid">
-        <article class="gf-card" data-reveal>
-          <div class="gf-media">
-            <img src="/images/torsten-deterding.jpg" alt="Torsten Deterding" width="512" height="512" loading="lazy" />
-          </div>
-          <div class="gf-body">
-            <span class="gf-role">Geschäftsführer</span>
+        <article class="gf-card">
+          <img src="/images/torsten-deterding.jpg" alt="Torsten Deterding" width="256" height="256" loading="lazy" />
+          <div>
             <h3>Torsten Deterding</h3>
+            <p class="gf-role">Geschäftsführer</p>
             <p>
               Versicherungsfachwirt mit umfangreicher Erfahrung in der Assekuranz seit 1997.
-              Datenschutzverantwortlicher nach DSGVO.
             </p>
           </div>
         </article>
-        <article class="gf-card" data-reveal data-reveal-delay="1">
-          <div class="gf-media">
-            <img src="/images/lothar-nast.jpg" alt="Lothar Nast" width="512" height="512" loading="lazy" />
-          </div>
-          <div class="gf-body">
-            <span class="gf-role">Geschäftsführer</span>
+        <article class="gf-card">
+          <img src="/images/lothar-nast.jpg" alt="Lothar Nast" width="256" height="256" loading="lazy" />
+          <div>
             <h3>Lothar Nast</h3>
+            <p class="gf-role">Geschäftsführer</p>
             <p>
               Versicherungsfachwirt und gelernter Versicherungskaufmann, tätig in der
-              Assekuranz seit 1988. Verantwortlicher für redaktionelle Inhalte.
+              Assekuranz seit 1988.
             </p>
           </div>
         </article>
@@ -95,213 +76,136 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     </div>
   </section>
 
-  {/* BERUF / BERUFUNG */}
-  <section class="section bg-cream">
-    <div class="container container-narrow prose-editorial">
-      <div data-reveal>
-        <span class="eyebrow">Beruf &amp; Berufung</span>
-        <h2 data-split>
-          Für uns ist Versicherung <em>kein Verkauf</em>.
-        </h2>
-      </div>
-      <p data-reveal data-reveal-delay="1">
-        Für uns ist die Versicherungsbranche nicht nur ein Beruf, sondern eine Berufung.
-        Unsere Expertise und Leidenschaft fließen in jeden Aspekt unserer Arbeit ein,
-        um für unsere Partner und Kunden den bestmöglichen Service zu bieten.
+  <section class="section">
+    <div class="container prose">
+      <h2>Beruf und Berufung</h2>
+      <p>
+        Für uns ist die Versicherungsbranche nicht nur ein Beruf, sondern eine Berufung. Unsere
+        Expertise und Leidenschaft fließen in jeden Aspekt unserer Arbeit ein, um für unsere
+        Partner und Kunden den bestmöglichen Service zu bieten.
       </p>
-      <p data-reveal data-reveal-delay="2">
+      <p>
         Mit dem Phönix Maklerverbund wählen Sie einen Partner, der auf allen Ebenen
-        Ungebundenheit, Expertise und eine individuelle Herangehensweise garantiert.
-        Wir freuen uns auf eine erfolgreiche Zusammenarbeit.
+        Ungebundenheit, Expertise und eine individuelle Herangehensweise garantiert. Wir freuen
+        uns auf eine erfolgreiche Zusammenarbeit.
       </p>
     </div>
   </section>
 
-  {/* QUOTE */}
-  <section class="section quote-section bg-dark">
-    <div class="container">
-      <blockquote data-reveal data-split>
-        Unser Beruf ist uns <em>auch Berufung.</em>
+  <section class="section section-quote">
+    <div class="container text-center">
+      <blockquote>
+        „Unser Beruf ist uns auch Berufung."
       </blockquote>
     </div>
   </section>
 </BaseLayout>
 
 <style>
-  /* HERO FULLBLEED */
   .hero-about {
-    position: relative;
-    min-height: 72vh;
-    display: flex;
-    align-items: flex-end;
-    padding-block: clamp(4rem, 8vw, 8rem);
+    padding-block: clamp(3rem, 7vw, 5.5rem);
+    background: linear-gradient(135deg, var(--color-primary-light) 0%, #ffffff 100%);
+  }
+
+  .hero-visual {
+    padding-top: clamp(1rem, 3vw, 2rem);
+    padding-bottom: clamp(3rem, 6vw, 5rem);
+  }
+
+  .hero-visual-frame {
     overflow: hidden;
-    background: var(--color-dark);
+    border-radius: var(--radius-lg);
+    aspect-ratio: 21/9;
+    background: var(--color-bg-light);
+    box-shadow: var(--shadow-md);
   }
 
-  .hero-about-bg {
-    position: absolute;
-    inset: 0;
-    z-index: 0;
-  }
-
-  .hero-about-bg img {
-    width: 100%;
-    height: 115%;
-    object-fit: cover;
-    opacity: 0.55;
-    transform: translateY(-7%);
-  }
-
-  .hero-about::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(180deg, rgba(10,25,64,0.35) 0%, rgba(10,25,64,0.85) 100%);
-    z-index: 1;
-  }
-
-  .hero-about-content {
-    position: relative;
-    z-index: 2;
-    max-width: 780px;
-  }
-
-  .hero-about-content h1 {
-    color: var(--color-cream);
-    margin-bottom: 1.5rem;
-  }
-
-  .hero-about-content h1 em { font-style: italic; color: var(--color-accent); font-weight: 400; }
-
-  /* Story */
-  .story-grid {
-    display: grid;
-    grid-template-columns: 0.9fr 1.1fr;
-    gap: clamp(2rem, 6vw, 6rem);
-  }
-
-  @media (max-width: 900px) { .story-grid { grid-template-columns: 1fr; gap: 2rem; } }
-
-  .story-sticky {
-    position: sticky;
-    top: 100px;
-    align-self: start;
-  }
-
-  .story-sticky h2 em { font-style: italic; color: var(--color-accent-dark); font-weight: 400; }
-
-  .story-body {
-    display: flex;
-    flex-direction: column;
-    gap: 1.75rem;
-  }
-
-  .story-body p {
-    font-size: 1.1rem;
-    line-height: 1.65;
-    color: var(--color-text);
-    max-width: 58ch;
-  }
-
-  .story-body p strong { color: var(--color-dark); }
-
-  /* Section Head */
-  .sec-head { max-width: 640px; margin-bottom: clamp(2.5rem, 5vw, 4rem); }
-  .sec-head h2 em { font-style: italic; color: var(--color-accent-dark); font-weight: 400; }
-
-  /* GF Cards */
-  .gf-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0;
-    border: 1px solid var(--color-border);
-    background: var(--color-cream);
-  }
-
-  @media (max-width: 768px) { .gf-grid { grid-template-columns: 1fr; } }
-
-  .gf-card {
-    display: grid;
-    grid-template-columns: 200px 1fr;
-    gap: clamp(1.5rem, 3vw, 2.5rem);
-    padding: clamp(1.75rem, 3vw, 2.5rem);
-    align-items: center;
-    border-right: 1px solid var(--color-border);
-  }
-
-  .gf-card:last-child { border-right: 0; }
-
-  @media (max-width: 900px) {
-    .gf-card { grid-template-columns: 140px 1fr; gap: 1.5rem; }
-  }
-
-  @media (max-width: 768px) {
-    .gf-card { border-right: 0; border-bottom: 1px solid var(--color-border); }
-    .gf-card:last-child { border-bottom: 0; }
-  }
-
-  @media (max-width: 480px) {
-    .gf-card { grid-template-columns: 1fr; text-align: left; }
-  }
-
-  .gf-media {
-    aspect-ratio: 1/1;
-    overflow: hidden;
-    background: var(--color-cream-warm);
-  }
-
-  .gf-media img {
+  .hero-visual-frame img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    filter: grayscale(0.1) contrast(1.02);
   }
 
-  .gf-role {
-    font-size: 0.78rem;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: var(--color-accent-dark);
-    margin-bottom: 0.4rem;
-    font-weight: 500;
+  .prose {
+    max-width: 780px;
   }
 
-  .gf-card h3 { margin-bottom: 0.75rem; }
-  .gf-card p { color: var(--color-text-muted); font-size: 0.98rem; max-width: 42ch; }
-
-  /* Prose Editorial */
-  .prose-editorial {
-    display: flex;
-    flex-direction: column;
-    gap: 1.75rem;
+  .prose h2 {
+    margin-top: 2.5rem;
+    margin-bottom: 1rem;
   }
 
-  .prose-editorial h2 em { font-style: italic; color: var(--color-accent-dark); font-weight: 400; }
+  .prose h2:first-child {
+    margin-top: 0;
+  }
 
-  .prose-editorial p {
-    font-size: clamp(1.05rem, 1.6vw, 1.2rem);
-    line-height: 1.65;
+  .prose p {
+    margin-bottom: 1.25rem;
     max-width: none;
   }
 
-  /* Quote */
-  .quote-section {
-    padding-block: clamp(5rem, 10vw, 9rem);
+  .section-header {
+    max-width: 720px;
+    margin-bottom: 2.5rem;
   }
 
-  .quote-section blockquote {
-    font-family: var(--font-display);
-    font-size: clamp(2rem, 5vw, 4rem);
-    font-weight: 400;
-    line-height: 1.15;
-    letter-spacing: -0.03em;
-    color: var(--color-cream);
-    max-width: 20ch;
+  .gf-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
   }
 
-  .quote-section blockquote em {
-    font-style: italic;
-    color: var(--color-accent);
+  @media (max-width: 768px) {
+    .gf-grid { grid-template-columns: 1fr; }
+  }
+
+  .gf-card {
+    display: grid;
+    grid-template-columns: 140px 1fr;
+    gap: 1.5rem;
+    align-items: center;
+    background: #fff;
+    padding: 1.5rem;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-border);
+  }
+
+  @media (max-width: 560px) {
+    .gf-card { grid-template-columns: 1fr; text-align: center; }
+  }
+
+  .gf-card img {
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid var(--color-primary-light);
+  }
+
+  @media (max-width: 560px) {
+    .gf-card img { margin-inline: auto; }
+  }
+
+  .gf-card h3 {
+    margin-bottom: 0.25rem;
+  }
+
+  .gf-role {
+    color: var(--color-primary-dark);
+    font-weight: 600;
+    font-size: 0.9rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .section-quote {
+    background: var(--color-dark);
+    color: #fff;
+  }
+
+  .section-quote blockquote {
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    font-weight: 500;
+    max-width: 700px;
+    margin: 0 auto;
   }
 </style>

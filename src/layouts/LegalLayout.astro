@@ -11,13 +11,13 @@ const { title, eyebrow } = Astro.props;
 <BaseLayout title={`${title} – Phönix Maklerverbund`}>
   <section class="hero-legal">
     <div class="container">
-      <span class="eyebrow" data-reveal>{eyebrow}</span>
-      <h1 data-split>{title}</h1>
+      <span class="eyebrow">{eyebrow}</span>
+      <h1>{title}</h1>
     </div>
   </section>
 
-  <section class="section-sm bg-cream">
-    <div class="container container-narrow legal-content" data-reveal>
+  <section class="section">
+    <div class="container legal-content">
       <slot />
     </div>
   </section>
@@ -25,77 +25,65 @@ const { title, eyebrow } = Astro.props;
 
 <style>
   .hero-legal {
-    padding-block: clamp(3rem, 5vw, 4rem);
-    background: var(--color-cream-warm);
+    padding-block: clamp(2.5rem, 6vw, 4rem);
+    background: var(--color-bg-light);
     border-bottom: 1px solid var(--color-border);
+  }
+
+  .legal-content {
+    max-width: 780px;
   }
 
   .legal-content :global(h2) {
     margin-top: 2.5rem;
     margin-bottom: 1rem;
-    font-size: clamp(1.35rem, 2vw, 1.65rem);
-    color: var(--color-dark);
+    font-size: 1.4rem;
   }
 
-  .legal-content :global(h2:first-child) { margin-top: 0; }
+  .legal-content :global(h2:first-child) {
+    margin-top: 0;
+  }
 
   .legal-content :global(h3) {
     margin-top: 1.75rem;
     margin-bottom: 0.75rem;
     font-size: 1.1rem;
-    color: var(--color-primary);
-    font-family: var(--font-body);
-    font-weight: 600;
-    letter-spacing: 0;
+    color: var(--color-primary-dark);
   }
 
   .legal-content :global(p) {
     margin-bottom: 1rem;
     max-width: none;
-    font-size: 1rem;
-    line-height: 1.7;
-    color: var(--color-text);
   }
 
   .legal-content :global(ul) {
     margin-bottom: 1rem;
-    padding-left: 1.25rem;
+    padding-left: 1.5rem;
   }
 
   .legal-content :global(li) {
-    margin-bottom: 0.45rem;
-    line-height: 1.6;
+    margin-bottom: 0.4rem;
   }
 
   .legal-content :global(strong) {
     color: var(--color-dark);
-    font-weight: 600;
   }
 
   .legal-content :global(a) {
-    color: var(--color-primary);
-    border-bottom: 1px solid var(--color-primary);
-    transition: color 220ms ease, border-color 220ms ease;
-  }
-
-  .legal-content :global(a:hover) {
-    color: var(--color-accent-dark);
-    border-bottom-color: var(--color-accent-dark);
+    color: var(--color-primary-dark);
+    text-decoration: underline;
   }
 
   .legal-content :global(.legal-note) {
-    padding: 1.25rem 1.5rem;
-    background: var(--color-accent-light);
-    border-left: 3px solid var(--color-accent);
-    margin-block: 1.75rem;
-    font-size: 0.95rem;
+    padding: 1rem 1.25rem;
+    background: #fef3c7;
+    border-left: 4px solid #f59e0b;
+    border-radius: var(--radius-sm);
+    margin-block: 1.5rem;
   }
 
   .legal-content :global(address) {
     font-style: normal;
     margin-bottom: 1rem;
-    line-height: 1.7;
-    padding-left: 1rem;
-    border-left: 1px solid var(--color-border);
   }
 </style>

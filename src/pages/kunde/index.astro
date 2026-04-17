@@ -17,40 +17,32 @@ const kachelImage: Record<string, string> = {
 <BaseLayout title="Für Kunden – Phönix Maklerverbund">
   <ErstinformationModal />
 
-  {/* HERO */}
   <section class="hero-kunde">
-    <div class="container hero-grid">
-      <div class="hero-text" data-reveal>
-        <span class="eyebrow">Für Kundinnen &amp; Kunden</span>
-        <h1 data-split>
-          Ihr persönlicher Makler — <em>unser</em> Netzwerk.
-        </h1>
-        <p class="lead" data-reveal data-reveal-delay="2">
-          Der Phönix Maklerverbund unterstützt ungebundene Versicherungsmakler bei der Abwicklung
-          ihrer Geschäfte. Ihr persönlicher Ansprechpartner bleibt Ihr Versicherungsmakler.
-        </p>
-      </div>
-      <figure class="hero-media" data-parallax-wrapper data-reveal data-reveal-delay="2">
-        <img
-          src="/images/hero/hero-kunde.png"
-          alt="Warmes Wohnzimmer – Geborgenheit"
-          width="1024"
-          height="1024"
-          loading="eager"
-          fetchpriority="high"
-          data-parallax="0.1"
-        />
+    <div class="container">
+      <span class="eyebrow">Willkommen</span>
+      <h1>Willkommen beim Phönix Maklerverbund</h1>
+      <p class="lead">
+        Der Phönix Maklerverbund unterstützt ungebundene Versicherungsmakler bei der Abwicklung
+        ihrer Geschäfte. Ihr persönlicher Ansprechpartner ist Ihr Versicherungsmakler.
+      </p>
+    </div>
+  </section>
+
+  <section class="hero-visual">
+    <div class="container" data-reveal>
+      <figure class="hero-visual-frame">
+        <img src="/images/hero/hero-kunde.png" alt="Warmes Wohnzimmer" width="1920" height="1080" loading="eager" />
       </figure>
     </div>
   </section>
 
-  {/* SUCH-BAND */}
-  <section class="section-sm search-band">
+  <section class="section section-search">
     <div class="container">
-      <div class="search-wrap" data-reveal>
+      <div class="search-card" data-reveal>
         <div>
           <span class="eyebrow">Maklersuche</span>
-          <h2>Finden Sie Ihren Versicherungsmakler.</h2>
+          <h2>Finden Sie Ihren Versicherungsmakler</h2>
+          <p>Geben Sie Ihre PLZ oder den Namen ein – wir finden den passenden Ansprechpartner.</p>
         </div>
         <form class="search-form" action="/makler-suche" method="get" role="search">
           <label for="search-query" class="visually-hidden">PLZ oder Name</label>
@@ -67,84 +59,77 @@ const kachelImage: Record<string, string> = {
     </div>
   </section>
 
-  {/* LEISTUNGSBEREICHE */}
-  <section class="section bg-cream">
+  <section class="section">
     <div class="container">
-      <div class="sec-head" data-reveal>
+      <div class="section-header text-center">
         <span class="eyebrow">Leistungsbereiche</span>
-        <h2 data-split>
-          Sieben <em>Bereiche</em>, in denen wir Sie begleiten.
-        </h2>
+        <h2>Informieren Sie sich über unsere Produkte</h2>
       </div>
-      <ul class="kachel-list">
+      <div class="grid kachel-grid">
         {kacheln.map((k, i) => (
-          <li data-reveal data-reveal-delay={(i % 3) + 1}>
-            <a href={`/kunde/${k.slug}`} class="kachel">
-              <div class="kachel-media">
-                <img src={kachelImage[k.slug]} alt="" loading="lazy" />
-              </div>
-              <div class="kachel-body">
-                <span class="kachel-num">{String(i + 1).padStart(2, '0')}</span>
-                <h3>{k.title}</h3>
-                <p>{k.text}</p>
-                <span class="kachel-arrow">Ansehen →</span>
-              </div>
-            </a>
-          </li>
+          <a href={`/kunde/${k.slug}`} class="kachel" data-reveal data-reveal-delay={(i % 3) + 1}>
+            <div class="kachel-image">
+              <img src={kachelImage[k.slug]} alt="" loading="lazy" />
+            </div>
+            <div class="kachel-body">
+              <h3>{k.title}</h3>
+              <p>{k.text}</p>
+              <span class="kachel-arrow" aria-hidden="true">Mehr erfahren →</span>
+            </div>
+          </a>
         ))}
-      </ul>
+      </div>
     </div>
   </section>
 </BaseLayout>
 
 <style>
-  /* Hero */
   .hero-kunde {
-    padding-block: clamp(3rem, 6vw, 5rem) clamp(4rem, 7vw, 6rem);
-    background: var(--color-cream);
+    padding-block: clamp(3rem, 7vw, 5.5rem);
+    background: linear-gradient(135deg, var(--color-primary-light) 0%, #ffffff 100%);
+  }
+
+  .hero-visual {
+    padding-top: clamp(1rem, 3vw, 2rem);
+    padding-bottom: clamp(2rem, 4vw, 3rem);
+  }
+
+  .hero-visual-frame {
     overflow: hidden;
+    border-radius: var(--radius-lg);
+    aspect-ratio: 21/9;
+    background: var(--color-bg-light);
+    box-shadow: var(--shadow-md);
   }
 
-  .hero-grid {
-    display: grid;
-    grid-template-columns: 1.05fr 0.95fr;
-    gap: clamp(2rem, 5vw, 5rem);
-    align-items: center;
-  }
-
-  @media (max-width: 900px) { .hero-grid { grid-template-columns: 1fr; gap: 2.5rem; } }
-
-  .hero-text h1 em { font-style: italic; color: var(--color-accent-dark); font-weight: 400; }
-
-  .hero-media {
-    position: relative;
-    overflow: hidden;
-    aspect-ratio: 4/5;
-  }
-
-  @media (max-width: 900px) { .hero-media { aspect-ratio: 4/3; } }
-
-  .hero-media img {
+  .hero-visual-frame img {
     width: 100%;
-    height: 115%;
+    height: 100%;
     object-fit: cover;
-    transform: translateY(-7%);
   }
 
-  /* Search band */
-  .search-band {
-    background: var(--color-cream-warm);
-    border-block: 1px solid var(--color-border);
+  .section-search {
+    padding-top: 0;
   }
 
-  .search-wrap {
+  .search-card {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 3rem;
+    gap: 2.5rem;
     align-items: center;
+    background: #fff;
+    padding: clamp(1.5rem, 4vw, 3rem);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-border);
+    box-shadow: var(--shadow-md);
   }
 
-  @media (max-width: 800px) { .search-wrap { grid-template-columns: 1fr; gap: 1.5rem; } }
+  @media (max-width: 768px) {
+    .search-card {
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+  }
 
   .search-form {
     display: flex;
@@ -154,17 +139,16 @@ const kachelImage: Record<string, string> = {
   .search-form input {
     flex: 1;
     min-height: var(--min-touch-target);
-    padding: 0.9rem 1.25rem;
-    background: var(--color-cream);
-    border: 1px solid var(--color-border);
-    border-radius: 0;
+    padding: 0.75rem 1rem;
+    border: 1.5px solid var(--color-border);
+    border-radius: var(--radius-md);
     font-size: 1rem;
   }
 
   .search-form input:focus {
     outline: none;
     border-color: var(--color-primary);
-    background: #fff;
+    box-shadow: 0 0 0 3px var(--color-primary-light);
   }
 
   .visually-hidden {
@@ -177,89 +161,75 @@ const kachelImage: Record<string, string> = {
     border: 0;
   }
 
-  /* Section Head */
-  .sec-head {
-    max-width: 640px;
-    margin-bottom: clamp(2.5rem, 5vw, 4rem);
+  .section-header {
+    max-width: 720px;
+    margin: 0 auto 3rem;
   }
 
-  .sec-head h2 em { font-style: italic; color: var(--color-accent-dark); font-weight: 400; }
-
-  /* Kacheln als editorial list */
-  .kachel-list {
-    list-style: none;
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-    gap: 2rem 1.5rem;
+  .kachel-grid {
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1.25rem;
   }
 
   .kachel {
     display: flex;
     flex-direction: column;
-    color: var(--color-dark);
-    height: 100%;
-  }
-
-  .kachel-media {
-    aspect-ratio: 4/3;
+    background: #fff;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
     overflow: hidden;
-    background: var(--color-cream-warm);
-    margin-bottom: 1.5rem;
+    color: var(--color-text);
+    transition: transform 200ms ease, box-shadow 200ms ease, border-color 200ms ease;
   }
 
-  .kachel-media img {
+  .kachel:hover,
+  .kachel:focus-visible {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--color-primary);
+  }
+
+  .kachel-image {
+    aspect-ratio: 16/10;
+    overflow: hidden;
+    background: var(--color-bg-light);
+  }
+
+  .kachel-image img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: transform 900ms var(--ease-out);
+    transition: transform 700ms var(--ease-out);
   }
 
-  .kachel:hover .kachel-media img { transform: scale(1.04); }
+  .kachel:hover .kachel-image img {
+    transform: scale(1.04);
+  }
 
   .kachel-body {
+    padding: 1.5rem 1.75rem 1.75rem;
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
-    padding-inline: 0.25rem;
-  }
-
-  .kachel-num {
-    font-family: var(--font-display);
-    font-size: 0.9rem;
-    color: var(--color-accent-dark);
-    font-weight: 500;
-    letter-spacing: 0.08em;
-    margin-bottom: 0.25rem;
+    gap: 0.4rem;
   }
 
   .kachel h3 {
-    font-size: clamp(1.25rem, 2vw, 1.5rem);
-    margin-bottom: 0.4rem;
-    transition: color 200ms ease;
+    font-size: 1.15rem;
+    margin-bottom: 0.25rem;
   }
-
-  .kachel:hover h3 { color: var(--color-primary); }
 
   .kachel p {
     color: var(--color-text-muted);
-    font-size: 0.98rem;
-    margin-bottom: 0.75rem;
+    font-size: 0.95rem;
   }
 
   .kachel-arrow {
-    font-family: var(--font-body);
-    font-size: 0.88rem;
-    font-weight: 500;
+    margin-top: 0.75rem;
+    font-size: 0.9rem;
+    font-weight: 600;
     color: var(--color-primary);
-    letter-spacing: 0.02em;
-    border-bottom: 1px solid transparent;
-    align-self: flex-start;
-    transition: border-color 220ms ease, transform 320ms var(--ease-out);
-    padding-bottom: 2px;
+    transition: transform 200ms ease;
   }
 
-  .kachel:hover .kachel-arrow {
-    border-bottom-color: var(--color-primary);
-    transform: translateX(4px);
-  }
+  .kachel:hover .kachel-arrow { transform: translateX(4px); }
 </style>

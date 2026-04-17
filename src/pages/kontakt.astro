@@ -7,121 +7,89 @@ const k = navigation.kontakt;
 <BaseLayout title="Kontakt – Phönix Maklerverbund">
   <section class="hero-kontakt">
     <div class="container">
-      <span class="eyebrow" data-reveal>Kontakt</span>
-      <h1 data-split>
-        So <em>erreichen</em> Sie uns.
-      </h1>
-      <p class="lead" data-reveal data-reveal-delay="2">
+      <span class="eyebrow">Kontakt</span>
+      <h1>So erreichen Sie uns</h1>
+      <p class="lead">
         Persönlich, schnell und direkt. Wir freuen uns auf Ihre Nachricht.
       </p>
     </div>
   </section>
 
-  <section class="section bg-cream">
+  <section class="section">
     <div class="container kontakt-grid">
-      <article class="kontakt-card" data-reveal>
-        <span class="kontakt-num">01</span>
+      <div class="kontakt-card" data-reveal>
         <h2>Telefon</h2>
         <a href={k.telefon_href} class="kontakt-large">{k.telefon}</a>
-        <p>Mo–Fr · 9–17 Uhr</p>
         <p>Fax: {k.fax}</p>
-      </article>
-
-      <article class="kontakt-card" data-reveal data-reveal-delay="1">
-        <span class="kontakt-num">02</span>
+      </div>
+      <div class="kontakt-card" data-reveal data-reveal-delay="1">
         <h2>E-Mail</h2>
         <a href={`mailto:${k.email}`} class="kontakt-large">{k.email}</a>
         <p>Wir antworten in der Regel innerhalb eines Werktages.</p>
-      </article>
-
-      <article class="kontakt-card" data-reveal data-reveal-delay="2">
-        <span class="kontakt-num">03</span>
+      </div>
+      <div class="kontakt-card" data-reveal data-reveal-delay="2">
         <h2>Adresse</h2>
         <address>
-          <strong>{k.firma}</strong><br />
+          {k.firma}<br />
           {k.strasse}<br />
           {k.plz_ort}
         </address>
-        <a href={k.maps} target="_blank" rel="noopener" class="btn btn-ghost">In Google Maps öffnen</a>
-      </article>
+        <p>
+          <a href={k.maps} target="_blank" rel="noopener" class="btn btn-ghost">In Google Maps öffnen →</a>
+        </p>
+      </div>
     </div>
   </section>
 </BaseLayout>
 
 <style>
   .hero-kontakt {
-    padding-block: clamp(4rem, 7vw, 6rem);
-    background: var(--color-cream);
+    padding-block: clamp(3rem, 7vw, 5.5rem);
+    background: linear-gradient(135deg, var(--color-primary-light) 0%, #ffffff 100%);
   }
-
-  .hero-kontakt h1 em { font-style: italic; color: var(--color-accent-dark); font-weight: 400; }
 
   .kontakt-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 0;
-    border: 1px solid var(--color-border);
+    gap: 1.5rem;
   }
 
   .kontakt-card {
-    position: relative;
-    padding: clamp(2rem, 4vw, 3rem);
-    background: var(--color-cream);
-    border-right: 1px solid var(--color-border);
+    background: #fff;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: 2rem;
     display: flex;
     flex-direction: column;
-    gap: 0.9rem;
-    transition: background-color 300ms ease;
-  }
-
-  .kontakt-card:last-child { border-right: 0; }
-
-  @media (max-width: 900px) {
-    .kontakt-card { border-right: 0; border-bottom: 1px solid var(--color-border); }
-    .kontakt-card:last-child { border-bottom: 0; }
-  }
-
-  .kontakt-card:hover { background: var(--color-cream-warm); }
-
-  .kontakt-num {
-    font-family: var(--font-display);
-    font-size: 0.9rem;
-    color: var(--color-accent-dark);
-    letter-spacing: 0.05em;
-    margin-bottom: 0.5rem;
+    gap: 0.75rem;
   }
 
   .kontakt-card h2 {
-    font-size: 0.82rem;
+    font-size: 1rem;
     text-transform: uppercase;
-    letter-spacing: 0.12em;
-    color: var(--color-text-muted);
-    font-family: var(--font-body);
-    font-weight: 500;
+    letter-spacing: 0.08em;
+    color: var(--color-primary-dark);
     margin-bottom: 0.5rem;
   }
 
   .kontakt-large {
-    font-family: var(--font-display);
-    font-size: clamp(1.25rem, 2.2vw, 1.65rem);
-    font-weight: 500;
+    font-size: clamp(1.15rem, 2vw, 1.35rem);
+    font-weight: 600;
     color: var(--color-dark);
     word-break: break-word;
-    letter-spacing: -0.015em;
-    transition: color 220ms ease;
-    line-height: 1.2;
   }
 
-  .kontakt-large:hover { color: var(--color-primary); }
+  .kontakt-large:hover {
+    color: var(--color-primary-dark);
+  }
 
   .kontakt-card address {
     font-style: normal;
-    line-height: 1.7;
-    color: var(--color-text);
+    line-height: 1.6;
   }
 
   .kontakt-card p {
     color: var(--color-text-muted);
-    font-size: 0.9rem;
+    font-size: 0.95rem;
   }
 </style>

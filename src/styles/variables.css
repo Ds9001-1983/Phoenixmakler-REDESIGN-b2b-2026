@@ -1,10 +1,9 @@
 :root {
-  /* Phönix CI — Navy + Cream + Gold */
+  /* Phönix CI — Navy + Cream + Gold (aus Logo extrahiert) */
   --color-primary: #1e3a8a;
   --color-primary-dark: #0a1940;
   --color-primary-darker: #050d26;
   --color-primary-light: #e8eaf5;
-  --color-primary-softer: #c3cae6;
 
   /* Warme Sekundär-/Akzentfarbe */
   --color-accent: #c9a66b;
@@ -18,43 +17,33 @@
   --color-text: #1a1f36;
   --color-text-muted: #5b6378;
   --color-bg: #ffffff;
-  --color-bg-cream: #faf7f2;
+  --color-bg-light: #f3ede2;
   --color-border: #e4ddd0;
-  --color-border-subtle: #efe9dc;
 
   /* Typografie */
-  --font-display: 'Fraunces', 'Playfair Display', Georgia, serif;
+  --font-heading: 'Fraunces', Georgia, 'Playfair Display', serif;
   --font-body: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
   --font-size-base: 16px;
-  --line-height: 1.65;
+  --line-height: 1.6;
 
-  /* Spacing & Layout */
-  --section-gap: 120px;
-  --section-gap-sm: 72px;
-  --content-max-width: 1240px;
-  --content-max-narrow: 780px;
+  /* Spacing */
+  --section-gap: 80px;
+  --content-max-width: 1200px;
   --padding-x: 24px;
-  --radius-sm: 4px;
-  --radius-md: 8px;
-  --radius-lg: 12px;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
 
   /* Barrierefreiheit */
-  --focus-outline: 3px solid var(--color-accent);
-  --focus-offset: 3px;
+  --focus-outline: 3px solid var(--color-primary);
+  --focus-offset: 2px;
   --min-touch-target: 44px;
 
-  /* Schatten — sehr subtil, editorial */
-  --shadow-sm: 0 1px 3px rgba(10, 25, 64, 0.04);
-  --shadow-md: 0 8px 24px rgba(10, 25, 64, 0.06);
-  --shadow-lg: 0 24px 60px rgba(10, 25, 64, 0.12);
+  /* Schatten */
+  --shadow-sm: 0 1px 2px rgba(10, 25, 64, 0.06);
+  --shadow-md: 0 4px 12px rgba(10, 25, 64, 0.08);
+  --shadow-lg: 0 12px 32px rgba(10, 25, 64, 0.14);
 
   /* Easing */
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
-  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
-}
-
-@media (min-width: 960px) {
-  :root {
-    --section-gap: 160px;
-  }
 }
