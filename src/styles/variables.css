@@ -1,49 +1,72 @@
 :root {
-  /* Phönix CI — Navy + Cream + Gold (aus Logo extrahiert) */
+  /* Phönix CI — Navy + Gold (aus Logo) */
   --color-primary: #1e3a8a;
   --color-primary-dark: #0a1940;
   --color-primary-darker: #050d26;
   --color-primary-light: #e8eaf5;
+  --color-primary-softer: #c3cae6;
 
-  /* Warme Sekundär-/Akzentfarbe */
+  /* Gold-Akzent */
   --color-accent: #c9a66b;
   --color-accent-dark: #9f7e49;
   --color-accent-light: #f0e4cc;
+  --color-accent-bright: #e2b870;
 
-  /* Neutrale Palette */
-  --color-cream: #faf7f2;
-  --color-cream-warm: #f3ede2;
-  --color-dark: #0a1940;
+  /* Enterprise-Neutral — inspired by Stripe/Mercury/Brex */
+  --color-ink: #0a1940;       /* Deep Navy als Haupttext */
   --color-text: #1a1f36;
-  --color-text-muted: #5b6378;
+  --color-text-muted: #555d7a;
+  --color-text-subtle: #8b93aa;
+
   --color-bg: #ffffff;
-  --color-bg-light: #f3ede2;
-  --color-border: #e4ddd0;
+  --color-bg-soft: #f7f8fb;   /* sehr leichtes Kühl-Grau */
+  --color-bg-warm: #faf7f2;   /* warmes Cream für wichtige Cards */
+  --color-bg-light: #f7f8fb;  /* Alias für Legacy */
+
+  --color-border: #e4e7ef;
+  --color-border-strong: #d2d7e2;
+  --color-line: #ecf0f6;
 
   /* Typografie */
-  --font-heading: 'Fraunces', Georgia, 'Playfair Display', serif;
   --font-body: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-display: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-mono: ui-monospace, 'SF Mono', 'Menlo', monospace;
   --font-size-base: 16px;
-  --line-height: 1.6;
+  --line-height: 1.55;
 
   /* Spacing */
-  --section-gap: 80px;
-  --content-max-width: 1200px;
+  --section-gap: 96px;
+  --section-gap-sm: 56px;
+  --content-max-width: 1240px;
+  --content-max-narrow: 820px;
   --padding-x: 24px;
   --radius-sm: 6px;
-  --radius-md: 10px;
-  --radius-lg: 16px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --radius-xl: 28px;
 
   /* Barrierefreiheit */
-  --focus-outline: 3px solid var(--color-primary);
+  --focus-outline: 3px solid var(--color-accent);
   --focus-offset: 2px;
   --min-touch-target: 44px;
 
-  /* Schatten */
-  --shadow-sm: 0 1px 2px rgba(10, 25, 64, 0.06);
-  --shadow-md: 0 4px 12px rgba(10, 25, 64, 0.08);
-  --shadow-lg: 0 12px 32px rgba(10, 25, 64, 0.14);
+  /* Schatten — Stripe-like, sehr subtil */
+  --shadow-xs: 0 1px 2px rgba(10, 25, 64, 0.04);
+  --shadow-sm: 0 2px 8px rgba(10, 25, 64, 0.05);
+  --shadow-md: 0 8px 24px rgba(10, 25, 64, 0.06), 0 2px 6px rgba(10,25,64,0.04);
+  --shadow-lg: 0 24px 60px rgba(10, 25, 64, 0.12);
+  --shadow-xl: 0 40px 90px rgba(10, 25, 64, 0.18);
 
   /* Easing */
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+
+  /* Navy gradient helper */
+  --grad-navy: linear-gradient(165deg, #0a1940 0%, #1e3a8a 100%);
+}
+
+@media (min-width: 960px) {
+  :root {
+    --section-gap: 140px;
+  }
 }

@@ -1,10 +1,9 @@
 ---
-// Wird nur gerendert, wenn die Seite mit <ErstinformationModal /> im /kunde/* Scope eingebunden wird.
-// Trigger: beim Laden der Seite, wenn sessionStorage-Key nicht gesetzt ist.
 ---
 
 <dialog class="erst-modal" data-erst-modal aria-labelledby="erst-title">
   <div class="erst-modal-inner">
+    <span class="eyebrow">Rechtlicher Hinweis</span>
     <h2 id="erst-title">Erstinformation zum Vermittlerstatus</h2>
     <p>
       Bevor Sie unsere Kundenangebote nutzen, möchten wir Sie gemäß §15 VersVermV
@@ -24,26 +23,26 @@
   .erst-modal {
     border: 0;
     padding: 0;
-    max-width: 540px;
+    max-width: 560px;
     width: calc(100% - 2rem);
     border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-lg);
+    box-shadow: var(--shadow-xl);
     background: #fff;
     color: var(--color-text);
   }
 
   .erst-modal::backdrop {
-    background: rgba(26, 26, 46, 0.6);
-    backdrop-filter: blur(4px);
+    background: rgba(10, 25, 64, 0.7);
+    backdrop-filter: blur(6px);
   }
 
-  .erst-modal-inner {
-    padding: 2rem;
-  }
+  .erst-modal-inner { padding: clamp(2rem, 4vw, 2.5rem); }
+
+  .erst-modal-inner .eyebrow { margin-bottom: 1rem; }
 
   .erst-modal-inner h2 {
     margin-bottom: 1rem;
-    font-size: 1.4rem;
+    font-size: clamp(1.35rem, 2.2vw, 1.65rem);
   }
 
   .erst-modal-inner p {
@@ -59,12 +58,8 @@
   }
 
   @media (max-width: 480px) {
-    .erst-modal-actions {
-      flex-direction: column;
-    }
-    .erst-modal-actions .btn {
-      width: 100%;
-    }
+    .erst-modal-actions { flex-direction: column; }
+    .erst-modal-actions .btn { width: 100%; }
   }
 </style>
 

@@ -1,125 +1,243 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-
-const vorteile = [
-  {
-    icon: '📈',
-    title: 'Seit 2012',
-    text: 'Inhabergeführt und 100% ungebunden von Kapitalgebern oder Versicherungsgesellschaften.',
-  },
-  {
-    icon: '🤝',
-    title: '120+ Vermittler',
-    text: 'Ein starkes, deutschlandweites Netzwerk aus spezialisierten Versicherungsmaklern.',
-  },
-  {
-    icon: '⚡',
-    title: 'Exklusive Courtagen',
-    text: 'Besondere Vereinbarungen mit Versicherern und ein transparentes Courtagemodell.',
-  },
-  {
-    icon: '💻',
-    title: 'MVP kostenlos',
-    text: 'Professional Works – professionelles Maklerverwaltungsprogramm, voll digitalisiert.',
-  },
-];
 ---
 
-<BaseLayout title="Phönix Maklerverbund – Ihr Mehrwert-Verbund">
+<BaseLayout title="Phönix Maklerverbund – Ungebunden seit 2012">
+  {/* HERO — asymmetric Mercury/Stripe Style */}
   <section class="hero">
     <div class="container hero-inner">
-      <span class="eyebrow">Phönix Maklerverbund</span>
-      <h1>Ihr Mehrwert-Verbund<br />für Finanz- und Versicherungslösungen</h1>
-      <p class="lead">
-        Seit 2012 unterstützt der Phönix Maklerverbund ungebundene Versicherungsmakler
-        und ihre Kunden mit Fachwissen, exklusiven Vereinbarungen und persönlicher Beratung.
-      </p>
-      <div class="hero-cta">
-        <a href="/makler-werden" class="btn btn-primary">Ich möchte Partner werden <span aria-hidden="true">→</span></a>
-        <a href="/kunde" class="btn btn-outline">Ich bin Kunde <span aria-hidden="true">→</span></a>
+      <div class="hero-text" data-reveal>
+        <span class="badge">Inhabergeführt · seit 2012</span>
+        <h1>
+          Ungebundenheit.<br />
+          <span class="accent">Verbunden.</span>
+        </h1>
+        <p class="lead">
+          Der Phönix Maklerverbund ist das Netzwerk für Versicherungsmaklerinnen und -makler,
+          die unabhängig beraten — und ihren Kunden Beratung auf Augenhöhe liefern.
+        </p>
+        <div class="hero-cta">
+          <a href="/makler-werden" class="btn btn-primary btn-lg">Partner werden →</a>
+          <a href="/kunde" class="btn btn-outline btn-lg">Für Kunden</a>
+        </div>
+      </div>
+      <div class="hero-visual" data-reveal data-reveal-delay="1">
+        <div class="hero-visual-frame">
+          <img src="/images/hero/hero-home.png" alt="Modernes Phönix-Büro" width="1024" height="1024" loading="eager" fetchpriority="high" />
+        </div>
+        <aside class="hero-stat-card">
+          <span class="hero-stat-label">Ins Netzwerk integriert</span>
+          <span class="hero-stat-value">
+            <span data-count="120" data-count-suffix="+">0</span>
+          </span>
+          <span class="hero-stat-sub">unabhängige Maklerinnen &amp; Makler</span>
+        </aside>
       </div>
     </div>
   </section>
 
-  <section class="hero-visual">
-    <div class="container" data-reveal>
-      <figure class="hero-visual-frame">
-        <img src="/images/hero/hero-home.png" alt="Modernes Phönix-Büro" width="1920" height="1080" loading="eager" fetchpriority="high" />
-      </figure>
+  {/* STATS-BAND */}
+  <section class="stats-band">
+    <div class="container stats-grid">
+      <div class="stat" data-reveal>
+        <span class="counter" data-count="12">0</span>
+        <span class="counter-label">Jahre Erfahrung</span>
+      </div>
+      <div class="stat" data-reveal data-reveal-delay="1">
+        <span class="counter"><span data-count="120">0</span>+</span>
+        <span class="counter-label">Partner im Netzwerk</span>
+      </div>
+      <div class="stat" data-reveal data-reveal-delay="2">
+        <span class="counter"><span data-count="100">0</span>%</span>
+        <span class="counter-label">Inhabergeführt</span>
+      </div>
+      <div class="stat" data-reveal data-reveal-delay="3">
+        <span class="counter">€0</span>
+        <span class="counter-label">MVP-Kosten für Partner</span>
+      </div>
     </div>
   </section>
 
+  {/* BENTO-GRID: VORTEILE */}
   <section class="section">
     <div class="container">
-      <div class="section-header text-center" data-reveal>
-        <span class="eyebrow">Warum Phönix?</span>
-        <h2>Vier Gründe, die für uns sprechen</h2>
-      </div>
-      <div class="grid grid-4 vorteile-grid">
-        {vorteile.map((v, i) => (
-          <article class="vorteil-card" data-reveal data-reveal-delay={(i % 4) + 1}>
-            <div class="vorteil-icon" aria-hidden="true">{v.icon}</div>
-            <h3>{v.title}</h3>
-            <p>{v.text}</p>
-          </article>
-        ))}
-      </div>
-    </div>
-  </section>
-
-  <section class="section section-bg">
-    <div class="container partner-net">
-      <div class="partner-net-text" data-reveal>
-        <span class="eyebrow">Unser Netzwerk</span>
-        <h2>Stark durch Partnerschaft</h2>
-        <p>
-          Durch unsere Netzwerkorganisation bieten wir Ihnen Zugang zu exklusiven Ressourcen,
-          Weiterbildungsprogrammen und einer starken Verhandlungsposition gegenüber Anbietern.
-          Unsere Partnerschaften mit den führenden Versicherern garantieren Ihnen erstklassige
-          Bedingungen und Produkte.
+      <div class="section-head" data-reveal>
+        <span class="eyebrow">Unsere Prinzipien</span>
+        <h2>Vier Gründe, warum Makler<br />bei Phönix bleiben.</h2>
+        <p class="lead">
+          Wir sind kein Apparat. Wir sind ein Netzwerk aus Fachleuten, die einander Rücken freihalten.
         </p>
-        <a href="/ueber-uns" class="btn btn-ghost">Mehr über uns →</a>
       </div>
-      <div class="partner-net-image" data-reveal data-reveal-delay="1">
-        <img src="/images/partner-netzwerk.webp" alt="Partner-Netzwerk Grafik" width="600" height="400" loading="lazy" />
+
+      <div class="bento">
+        <article class="bento-item bento-wide bento-navy" data-reveal>
+          <div class="bento-num">01</div>
+          <div>
+            <h3>Ungebunden &amp; inhabergeführt</h3>
+            <p>
+              Keine Beteiligungen von Versicherern oder Kapitalgebern. Sie empfehlen, was für
+              Ihre Kunden passt — nicht was eine Zentrale vorgibt.
+            </p>
+          </div>
+        </article>
+
+        <article class="bento-item bento-narrow" data-reveal data-reveal-delay="1">
+          <div class="bento-icon" aria-hidden="true">★</div>
+          <div>
+            <h3>Exklusive Courtagen</h3>
+            <p>Besondere Vereinbarungen mit den führenden Versicherern im Markt.</p>
+          </div>
+        </article>
+
+        <article class="bento-item bento-narrow" data-reveal data-reveal-delay="2">
+          <div class="bento-icon" aria-hidden="true">⌘</div>
+          <div>
+            <h3>MVP kostenlos</h3>
+            <p>Professional Works — vollständiges Verwaltungsprogramm, volldigital, kostenfrei für Partner.</p>
+          </div>
+        </article>
+
+        <article class="bento-item bento-wide" data-reveal data-reveal-delay="3">
+          <div class="bento-icon" aria-hidden="true">◎</div>
+          <div>
+            <h3>Starkes Netzwerk</h3>
+            <p>
+              Regelmäßige Online-Meetings, Marktaktualisierungen, Deckungskonzepte. Über 120
+              Kolleginnen und Kollegen teilen Wissen — und Bestandsumdeckungen.
+            </p>
+          </div>
+        </article>
       </div>
     </div>
   </section>
 
-  <section class="section cta-band">
-    <div class="container text-center">
-      <h2>Bereit, Teil des Phönix Netzwerks zu werden?</h2>
-      <p class="lead" style="margin-inline:auto;">
-        Als Teil des Phönix Maklerverbunds profitieren Sie von unserer langjährigen Erfahrung,
-        exklusiven Courtagen und einer starken Gemeinschaft.
-      </p>
-      <a href="/makler-werden" class="btn btn-primary btn-lg">Jetzt Partner werden →</a>
+  {/* TESTIMONIAL — Navy Full-Width */}
+  <section class="section bg-navy testimonial-section">
+    <div class="container">
+      <div class="testimonial-inner" data-reveal>
+        <span class="eyebrow">Was uns ausmacht</span>
+        <hr class="hr-accent" style="margin-block:1rem 2rem" />
+        <blockquote class="testimonial-quote">
+          „Wir sind keine Zentrale, die Ihnen Produkte verordnet — wir sind ein Verbund,
+          der Ihnen <em>Entscheidungsfreiheit zurückgibt.</em>"
+        </blockquote>
+        <footer class="testimonial-author">
+          <div class="author-avatar">
+            <img src="/images/torsten-deterding.jpg" alt="Torsten Deterding" />
+          </div>
+          <div>
+            <strong>Torsten Deterding &amp; Lothar Nast</strong>
+            <span>Geschäftsführer · Phönix Maklerverbund GmbH</span>
+          </div>
+        </footer>
+      </div>
+    </div>
+  </section>
+
+  {/* PFADE */}
+  <section class="section bg-soft">
+    <div class="container">
+      <div class="section-head" data-reveal>
+        <span class="eyebrow">Zwei Wege. Ein Netzwerk.</span>
+        <h2>Finden Sie Ihren Zugang<br />zum Phönix-Netzwerk.</h2>
+      </div>
+
+      <div class="pfade-grid">
+        <a href="/makler-werden" class="pfad-card" data-reveal data-reveal-delay="1">
+          <span class="pfad-tag">Für Maklerinnen &amp; Makler</span>
+          <h3>Werden Sie Partner.</h3>
+          <p>Wechsel aus der Ausschließlichkeit, Unterstützung beim Aufbau, exklusive Vereinbarungen.</p>
+          <span class="pfad-arrow">→</span>
+        </a>
+        <a href="/kunde" class="pfad-card pfad-card-accent" data-reveal data-reveal-delay="2">
+          <span class="pfad-tag">Für Kundinnen &amp; Kunden</span>
+          <h3>Finden Sie Ihren Makler.</h3>
+          <p>Unsere Partner sind unabhängig, fair vergütet — und ausschließlich Ihren Anliegen verpflichtet.</p>
+          <span class="pfad-arrow">→</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  {/* TRUST ROW */}
+  <section class="section-sm trust-row">
+    <div class="container">
+      <div class="trust-inner" data-reveal>
+        <span class="trust-label">Ein Netzwerk, vielen Versicherern anvertraut</span>
+        <ul class="trust-logos">
+          <li><img src="/images/logos/barmenia.png" alt="Barmenia" /></li>
+          <li><img src="/images/logos/sdk.png" alt="SDK" /></li>
+          <li><img src="/images/logos/hansemerkur.png" alt="HanseMerkur" /></li>
+          <li><img src="/images/logos/arag.png" alt="ARAG" /></li>
+          <li><img src="/images/logos/ideal.webp" alt="IDEAL" /></li>
+          <li><img src="/images/logos/neodigital.png" alt="Neodigital" /></li>
+          <li><img src="/images/logos/ammerlaender.png" alt="Ammerländer" /></li>
+        </ul>
+      </div>
     </div>
   </section>
 </BaseLayout>
 
 <style>
+  /* HERO */
   .hero {
-    padding-block: clamp(3rem, 8vw, 6rem);
-    background: linear-gradient(135deg, var(--color-primary-light) 0%, #ffffff 100%);
+    padding-block: clamp(2.5rem, 5vw, 4.5rem) clamp(3rem, 6vw, 5rem);
+    background: var(--color-bg);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -200px;
+    right: -200px;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(201, 166, 107, 0.08) 0%, transparent 70%);
+    pointer-events: none;
   }
 
   .hero-inner {
-    max-width: 820px;
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: clamp(2rem, 5vw, 5rem);
+    align-items: center;
+    position: relative;
+  }
+
+  @media (max-width: 900px) { .hero-inner { grid-template-columns: 1fr; gap: 3rem; } }
+
+  .hero-text h1 .accent {
+    color: var(--color-primary);
+    font-style: normal;
+  }
+
+  .hero-text .lead {
+    margin-block: 1.5rem 2.5rem;
+  }
+
+  .hero-cta {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    align-items: center;
   }
 
   .hero-visual {
-    padding-top: clamp(1rem, 3vw, 2rem);
-    padding-bottom: clamp(3rem, 6vw, 5rem);
-    background: var(--color-bg);
+    position: relative;
   }
 
   .hero-visual-frame {
+    aspect-ratio: 4/5;
     overflow: hidden;
     border-radius: var(--radius-lg);
-    aspect-ratio: 21/9;
-    background: var(--color-bg-light);
-    box-shadow: var(--shadow-md);
+    background: var(--color-bg-soft);
+    box-shadow: var(--shadow-lg);
+  }
+
+  @media (max-width: 900px) {
+    .hero-visual-frame { aspect-ratio: 4/3; }
   }
 
   .hero-visual-frame img {
@@ -128,83 +246,273 @@ const vorteile = [
     object-fit: cover;
   }
 
-  .hero h1 {
-    margin-bottom: 1.5rem;
-  }
-
-  .hero-cta {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1rem;
-    margin-top: 2rem;
-  }
-
-  .section-header {
-    max-width: 720px;
-    margin: 0 auto 3rem;
-  }
-
-  .vorteile-grid {
-    gap: 1.5rem;
-  }
-
-  .vorteil-card {
-    padding: 2rem 1.5rem;
+  .hero-stat-card {
+    position: absolute;
+    bottom: -30px;
+    left: -30px;
     background: #fff;
+    padding: 1.5rem 1.75rem;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-lg);
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    min-width: 220px;
     border: 1px solid var(--color-border);
-    border-radius: var(--radius-lg);
-    transition: transform 200ms ease, box-shadow 200ms ease, border-color 200ms ease;
   }
 
-  .vorteil-card:hover {
-    transform: translateY(-4px);
-    box-shadow: var(--shadow-md);
-    border-color: var(--color-primary-light);
+  @media (max-width: 900px) {
+    .hero-stat-card { left: 50%; transform: translateX(-50%); bottom: -24px; }
   }
 
-  .vorteil-icon {
-    font-size: 2rem;
-    margin-bottom: 1rem;
+  .hero-stat-label {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--color-primary);
+    font-weight: 600;
   }
 
-  .vorteil-card h3 {
-    margin-bottom: 0.5rem;
-    font-size: 1.125rem;
+  .hero-stat-value {
+    font-family: var(--font-display);
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: var(--color-ink);
+    letter-spacing: -0.03em;
+    line-height: 1;
+    margin-block: 0.25rem;
+    font-feature-settings: 'tnum';
   }
 
-  .vorteil-card p {
+  .hero-stat-sub {
+    font-size: 0.82rem;
     color: var(--color-text-muted);
-    font-size: 0.95rem;
   }
 
-  .partner-net {
+  /* STATS-BAND */
+  .stats-band {
+    padding-block: clamp(3rem, 5vw, 4.5rem);
+    background: var(--color-bg-soft);
+    border-block: 1px solid var(--color-border);
+  }
+
+  .stats-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 3rem;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2rem;
+  }
+
+  @media (max-width: 700px) {
+    .stats-grid { grid-template-columns: 1fr 1fr; gap: 2.5rem 1.5rem; }
+  }
+
+  .stat {
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Section Head */
+  .section-head {
+    max-width: 680px;
+    margin-bottom: clamp(2.5rem, 5vw, 4rem);
+  }
+
+  .section-head h2 { margin-bottom: 1rem; }
+  .section-head .lead { margin-top: 0.5rem; }
+
+  /* Bento */
+  .bento-num {
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    color: var(--color-accent);
+  }
+
+  .bento-icon {
+    font-size: 1.75rem;
+    color: var(--color-accent);
+    width: 48px;
+    height: 48px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    background: var(--color-bg-soft);
+  }
+
+  .bento-navy .bento-icon {
+    background: rgba(255,255,255,0.06);
+    border-color: rgba(255,255,255,0.15);
+  }
+
+  .bento-item h3 {
+    margin-bottom: 0.5rem;
+  }
+
+  .bento-item p {
+    color: var(--color-text-muted);
+    font-size: 0.98rem;
+  }
+
+  .bento-navy p { color: rgba(255,255,255,0.7); }
+
+  /* Testimonial */
+  .testimonial-section { padding-block: clamp(5rem, 8vw, 7rem); }
+
+  .testimonial-inner {
+    max-width: 900px;
+  }
+
+  .testimonial-quote {
+    font-size: clamp(1.75rem, 3.5vw, 2.75rem);
+    font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: -0.025em;
+    color: #fff;
+    margin-bottom: 3rem;
+    max-width: 28ch;
+  }
+
+  .testimonial-quote em {
+    color: var(--color-accent);
+    font-style: normal;
+  }
+
+  .testimonial-author {
+    display: flex;
+    gap: 1.25rem;
     align-items: center;
   }
 
-  @media (max-width: 768px) {
-    .partner-net {
-      grid-template-columns: 1fr;
-    }
+  .author-avatar {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    overflow: hidden;
+    background: rgba(255,255,255,0.1);
+    flex-shrink: 0;
   }
 
-  .partner-net-image img {
+  .author-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .testimonial-author strong {
+    display: block;
+    color: #fff;
+    font-weight: 600;
+    font-size: 1rem;
+    margin-bottom: 0.15rem;
+  }
+
+  .testimonial-author span {
+    display: block;
+    color: rgba(255,255,255,0.65);
+    font-size: 0.88rem;
+  }
+
+  /* Pfade */
+  .pfade-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+  }
+
+  @media (max-width: 768px) {
+    .pfade-grid { grid-template-columns: 1fr; }
+  }
+
+  .pfad-card {
+    padding: clamp(2rem, 3.5vw, 3rem);
+    background: #fff;
+    border: 1px solid var(--color-border);
     border-radius: var(--radius-lg);
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    color: var(--color-ink);
+    transition: border-color 260ms ease, transform 260ms var(--ease-out), box-shadow 280ms ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .pfad-card:hover {
+    border-color: var(--color-ink);
+    transform: translateY(-3px);
     box-shadow: var(--shadow-md);
   }
 
-  .cta-band h2 {
-    margin-bottom: 1rem;
+  .pfad-tag {
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-primary);
   }
 
-  .cta-band .btn {
-    margin-top: 2rem;
+  .pfad-card-accent .pfad-tag { color: var(--color-accent-dark); }
+
+  .pfad-card h3 {
+    font-size: clamp(1.5rem, 2.8vw, 2rem);
+    font-weight: 700;
+    letter-spacing: -0.025em;
   }
 
-  .btn-lg {
-    padding: 1rem 2rem;
-    font-size: 1.05rem;
+  .pfad-card p {
+    color: var(--color-text-muted);
+    max-width: 40ch;
+  }
+
+  .pfad-arrow {
+    margin-top: auto;
+    font-size: 1.5rem;
+    color: var(--color-primary);
+    transition: transform 320ms var(--ease-out);
+  }
+
+  .pfad-card:hover .pfad-arrow { transform: translateX(8px); }
+
+  /* Trust Row */
+  .trust-row { background: #fff; border-top: 1px solid var(--color-border); }
+
+  .trust-inner {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    align-items: center;
+    text-align: center;
+  }
+
+  .trust-label {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--color-text-subtle);
+    font-weight: 500;
+  }
+
+  .trust-logos {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem 3rem;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .trust-logos img {
+    max-height: 32px;
+    width: auto;
+    opacity: 0.6;
+    filter: grayscale(0.5);
+    transition: opacity 220ms ease, filter 220ms ease;
+  }
+
+  .trust-logos img:hover {
+    opacity: 1;
+    filter: grayscale(0);
   }
 </style>

@@ -34,30 +34,30 @@ if (!produkt) {
 <BaseLayout title={produkt.title}>
   <ErstinformationModal />
 
-  <section class="hero-produkt">
-    <div class="container">
-      <span class="eyebrow">{produkt.eyebrow}</span>
-      <h1>{produkt.title}</h1>
-      <p class="lead">{produkt.intro}</p>
-    </div>
-  </section>
-
-  <section class="hero-visual">
-    <div class="container" data-reveal>
-      <figure class="hero-visual-frame">
-        <img src={heroImage[slug]} alt="" width="1920" height="1080" loading="eager" />
-      </figure>
+  {/* HERO asymmetric mit Pot-Bild */}
+  <section class="hero">
+    <div class="container hero-inner">
+      <div class="hero-text" data-reveal>
+        <span class="badge">{produkt.eyebrow}</span>
+        <h1>{produkt.title}</h1>
+        <p class="lead">{produkt.intro}</p>
+      </div>
+      <div class="hero-visual" data-reveal data-reveal-delay="1">
+        <div class="hero-visual-frame">
+          <img src={heroImage[slug]} alt="" width="1024" height="1024" loading="eager" fetchpriority="high" />
+        </div>
+      </div>
     </div>
   </section>
 
   {produkt.pots.length > 0 && (
-    <section class="section">
+    <section class="section bg-soft">
       <div class="container">
-        <div class="section-header" data-reveal>
-          <span class="eyebrow">Themen & Tipps</span>
-          <h2>Wissenswertes auf einen Blick</h2>
+        <div class="section-head" data-reveal>
+          <span class="eyebrow">Themen &amp; Tipps</span>
+          <h2>Wissenswertes auf einen Blick.</h2>
         </div>
-        <div class="grid grid-3 pots-grid">
+        <div class="pots-grid">
           {produkt.pots.map((pot, i) => (
             <div data-reveal data-reveal-delay={(i % 3) + 1}>
               <TeaserCard headline={pot.headline} url={pot.url} />
@@ -69,11 +69,11 @@ if (!produkt) {
   )}
 
   {produkt.produkte.length > 0 && (
-    <section class="section section-bg">
+    <section class="section">
       <div class="container">
-        <div class="section-header" data-reveal>
+        <div class="section-head" data-reveal>
           <span class="eyebrow">Empfohlene Produkte</span>
-          <h2>Direkt berechnen und abschließen</h2>
+          <h2>Direkt berechnen<br />und abschließen.</h2>
         </div>
         <div class="product-stack">
           {produkt.produkte.map((p, i) => (
@@ -90,50 +90,50 @@ if (!produkt) {
 </BaseLayout>
 
 <style>
-  .hero-produkt {
-    padding-block: clamp(3rem, 7vw, 5.5rem);
-    background: linear-gradient(135deg, var(--color-primary-light) 0%, #ffffff 100%);
+  .hero {
+    padding-block: clamp(2.5rem, 5vw, 4.5rem) clamp(3rem, 6vw, 5rem);
+    background: var(--color-bg);
+    overflow: hidden;
   }
 
-  .hero-visual {
-    padding-top: clamp(1rem, 3vw, 2rem);
-    padding-bottom: clamp(3rem, 6vw, 5rem);
+  .hero-inner {
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: clamp(2rem, 5vw, 5rem);
+    align-items: center;
   }
+
+  @media (max-width: 900px) { .hero-inner { grid-template-columns: 1fr; gap: 3rem; } }
+
+  .hero-text h1 { max-width: 18ch; margin-block: 0 1.5rem; }
 
   .hero-visual-frame {
+    aspect-ratio: 4/5;
     overflow: hidden;
     border-radius: var(--radius-lg);
-    aspect-ratio: 21/9;
-    background: var(--color-bg-light);
-    box-shadow: var(--shadow-md);
+    background: var(--color-bg-soft);
+    box-shadow: var(--shadow-lg);
   }
 
-  .hero-visual-frame img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
+  @media (max-width: 900px) { .hero-visual-frame { aspect-ratio: 4/3; } }
 
-  .hero-produkt h1 {
-    max-width: 20ch;
-  }
+  .hero-visual-frame img { width: 100%; height: 100%; object-fit: cover; }
 
-  .hero-produkt .lead {
-    margin-top: 1rem;
-  }
-
-  .section-header {
-    max-width: 720px;
-    margin-bottom: 2rem;
-  }
+  .section-head { max-width: 640px; margin-bottom: clamp(2rem, 5vw, 3.5rem); }
 
   .pots-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 1.5rem;
+  }
+
+  @media (min-width: 720px) {
+    .pots-grid { grid-template-columns: repeat(3, 1fr); }
   }
 
   .product-stack {
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
+    gap: 1.25rem;
   }
 </style>

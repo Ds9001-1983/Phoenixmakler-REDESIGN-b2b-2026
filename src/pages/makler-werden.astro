@@ -1,59 +1,155 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import vorteile from '../data/makler-werden-vorteile.json';
+
+const prozess = [
+  {
+    num: '01',
+    title: 'Gespräch',
+    text: 'Unverbindliches Kennenlernen — persönlich oder per Videocall. Wir schauen uns an, ob die Chemie stimmt.',
+  },
+  {
+    num: '02',
+    title: 'Vertrag & Vorbereitung',
+    text: 'Rechtssichere Rahmenvereinbarung, Klärung der Bestandsübergabe, Vorbereitung des Wechsels.',
+  },
+  {
+    num: '03',
+    title: 'Go-Live',
+    text: 'Zugang zu Professional Works MVP, Einführung ins Netzwerk, erste Bestandsumdeckungen.',
+  },
+  {
+    num: '04',
+    title: 'Wachstum',
+    text: 'Regelmäßige Meetings, Weiterbildung, exklusive Produkte — wir begleiten Sie dauerhaft.',
+  },
+];
 ---
 
-<BaseLayout title="Makler werden – Partner im Phönix Maklerverbund">
-  <section class="hero-b2b">
-    <div class="container">
-      <span class="eyebrow">Für Versicherungsmakler</span>
-      <h1>Ihr Mehrwert-Verbund für Finanz- und Versicherungslösungen</h1>
-      <p class="lead">
-        Seit 2012 bietet der Phönix Maklerverbund individuelle Unterstützung für Finanz- und
-        Versicherungsmakler. Über 120 Partner profitieren von unseren Diensten in Altersvorsorge,
-        Krankenversicherung und mehr.
-      </p>
-      <a href="#partner-werden" class="btn btn-primary">Jetzt Partner werden <span aria-hidden="true">↓</span></a>
+<BaseLayout title="Partner werden – Phönix Maklerverbund">
+  {/* HERO asymmetric */}
+  <section class="hero">
+    <div class="container hero-inner">
+      <div class="hero-text" data-reveal>
+        <span class="badge">Für Versicherungsmakler</span>
+        <h1>
+          Ein Verbund, der für <span class="accent">Sie</span> arbeitet.
+        </h1>
+        <p class="lead">
+          Seit 2012 begleiten wir Vermittlerinnen und Vermittler in die Ungebundenheit.
+          Mit exklusiven Courtagen, rechtssicheren Rahmenverträgen und einem Team,
+          das Sie persönlich kennt.
+        </p>
+        <div class="hero-cta">
+          <a href="#partner-werden" class="btn btn-primary btn-lg">Jetzt Partner werden</a>
+          <a href="#prozess" class="btn btn-outline btn-lg">So läuft's</a>
+        </div>
+      </div>
+      <div class="hero-visual" data-reveal data-reveal-delay="1">
+        <div class="hero-visual-frame">
+          <img src="/images/hero/hero-makler.png" alt="Phönix Partner" width="1024" height="1024" loading="eager" fetchpriority="high" />
+        </div>
+        <aside class="hero-stat-card">
+          <span class="hero-stat-label">Durchschnittliche Verweildauer</span>
+          <span class="hero-stat-value">
+            <span data-count="7" data-count-suffix=" Jahre">0</span>
+          </span>
+          <span class="hero-stat-sub">unserer Partner im Netzwerk</span>
+        </aside>
+      </div>
     </div>
   </section>
 
-  <section class="hero-visual">
-    <div class="container" data-reveal>
-      <figure class="hero-visual-frame">
-        <img src="/images/hero/hero-makler.png" alt="Phönix Partner Portrait" width="1920" height="1080" loading="eager" />
-      </figure>
-    </div>
-  </section>
-
+  {/* BENTO — Vorteile */}
   <section class="section">
     <div class="container">
-      <div class="section-header" data-reveal>
-        <span class="eyebrow">Dienstleistungen & Vorteile</span>
-        <h2>Was Sie bei Phönix erwartet</h2>
+      <div class="section-head" data-reveal>
+        <span class="eyebrow">Dienstleistungen &amp; Vorteile</span>
+        <h2>Was Sie bei Phönix erwartet.</h2>
       </div>
-      <div class="grid grid-3">
-        {vorteile.leistungen.map((item, i) => (
-          <article class="info-card" data-reveal data-reveal-delay={i + 1}>
-            <h3>{item.title}</h3>
-            <p>{item.text}</p>
-          </article>
-        ))}
+
+      <div class="bento">
+        <article class="bento-item bento-wide bento-navy" data-reveal>
+          <div class="bento-num">01</div>
+          <div>
+            <h3>Branchen-Spezialisierung</h3>
+            <p>Fachliche Unterstützung in Altersvorsorge, Krankenabsicherung und Finanzierung — von Fachwirten, die seit Jahrzehnten im Markt sind.</p>
+          </div>
+        </article>
+
+        <article class="bento-item bento-narrow" data-reveal data-reveal-delay="1">
+          <div class="bento-icon" aria-hidden="true">✦</div>
+          <div>
+            <h3>Persönliche Beratung</h3>
+            <p>Direkter Draht zur Geschäftsführung. Keine Hotline.</p>
+          </div>
+        </article>
+
+        <article class="bento-item bento-narrow" data-reveal data-reveal-delay="2">
+          <div class="bento-icon" aria-hidden="true">◎</div>
+          <div>
+            <h3>Transparenz</h3>
+            <p>Klare Kondition, klare Courtage — ohne versteckte Abzüge.</p>
+          </div>
+        </article>
+
+        <article class="bento-item bento-narrow" data-reveal data-reveal-delay="3">
+          <div class="bento-icon" aria-hidden="true">★</div>
+          <div>
+            <h3>Exklusive Verträge</h3>
+            <p>Besondere Vereinbarungen mit den führenden Versicherern.</p>
+          </div>
+        </article>
+
+        <article class="bento-item bento-wide" data-reveal data-reveal-delay="4">
+          <div class="bento-icon" aria-hidden="true">⌘</div>
+          <div>
+            <h3>Professional Works MVP — kostenlos</h3>
+            <p>
+              Volldigitalisiertes Maklerverwaltungsprogramm mit elektronischer Unterschrift,
+              automatischer Dokumentenablage und Kunden-Self-Service. Für Phönix-Partner kostenfrei.
+            </p>
+          </div>
+        </article>
       </div>
     </div>
   </section>
 
-  <section class="section section-bg">
-    <div class="container two-col">
-      <div>
+  {/* PROZESS Timeline */}
+  <section class="section bg-soft" id="prozess">
+    <div class="container">
+      <div class="section-head" data-reveal>
+        <span class="eyebrow">So läuft's</span>
+        <h2>Von der ersten Mail<br />bis zum Go-Live.</h2>
+      </div>
+
+      <ol class="prozess-list">
+        {prozess.map((p, i) => (
+          <li class="prozess-item" data-reveal data-reveal-delay={i + 1}>
+            <span class="prozess-num">{p.num}</span>
+            <div class="prozess-body">
+              <h3>{p.title}</h3>
+              <p>{p.text}</p>
+            </div>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  {/* SELBSTÄNDIGKEIT NAVY */}
+  <section class="section bg-navy">
+    <div class="container split-grid">
+      <div data-reveal>
         <span class="eyebrow">Unser Versprechen</span>
-        <h2>Ihre Selbständigkeit, unsere Priorität</h2>
-        <p>
+        <h2>Ihre Selbständigkeit,<br />unsere Priorität.</h2>
+        <p class="lead">
           Wir fördern Ihre Selbständigkeit durch rechtlich eigenständige Vereinbarungen,
           damit Sie flexibel und sicher agieren können.
         </p>
       </div>
-      <div>
-        <h3>Unsere Alleinstellungsmerkmale</h3>
+      <div data-reveal data-reveal-delay="1">
+        <h3 style="color:#fff; margin-bottom: 1.5rem">Alleinstellungsmerkmale</h3>
         <ul class="check-list">
           {vorteile.alleinstellung.map((item) => (
             <li>{item}</li>
@@ -63,59 +159,30 @@ import vorteile from '../data/makler-werden-vorteile.json';
     </div>
   </section>
 
+  {/* WECHSEL */}
   <section class="section">
     <div class="container">
-      <div class="section-header">
-        <span class="eyebrow">Praktische Unterstützung</span>
-        <h2>Tools, die Ihre Arbeit vereinfachen</h2>
-      </div>
-      <div class="grid grid-2">
-        {vorteile.unterstuetzung.map((item) => (
-          <article class="info-card info-card-light">
-            <h3>{item.title}</h3>
-            <p>{item.text}</p>
-          </article>
-        ))}
-      </div>
-    </div>
-  </section>
-
-  <section class="section section-bg">
-    <div class="container">
-      <div class="section-header">
-        <span class="eyebrow">Networking & Weiterbildung</span>
-        <h2>Gemeinsam stark im Markt</h2>
-      </div>
-      <ul class="check-list">
-        {vorteile.networking.map((item) => (
-          <li>{item}</li>
-        ))}
-      </ul>
-    </div>
-  </section>
-
-  <section class="section">
-    <div class="container two-col">
-      <div>
+      <div class="section-head" data-reveal>
         <span class="eyebrow">Wechsel aus der Ausschließlichkeit</span>
-        <h2>Schritt für Schritt in die Ungebundenheit</h2>
-        <p>
+        <h2>Schritt für Schritt<br />in die Ungebundenheit.</h2>
+        <p class="lead">
           Wenn Sie einen Wechsel in Erwägung ziehen, berücksichtigen Sie vertragliche Details
           und Kündigungsfristen. Wir unterstützen Sie bei jedem Schritt.
         </p>
       </div>
-      <div class="wechsel-lists">
-        <div>
+
+      <div class="wechsel-grid">
+        <div class="wechsel-col" data-reveal>
           <h3>Was zu beachten ist</h3>
-          <ul class="check-list">
+          <ul class="check-list check-list-dark">
             {vorteile.wechsel_beachten.map((item) => (
               <li>{item}</li>
             ))}
           </ul>
         </div>
-        <div>
-          <h3>Wie wir Ihnen helfen</h3>
-          <ul class="check-list">
+        <div class="wechsel-col" data-reveal data-reveal-delay="1">
+          <h3>Wie wir helfen</h3>
+          <ul class="check-list check-list-dark">
             {vorteile.wechsel_hilfe.map((item) => (
               <li>{item}</li>
             ))}
@@ -125,27 +192,18 @@ import vorteile from '../data/makler-werden-vorteile.json';
     </div>
   </section>
 
-  <section class="section section-quote">
-    <div class="container text-center">
-      <blockquote>
-        „Der Phönix Maklerverbund steht für Transparenz, Qualität und die Förderung Ihrer
-        Selbständigkeit. Wir sind Ihr persönlicher Dienstleister im Bereich Finanz- und
-        Versicherungsmakler."
-      </blockquote>
-    </div>
-  </section>
-
-  <section class="section section-form" id="partner-werden">
-    <div class="container">
-      <div class="section-header text-center">
+  {/* FORMULAR */}
+  <section class="section bg-soft" id="partner-werden">
+    <div class="container-narrow">
+      <div class="form-head text-center" data-reveal>
         <span class="eyebrow">Jetzt loslegen</span>
-        <h2>Jetzt Partner werden</h2>
-        <p class="lead" style="margin-inline:auto;">
-          Tragen Sie Ihre Daten ein – wir melden uns persönlich bei Ihnen.
+        <h2>Ihre Partnerschaft<br />beginnt hier.</h2>
+        <p class="lead" style="margin-inline:auto">
+          Tragen Sie Ihre Daten ein — wir melden uns persönlich bei Ihnen.
         </p>
       </div>
 
-      <form class="registrierung-form" data-registrierung novalidate>
+      <form class="registrierung-form" data-registrierung novalidate data-reveal data-reveal-delay="1">
         <div class="form-row">
           <div class="form-field">
             <label for="anrede">Anrede *</label>
@@ -158,7 +216,7 @@ import vorteile from '../data/makler-werden-vorteile.json';
           </div>
         </div>
 
-        <div class="form-row grid-2">
+        <div class="form-row form-row-2">
           <div class="form-field">
             <label for="vorname">Vorname *</label>
             <input type="text" id="vorname" name="vorname" autocomplete="given-name" required />
@@ -171,13 +229,13 @@ import vorteile from '../data/makler-werden-vorteile.json';
 
         <div class="form-row">
           <div class="form-field">
-            <label for="strasse">Straße & Hausnummer *</label>
+            <label for="strasse">Straße &amp; Hausnummer *</label>
             <input type="text" id="strasse" name="strasse" autocomplete="street-address" required />
           </div>
         </div>
 
-        <div class="form-row grid-2">
-          <div class="form-field form-field-sm">
+        <div class="form-row form-row-2">
+          <div class="form-field">
             <label for="plz">PLZ *</label>
             <input type="text" id="plz" name="plz" autocomplete="postal-code" inputmode="numeric" pattern="[0-9]{5}" required />
           </div>
@@ -187,7 +245,7 @@ import vorteile from '../data/makler-werden-vorteile.json';
           </div>
         </div>
 
-        <div class="form-row grid-2">
+        <div class="form-row form-row-2">
           <div class="form-field">
             <label for="telefon">Telefon *</label>
             <input type="tel" id="telefon" name="telefon" autocomplete="tel" required />
@@ -198,7 +256,7 @@ import vorteile from '../data/makler-werden-vorteile.json';
           </div>
         </div>
 
-        <div class="form-row grid-2">
+        <div class="form-row form-row-2">
           <div class="form-field">
             <label for="geburtsdatum">Geburtsdatum *</label>
             <input type="date" id="geburtsdatum" name="geburtsdatum" required />
@@ -236,13 +294,13 @@ import vorteile from '../data/makler-werden-vorteile.json';
         <div class="form-submit">
           <button type="submit" class="btn btn-primary btn-lg">Jetzt Partner werden →</button>
           <p class="form-hint">
-            Ihre Daten werden nach Eingang des CRM-Zugangs (Phase 2) direkt an unser System übermittelt.
+            Hinweis: Die automatische Übermittlung wird nach Freischaltung des CRM-Zugangs aktiviert.
           </p>
         </div>
 
         <div class="form-success" data-form-success hidden>
           <h3>Vielen Dank für Ihr Interesse!</h3>
-          <p>Wir melden uns in Kürze bei Ihnen.</p>
+          <p>Wir melden uns in Kürze persönlich bei Ihnen.</p>
         </div>
       </form>
     </div>
@@ -250,212 +308,260 @@ import vorteile from '../data/makler-werden-vorteile.json';
 </BaseLayout>
 
 <style>
-  .hero-b2b {
-    padding-block: clamp(3rem, 7vw, 5.5rem);
-    background: linear-gradient(135deg, var(--color-primary-light) 0%, #ffffff 100%);
+  /* HERO */
+  .hero {
+    padding-block: clamp(2.5rem, 5vw, 4.5rem) clamp(3rem, 6vw, 5rem);
+    background: var(--color-bg);
+    position: relative;
+    overflow: hidden;
   }
 
-  .hero-visual {
-    padding-top: clamp(1rem, 3vw, 2rem);
-    padding-bottom: clamp(3rem, 6vw, 5rem);
+  .hero-inner {
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: clamp(2rem, 5vw, 5rem);
+    align-items: center;
   }
+
+  @media (max-width: 900px) { .hero-inner { grid-template-columns: 1fr; gap: 3rem; } }
+
+  .hero-text h1 .accent { color: var(--color-primary); }
+  .hero-text .lead { margin-block: 1.5rem 2.5rem; }
+
+  .hero-cta {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .hero-visual { position: relative; }
 
   .hero-visual-frame {
+    aspect-ratio: 4/5;
     overflow: hidden;
     border-radius: var(--radius-lg);
-    aspect-ratio: 21/9;
-    background: var(--color-bg-light);
-    box-shadow: var(--shadow-md);
+    background: var(--color-bg-soft);
+    box-shadow: var(--shadow-lg);
   }
 
-  .hero-visual-frame img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
+  @media (max-width: 900px) { .hero-visual-frame { aspect-ratio: 4/3; } }
 
-  .hero-b2b h1 {
-    max-width: 20ch;
-    margin-bottom: 1.5rem;
-  }
+  .hero-visual-frame img { width: 100%; height: 100%; object-fit: cover; }
 
-  .hero-b2b .lead {
-    margin-bottom: 2rem;
-  }
-
-  .section-header {
-    max-width: 720px;
-    margin-bottom: 2.5rem;
-  }
-
-  .section-header.text-center {
-    margin-inline: auto;
-  }
-
-  .info-card {
+  .hero-stat-card {
+    position: absolute;
+    bottom: -30px;
+    left: -30px;
     background: #fff;
+    padding: 1.5rem 1.75rem;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-lg);
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    min-width: 220px;
     border: 1px solid var(--color-border);
-    border-radius: var(--radius-lg);
-    padding: 2rem;
-    transition: border-color 200ms ease, box-shadow 200ms ease, transform 200ms ease;
   }
 
-  .info-card:hover {
-    border-color: var(--color-primary);
-    box-shadow: var(--shadow-md);
-    transform: translateY(-3px);
+  @media (max-width: 900px) {
+    .hero-stat-card { left: 50%; transform: translateX(-50%); bottom: -24px; }
   }
 
-  .info-card-light {
-    background: #fff;
+  .hero-stat-label {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--color-primary);
+    font-weight: 600;
   }
 
-  .info-card h3 {
-    margin-bottom: 0.75rem;
-    color: var(--color-primary-dark);
-    font-size: 1.15rem;
+  .hero-stat-value {
+    font-family: var(--font-display);
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--color-ink);
+    letter-spacing: -0.03em;
+    line-height: 1;
+    margin-block: 0.25rem;
+    font-feature-settings: 'tnum';
   }
 
-  .info-card p {
-    color: var(--color-text-muted);
+  .hero-stat-sub { font-size: 0.82rem; color: var(--color-text-muted); }
+
+  /* Section Head */
+  .section-head { max-width: 680px; margin-bottom: clamp(2.5rem, 5vw, 4rem); }
+  .section-head h2 { margin-bottom: 1rem; }
+  .section-head .lead { margin-top: 0.5rem; }
+
+  /* Bento */
+  .bento-num {
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    color: var(--color-accent);
   }
 
-  .two-col {
+  .bento-icon {
+    font-size: 1.6rem;
+    color: var(--color-accent);
+    width: 44px;
+    height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    background: var(--color-bg-soft);
+  }
+
+  .bento-item h3 { margin-bottom: 0.5rem; }
+  .bento-item p { color: var(--color-text-muted); font-size: 0.98rem; }
+  .bento-navy p { color: rgba(255,255,255,0.7); }
+  .bento-navy .bento-icon { background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.15); }
+
+  /* Prozess */
+  .prozess-list {
+    list-style: none;
+    counter-reset: prozess;
+  }
+
+  .prozess-item {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 3rem;
+    grid-template-columns: 100px 1fr;
+    gap: clamp(1.5rem, 3vw, 3rem);
+    padding-block: 2rem;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .prozess-item:last-child { border-bottom: 1px solid var(--color-border); }
+
+  @media (max-width: 540px) {
+    .prozess-item { grid-template-columns: 1fr; gap: 0.75rem; padding-block: 1.5rem; }
+  }
+
+  .prozess-num {
+    font-family: var(--font-display);
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--color-accent-dark);
+    letter-spacing: 0.08em;
+  }
+
+  .prozess-body h3 {
+    margin-bottom: 0.6rem;
+    font-size: clamp(1.35rem, 2.2vw, 1.75rem);
+    font-weight: 700;
+  }
+
+  .prozess-body p { color: var(--color-text-muted); max-width: 56ch; font-size: 1rem; }
+
+  /* Split Navy */
+  .split-grid {
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: clamp(2rem, 6vw, 5rem);
     align-items: start;
   }
 
-  @media (max-width: 768px) {
-    .two-col {
-      grid-template-columns: 1fr;
-      gap: 2rem;
-    }
-  }
+  @media (max-width: 900px) { .split-grid { grid-template-columns: 1fr; } }
 
-  .check-list {
-    list-style: none;
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-  }
+  /* Check List */
+  .check-list { list-style: none; display: flex; flex-direction: column; gap: 1rem; }
 
   .check-list li {
     padding-left: 2rem;
     position: relative;
+    line-height: 1.55;
+    color: rgba(255,255,255,0.85);
   }
+
+  .check-list.check-list-dark li { color: var(--color-text); }
 
   .check-list li::before {
     content: '';
     position: absolute;
     left: 0;
-    top: 0.4em;
-    width: 1.25rem;
-    height: 1.25rem;
-    background: var(--color-primary);
-    mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23fff' d='M9.55 17.577L4 12.027l1.4-1.4 4.15 4.15 9.05-9.05 1.4 1.4z'/%3E%3C/svg%3E");
-    mask-size: contain;
-    mask-repeat: no-repeat;
-    -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23fff' d='M9.55 17.577L4 12.027l1.4-1.4 4.15 4.15 9.05-9.05 1.4 1.4z'/%3E%3C/svg%3E");
-    -webkit-mask-size: contain;
-    -webkit-mask-repeat: no-repeat;
+    top: 0.55em;
+    width: 18px;
+    height: 1px;
+    background: var(--color-accent);
   }
 
-  .wechsel-lists {
-    display: flex;
-    flex-direction: column;
-    gap: 2rem;
+  /* Wechsel */
+  .wechsel-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
   }
 
-  .wechsel-lists h3 {
-    margin-bottom: 1rem;
+  @media (max-width: 768px) { .wechsel-grid { grid-template-columns: 1fr; } }
+
+  .wechsel-col h3 {
     font-size: 1.1rem;
-    color: var(--color-primary-dark);
-  }
-
-  .section-quote {
-    background: var(--color-dark);
-    color: #fff;
-  }
-
-  .section-quote blockquote {
-    font-size: clamp(1.25rem, 2.5vw, 1.65rem);
-    line-height: 1.5;
-    max-width: 800px;
-    margin: 0 auto;
-    font-weight: 500;
+    color: var(--color-primary);
+    margin-bottom: 1.5rem;
   }
 
   /* Formular */
-  .section-form {
-    background: var(--color-bg-light);
-  }
+  .form-head { max-width: 600px; margin: 0 auto clamp(2.5rem, 5vw, 4rem); }
 
   .registrierung-form {
-    max-width: 720px;
-    margin: 0 auto;
     background: #fff;
-    padding: clamp(1.5rem, 4vw, 2.5rem);
+    padding: clamp(2rem, 4vw, 3rem);
     border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--color-border);
+    box-shadow: var(--shadow-md);
   }
 
-  .form-row {
-    margin-bottom: 1.25rem;
-  }
-
-  .form-row.grid-2 {
+  .form-row { margin-bottom: 1.5rem; }
+  .form-row-2 {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 1rem;
   }
 
   @media (max-width: 540px) {
-    .form-row.grid-2 {
-      grid-template-columns: 1fr;
-    }
+    .form-row-2 { grid-template-columns: 1fr; }
   }
 
-  .form-field {
-    display: flex;
-    flex-direction: column;
-    gap: 0.4rem;
-  }
+  .form-field { display: flex; flex-direction: column; gap: 0.5rem; }
 
   .form-field label {
-    font-size: 0.9rem;
+    font-size: 0.78rem;
     font-weight: 600;
-    color: var(--color-dark);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
   }
 
-  .optional {
-    color: var(--color-text-muted);
-    font-weight: 400;
-  }
+  .optional { color: var(--color-text-subtle); font-weight: 400; text-transform: none; letter-spacing: 0; }
 
   .form-field input,
   .form-field select {
     min-height: var(--min-touch-target);
-    padding: 0.625rem 0.875rem;
+    padding: 0.75rem 1rem;
     border: 1.5px solid var(--color-border);
     border-radius: var(--radius-sm);
     background: #fff;
-    transition: border-color 120ms ease, box-shadow 120ms ease;
+    font-size: 1rem;
+    transition: border-color 220ms ease, box-shadow 220ms ease;
   }
 
   .form-field input:focus,
   .form-field select:focus {
-    border-color: var(--color-primary);
     outline: none;
-    box-shadow: 0 0 0 3px var(--color-primary-light);
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.15);
   }
 
   .form-checks {
     display: flex;
     flex-direction: column;
     gap: 0.75rem;
-    margin-block: 1.5rem;
+    margin-block: 2rem;
+    padding-block: 1.5rem;
+    border-block: 1px solid var(--color-border);
   }
 
   .check {
@@ -467,48 +573,29 @@ import vorteile from '../data/makler-werden-vorteile.json';
   }
 
   .check input {
-    margin-top: 0.25rem;
-    width: 1.15rem;
-    height: 1.15rem;
+    margin-top: 0.2rem;
+    width: 1.1rem;
+    height: 1.1rem;
     accent-color: var(--color-primary);
   }
 
-  .check a {
-    color: var(--color-primary-dark);
-    text-decoration: underline;
-  }
+  .check a { color: var(--color-primary); text-decoration: underline; }
 
-  .form-submit {
-    text-align: center;
-    margin-top: 1.5rem;
-  }
-
-  .form-submit .btn {
-    min-width: 260px;
-  }
-
+  .form-submit { text-align: center; }
+  .form-submit .btn { min-width: 260px; }
   .form-hint {
-    margin-top: 1rem;
+    margin-top: 1.25rem;
     font-size: 0.85rem;
     color: var(--color-text-muted);
-    max-width: 40ch;
+    max-width: 42ch;
     margin-inline: auto;
   }
 
-  .form-success {
-    text-align: center;
-    padding: 2rem;
-  }
-
-  .form-success h3 {
-    color: var(--color-primary-dark);
-    margin-bottom: 0.5rem;
-  }
+  .form-success { text-align: center; padding: 2rem; }
+  .form-success h3 { color: var(--color-primary); margin-bottom: 0.5rem; }
 </style>
 
 <script>
-  // TODO(Phase 2): PW-API "Nutzer erstellen" anbinden, sobald CRM-Zugang vorliegt.
-  // Endpoint + Auth von Torsten (entwicklung@superbrand.marketing).
   const form = document.querySelector<HTMLFormElement>('[data-registrierung]');
   const success = document.querySelector<HTMLElement>('[data-form-success]');
 
@@ -518,7 +605,6 @@ import vorteile from '../data/makler-werden-vorteile.json';
       form.reportValidity();
       return;
     }
-    // Platzhalter: In Phase 2 wird hier ein fetch() an die PW-API ausgeführt.
     form.style.display = 'none';
     if (success) {
       success.hidden = false;

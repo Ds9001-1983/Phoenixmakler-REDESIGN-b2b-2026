@@ -1,4 +1,8 @@
 import Lenis from 'lenis';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+gsap.registerPlugin(ScrollTrigger);
 
 const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -10,11 +14,9 @@ if (!prefersReduced) {
     smoothWheel: true,
   });
 
-  function raf(time: number) {
-    lenis.raf(time);
-    requestAnimationFrame(raf);
-  }
-  requestAnimationFrame(raf);
+  lenis.on('scroll', ScrollTrigger.update);
+  gsap.ticker.add((time) => lenis.raf(time * 1000));
+  gsap.ticker.lagSmoothing(0);
 
   // Anchor links: smooth scroll
   document.querySelectorAll<HTMLAnchorElement>('a[href^="#"]').forEach((anchor) => {
@@ -30,7 +32,7 @@ if (!prefersReduced) {
   });
 }
 
-// --- Reveal on Scroll (dezent) ---
+// --- Reveal on Scroll ---
 const revealObserver = new IntersectionObserver(
   (entries) => {
     entries.forEach((entry) => {
@@ -44,3 +46,30 @@ const revealObserver = new IntersectionObserver(
 );
 
 document.querySelectorAll('[data-reveal]').forEach((el) => revealObserver.observe(el));
+
+// --- Number Counter (Scroll-triggered) ---
+document.querySelectorAll<HTMLElement>('[data-count]').forEach((el) => {
+  const target = parseFloat(el.dataset.count ?? '0');
+  const suffix = el.dataset.countSuffix ?? '';
+  const prefix = el.dataset.countPrefix ?? '';
+  const decimals = parseInt(el.dataset.countDecimals ?? '0', 10);
+  const duration = parseFloat(el.dataset.countDuration ?? '1.8');
+  const obj = { val: 0 };
+
+  ScrollTrigger.create({
+    trigger: el,
+    start: 'top 88%',
+    once: true,
+    onEnter: () => {
+      gsap.to(obj, {
+        val: target,
+        duration: prefersReduced ? 0.1 : duration,
+        ease: 'power2.out',
+        onUpdate: () => {
+          const v = decimals > 0 ? obj.val.toFixed(decimals) : Math.round(obj.val).toString();
+          el.textContent = `${prefix}${v}${suffix}`;
+        },
+      });
+    },
+  });
+});
