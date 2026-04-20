@@ -25,21 +25,20 @@ const year = new Date().getFullYear();
 
       <div class="footer-cols">
         <div>
-          <h3 class="footer-heading">Leistungen</h3>
+          <h3 class="footer-heading">Phönix</h3>
           <ul class="footer-list">
-            {navigation.footer.leistungen.map((item) => (
+            {navigation.footer.phoenix.map((item) => (
               <li><a href={item.href}>{item.label}</a></li>
             ))}
           </ul>
         </div>
 
         <div>
-          <h3 class="footer-heading">Phönix</h3>
+          <h3 class="footer-heading">Für Kunden</h3>
           <ul class="footer-list">
-            <li><a href="/ueber-uns">Über uns</a></li>
-            <li><a href="/makler-werden">Partner werden</a></li>
-            <li><a href="/makler-suche">Maklerfinder</a></li>
-            <li><a href="/kontakt">Kontakt</a></li>
+            {navigation.footer.kunden.map((item) => (
+              <li><a href={item.href}>{item.label}</a></li>
+            ))}
           </ul>
         </div>
 

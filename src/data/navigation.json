@@ -1,15 +1,22 @@
 {
   "primary": [
+    { "label": "Partner werden", "href": "/makler-werden" },
     { "label": "Über uns", "href": "/ueber-uns" },
-    { "label": "Leistungen", "href": "/kunde" },
     { "label": "Kontakt", "href": "/kontakt" }
   ],
   "cta": [
-    { "label": "Makler finden", "href": "/makler-suche", "variant": "outline" },
-    { "label": "Makler werden", "href": "/makler-werden", "variant": "primary" }
+    { "label": "Ich bin Kunde", "href": "/kunde", "variant": "link" },
+    { "label": "Partner werden", "href": "/makler-werden", "variant": "primary" }
   ],
   "footer": {
-    "leistungen": [
+    "phoenix": [
+      { "label": "Partner werden", "href": "/makler-werden" },
+      { "label": "Über uns", "href": "/ueber-uns" },
+      { "label": "Kontakt", "href": "/kontakt" }
+    ],
+    "kunden": [
+      { "label": "Für Kunden", "href": "/kunde" },
+      { "label": "Maklerfinder", "href": "/makler-suche" },
       { "label": "Altersvorsorge", "href": "/kunde/altersvorsorge" },
       { "label": "Einkommenssicherung", "href": "/kunde/einkommenssicherung" },
       { "label": "Zahnzusatzversicherung", "href": "/kunde/zahnzusatzversicherung" },
@@ -24,6 +31,15 @@
       { "label": "Erstinformation", "href": "/erstinformation" },
       { "label": "Beschwerdemanagement", "href": "/beschwerdemanagement" },
       { "label": "Barrierefreiheit", "href": "/barrierefreiheit" }
+    ],
+    "leistungen": [
+      { "label": "Altersvorsorge", "href": "/kunde/altersvorsorge" },
+      { "label": "Einkommenssicherung", "href": "/kunde/einkommenssicherung" },
+      { "label": "Zahnzusatzversicherung", "href": "/kunde/zahnzusatzversicherung" },
+      { "label": "Krankenhauszusatz", "href": "/kunde/krankenhauszusatzversicherung" },
+      { "label": "Haustier", "href": "/kunde/haustier" },
+      { "label": "Haus & Wohnen", "href": "/kunde/haus-wohnen" },
+      { "label": "Vermögensaufbau", "href": "/kunde/vermoegensaufbau" }
     ]
   },
   "kontakt": {
