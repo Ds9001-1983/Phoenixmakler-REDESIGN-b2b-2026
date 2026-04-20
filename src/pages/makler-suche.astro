@@ -1,20 +1,29 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import FooterCinematic from '../components/sections/FooterCinematic.astro';
 import makler from '../data/makler.json';
 
 const q = Astro.url.searchParams.get('q') ?? '';
 ---
 
-<BaseLayout title="Maklerfinder – Phönix Maklerverbund">
-  <section class="hero-suche">
-    <div class="container" data-reveal>
-      <span class="eyebrow">Maklerfinder</span>
-      <h1>Finden Sie <span class="accent">Ihren</span><br />Versicherungsmakler.</h1>
-      <p class="lead">
-        Alle Partner des Phönix Maklerverbunds auf einen Blick. Suchen Sie nach Ort,
-        PLZ oder Namen und nehmen Sie direkt Kontakt auf.
+<BaseLayout
+  title="Maklerfinder – Phönix Maklerverbund"
+  description="Alle Partner des Phönix Maklerverbunds auf einen Blick. Suchen Sie Ihren Makler nach PLZ, Ort oder Name."
+  hideFooter={true}
+>
+  {/* HERO */}
+  <section class="ms-hero">
+    <div class="ms-hero__container">
+      <span class="ms-hero__caption">Maklerfinder</span>
+      <h1 class="ms-hero__title" data-split="words" data-split-trigger="load" data-split-stagger="0.07" data-split-delay="0.2">
+        Finden Sie <em>Ihren</em><br/>Versicherungsmakler.
+      </h1>
+      <p class="ms-hero__lead" data-reveal data-reveal-delay="3">
+        Alle Maklerinnen und Makler des Phönix-Netzwerks auf einen Blick. PLZ, Ort oder Namen
+        eingeben — und direkt den passenden Ansprechpartner kontaktieren.
       </p>
-      <form class="search-bar" role="search" method="get">
+
+      <form class="ms-hero__form" role="search" method="get" data-reveal data-reveal-delay="4">
         <label for="q" class="visually-hidden">PLZ, Ort oder Name</label>
         <input
           id="q"
@@ -23,80 +32,148 @@ const q = Astro.url.searchParams.get('q') ?? '';
           placeholder="PLZ, Ort oder Name eingeben"
           value={q}
           data-search-input
+          autocomplete="off"
         />
-        <button type="submit" class="btn btn-primary">Suchen →</button>
+        <button type="submit" class="btn btn-accent btn-lg" data-magnetic data-cursor-label="Suchen">
+          Suchen
+          <svg width="18" height="14" viewBox="0 0 18 14" fill="none" aria-hidden="true"><path d="M1 7h15M12 1l5 6-5 6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
       </form>
     </div>
   </section>
 
-  <section class="section bg-soft">
-    <div class="container">
-      <p class="results-hint" data-reveal>
-        Zeigt aktuell {makler.length} Phönix-Partner. Die vollständige Liste mit über 120
-        Vermittlern wird nach Anbindung des CRM-Systems dynamisch geladen.
-      </p>
-      <ul class="makler-list" data-makler-list>
-        {makler.map((m, i) => (
-          <li
-            class="makler-card"
-            data-name={m.name.toLowerCase()}
-            data-ort={m.ort.toLowerCase()}
-            data-plz={m.plz}
-            data-reveal
-            data-reveal-delay={(i % 4) + 1}
-          >
-            <div class="makler-avatar" aria-hidden="true">
-              {m.name.split(' ').map((n) => n[0]).slice(0, 2).join('').toUpperCase()}
-            </div>
-            <div class="makler-info">
-              <h3>{m.name}</h3>
-              {m.ort !== '—' && <p class="makler-ort">{m.plz} {m.ort}</p>}
-              <div class="makler-actions">
-                <a href={`tel:${m.telefon.replace(/[\s\-]/g, '')}`} class="makler-link">Anrufen</a>
-                <span class="sep" aria-hidden="true">·</span>
-                <a href={`mailto:${m.email}`} class="makler-link">E-Mail</a>
+  {/* RESULTS */}
+  <section class="ms-results">
+    <div class="ms-results__container">
+      <div class="ms-results__head">
+        <div>
+          <span class="ms-results__caption">{makler.length} Ergebnisse</span>
+          <h2 class="ms-results__title">Phönix-Partner in Ihrer Nähe</h2>
+        </div>
+        <p class="ms-results__hint">
+          Aktuell zeigen wir {makler.length} von über 120 Partnern. Die vollständige Liste wird
+          nach Anbindung des CRM-Systems dynamisch geladen.
+        </p>
+      </div>
+
+      <ul class="ms-grid" data-makler-list>
+        {makler.map((m, i) => {
+          const initials = m.name.split(' ').map((n) => n[0]).slice(0, 2).join('').toUpperCase();
+          return (
+            <li
+              class="ms-card"
+              data-name={m.name.toLowerCase()}
+              data-ort={m.ort.toLowerCase()}
+              data-plz={m.plz}
+              data-reveal
+              data-reveal-delay={(i % 4) + 1}
+            >
+              <div class="ms-card__avatar" aria-hidden="true">{initials}</div>
+              <div class="ms-card__body">
+                <h3 class="ms-card__name">{m.name}</h3>
+                {m.ort !== '—' ? (
+                  <p class="ms-card__ort">{m.plz} {m.ort}</p>
+                ) : (
+                  <p class="ms-card__ort ms-card__ort--muted">Ort folgt</p>
+                )}
+                <div class="ms-card__actions">
+                  <a href={`tel:${m.telefon.replace(/[\s-]/g, '')}`} class="ms-card__link" data-cursor-label="Anrufen">
+                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M11.4 9.9c-.2 0-.4.1-.6.2l-1.5 1c-.3.2-.7.1-1-.1-.8-.7-1.5-1.4-2.2-2.2-.2-.3-.3-.7-.1-1l1-1.5c.2-.3.2-.7 0-1L5.4 2.7c-.2-.3-.6-.4-1-.3-.9.4-1.8.9-2.2 1.8-.8 1.6.3 4.1 2.7 6.5 2.4 2.4 4.9 3.5 6.5 2.7.9-.5 1.4-1.3 1.8-2.2.1-.4 0-.8-.3-1l-1.5-.3z" fill="currentColor"/></svg>
+                    Anrufen
+                  </a>
+                  <a href={`mailto:${m.email}`} class="ms-card__link" data-cursor-label="E-Mail">
+                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M12 3H2c-.6 0-1 .4-1 1v6c0 .6.4 1 1 1h10c.6 0 1-.4 1-1V4c0-.6-.4-1-1-1zm0 2L7 8 2 5V4l5 3 5-3v1z" fill="currentColor"/></svg>
+                    E-Mail
+                  </a>
+                </div>
               </div>
-            </div>
-          </li>
-        ))}
+            </li>
+          );
+        })}
       </ul>
+
+      <div class="ms-empty" data-ms-empty hidden>
+        <p>Keine Treffer für Ihre Suche. Versuchen Sie einen anderen Ort oder die PLZ.</p>
+      </div>
     </div>
   </section>
+
+  <FooterCinematic />
 </BaseLayout>
 
 <style>
-  .hero-suche {
-    padding-block: clamp(3rem, 6vw, 5rem);
+  .ms-hero {
+    padding-block: clamp(5rem, 10vh, 8rem) clamp(3rem, 6vh, 5rem);
     background: var(--color-bg);
   }
-
-  .hero-suche h1 { max-width: 22ch; }
-  .hero-suche h1 .accent { color: var(--color-primary); }
-  .hero-suche .lead { margin-block: 1.5rem 2.5rem; }
-
-  .search-bar {
+  .ms-hero__container {
+    max-width: var(--content-max-width);
+    margin-inline: auto;
+    padding-inline: var(--padding-x);
+  }
+  .ms-hero__caption {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-accent-dark);
+    margin-bottom: 1.5rem;
+  }
+  .ms-hero__title {
+    font-family: var(--font-display);
+    font-size: clamp(2.5rem, 6.5vw, 5.5rem);
+    font-weight: 400;
+    line-height: 0.96;
+    letter-spacing: -0.035em;
+    color: var(--color-ink);
+    margin: 0;
+    max-width: 18ch;
+    font-variation-settings: 'opsz' 144, 'SOFT' 100;
+  }
+  .ms-hero__title em {
+    font-style: italic;
+    font-weight: 300;
+    color: var(--color-accent);
+  }
+  .ms-hero__lead {
+    margin-top: 1.75rem;
+    font-size: 1.08rem;
+    line-height: 1.55;
+    color: var(--color-text-muted);
+    max-width: 56ch;
+  }
+  .ms-hero__form {
+    margin-top: 2.5rem;
     display: flex;
     gap: 0.5rem;
-    max-width: 560px;
+    max-width: 620px;
   }
-
-  .search-bar input {
+  .ms-hero__form input {
     flex: 1;
-    min-height: 52px;
-    padding: 0.9rem 1.25rem;
+    min-height: 60px;
+    padding: 1rem 1.5rem;
     background: #fff;
-    border: 1.5px solid var(--color-border);
+    border: 1.5px solid var(--color-border-strong);
     border-radius: 999px;
-    font-size: 1rem;
+    font-size: 1.05rem;
+    color: var(--color-ink);
   }
-
-  .search-bar input:focus {
+  .ms-hero__form input::placeholder { color: var(--color-text-subtle); }
+  .ms-hero__form input:focus {
     outline: none;
-    border-color: var(--color-primary);
-    box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.12);
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 3px rgba(184,134,91,0.15);
+  }
+  .ms-hero__form .btn {
+    min-height: 60px;
+    padding-inline: 1.75rem;
   }
 
-  .search-bar .btn { min-height: 52px; }
+  @media (max-width: 520px) {
+    .ms-hero__form { flex-direction: column; }
+    .ms-hero__form .btn { width: 100%; }
+  }
 
   .visually-hidden {
     position: absolute;
@@ -108,107 +185,171 @@ const q = Astro.url.searchParams.get('q') ?? '';
     border: 0;
   }
 
-  .results-hint {
-    font-size: 0.9rem;
-    color: var(--color-text-muted);
+  /* RESULTS */
+  .ms-results {
+    padding-block: clamp(4rem, 8vh, 6rem) clamp(5rem, 10vh, 8rem);
+    background: var(--color-bg-warm);
+  }
+  .ms-results__container {
+    max-width: var(--content-max-width);
+    margin-inline: auto;
+    padding-inline: var(--padding-x);
+  }
+  .ms-results__head {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    align-items: end;
+    padding-bottom: 2.5rem;
     margin-bottom: 2.5rem;
-    max-width: 64ch;
+    border-bottom: 1px solid var(--color-border);
+  }
+  .ms-results__caption {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-accent-dark);
+    margin-bottom: 0.75rem;
+  }
+  .ms-results__title {
+    font-family: var(--font-display);
+    font-size: clamp(1.75rem, 3vw, 2.5rem);
+    font-weight: 400;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    color: var(--color-ink);
+    margin: 0;
+    font-variation-settings: 'opsz' 144, 'SOFT' 75;
+  }
+  .ms-results__hint {
+    font-size: 0.92rem;
+    line-height: 1.55;
+    color: var(--color-text-muted);
+    margin: 0;
+    max-width: 46ch;
+    justify-self: end;
   }
 
-  .makler-list {
+  @media (max-width: 820px) {
+    .ms-results__head { grid-template-columns: 1fr; gap: 1rem; }
+    .ms-results__hint { justify-self: start; }
+  }
+
+  .ms-grid {
     list-style: none;
+    padding: 0;
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-    gap: 1rem;
+    gap: 1.25rem;
   }
 
-  .makler-card {
-    display: grid;
-    grid-template-columns: 64px 1fr;
+  .ms-card {
+    display: flex;
     gap: 1.25rem;
-    align-items: center;
     padding: 1.5rem;
     background: #fff;
     border: 1px solid var(--color-border);
-    border-radius: var(--radius-md);
-    transition: border-color 260ms ease, background-color 280ms ease, transform 220ms var(--ease-out);
+    border-radius: var(--radius-lg);
+    transition: border-color 280ms, transform 300ms var(--ease-out), box-shadow 280ms;
   }
-
-  .makler-card[hidden] { display: none; }
-
-  .makler-card:hover {
-    border-color: var(--color-border-strong);
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-sm);
+  .ms-card:hover {
+    border-color: var(--color-accent);
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-md);
   }
-
-  .makler-avatar {
-    width: 64px;
-    height: 64px;
-    border-radius: 50%;
-    background: var(--color-ink);
+  .ms-card__avatar {
+    flex-shrink: 0;
+    width: 56px;
+    height: 56px;
+    border-radius: 999px;
+    background: var(--color-primary-dark);
     color: #fff;
     display: flex;
     align-items: center;
     justify-content: center;
     font-family: var(--font-display);
-    font-weight: 700;
-    font-size: 1.15rem;
-    letter-spacing: 0.02em;
-  }
-
-  .makler-info h3 {
     font-size: 1.1rem;
-    margin-bottom: 0.2rem;
-    font-weight: 600;
+    font-weight: 500;
+    letter-spacing: -0.01em;
   }
-
-  .makler-ort {
+  .ms-card__body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    flex: 1;
+  }
+  .ms-card__name {
+    font-family: var(--font-display);
+    font-size: 1.2rem;
+    font-weight: 400;
+    line-height: 1.15;
+    letter-spacing: -0.015em;
+    color: var(--color-ink);
+    margin: 0;
+  }
+  .ms-card__ort {
     font-size: 0.88rem;
     color: var(--color-text-muted);
-    margin-bottom: 0.75rem;
+    margin: 0;
   }
-
-  .makler-actions {
+  .ms-card__ort--muted { color: var(--color-text-subtle); font-style: italic; }
+  .ms-card__actions {
     display: flex;
     gap: 0.75rem;
+    margin-top: 0.75rem;
+  }
+  .ms-card__link {
+    display: inline-flex;
     align-items: center;
+    gap: 0.4rem;
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    letter-spacing: 0.04em;
+    color: var(--color-accent-dark);
+    padding: 0.4rem 0.8rem;
+    background: var(--color-accent-light);
+    border-radius: 999px;
+    transition: background-color 200ms, color 200ms;
+  }
+  .ms-card__link:hover {
+    background: var(--color-accent);
+    color: var(--color-ink);
   }
 
-  .makler-link {
-    font-size: 0.88rem;
-    font-weight: 500;
-    color: var(--color-primary);
-    border-bottom: 1px solid transparent;
-    padding-bottom: 2px;
-    transition: border-color 220ms ease;
+  .ms-empty {
+    padding: 3rem;
+    text-align: center;
+    color: var(--color-text-muted);
   }
-
-  .makler-link:hover { border-bottom-color: var(--color-primary); }
-
-  .sep { color: var(--color-border-strong); }
 </style>
 
 <script>
-  // TODO(Phase 2): Liste aus PW-API laden, sobald CRM-Zugang vorliegt.
+  // Live-Filter: Input tippen → Cards filtern
   const input = document.querySelector<HTMLInputElement>('[data-search-input]');
-  const list = document.querySelectorAll<HTMLLIElement>('.makler-card');
+  const cards = document.querySelectorAll<HTMLLIElement>('[data-makler-list] li');
+  const empty = document.querySelector<HTMLElement>('[data-ms-empty]');
 
-  const applyFilter = (q: string) => {
-    const term = q.trim().toLowerCase();
-    list.forEach((item) => {
-      const haystack = [item.dataset.name, item.dataset.ort, item.dataset.plz].join(' ');
-      item.hidden = term.length > 0 && !haystack.includes(term);
+  const applyFilter = (value: string) => {
+    const q = value.trim().toLowerCase();
+    let visible = 0;
+    cards.forEach((card) => {
+      const name = card.dataset.name ?? '';
+      const ort = card.dataset.ort ?? '';
+      const plz = card.dataset.plz ?? '';
+      const match = !q || name.includes(q) || ort.includes(q) || plz.startsWith(q);
+      card.style.display = match ? '' : 'none';
+      if (match) visible++;
     });
+    if (empty) empty.hidden = visible > 0;
   };
 
-  const urlQ = new URLSearchParams(window.location.search).get('q');
-  if (input && urlQ) {
-    input.value = urlQ;
-    applyFilter(urlQ);
+  if (input) {
+    // Initial filter based on URL param
+    applyFilter(input.value);
+    input.addEventListener('input', (e) => {
+      applyFilter((e.target as HTMLInputElement).value);
+    });
   }
-
-  input?.addEventListener('input', (e) => {
-    applyFilter((e.target as HTMLInputElement).value);
-  });
 </script>

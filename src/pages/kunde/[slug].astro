@@ -2,9 +2,7 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import ErstinformationModal from '../../components/ErstinformationModal.astro';
 import CookieConsent from '../../components/CookieConsent.astro';
-import TeaserCard from '../../components/TeaserCard.astro';
-import ProductBlock from '../../components/ProductBlock.astro';
-import MaklerFindenCTA from '../../components/MaklerFindenCTA.astro';
+import FooterCinematic from '../../components/sections/FooterCinematic.astro';
 import produkteData from '../../data/produkte.json';
 
 const heroImage: Record<string, string> = {
@@ -32,20 +30,34 @@ if (!produkt) {
 }
 ---
 
-<BaseLayout title={produkt.title}>
+<BaseLayout title={produkt.title} hideFooter={true}>
   <ErstinformationModal />
   <CookieConsent />
 
-  {/* HERO asymmetric mit Pot-Bild */}
-  <section class="hero">
-    <div class="container hero-inner">
-      <div class="hero-text" data-reveal>
-        <span class="badge">{produkt.eyebrow}</span>
-        <h1>{produkt.title}</h1>
-        <p class="lead">{produkt.intro}</p>
+  {/* HERO */}
+  <section class="pr-hero">
+    <div class="pr-hero__container">
+      <div class="pr-hero__text">
+        <span class="pr-hero__caption">{produkt.eyebrow}</span>
+        <h1 class="pr-hero__title" data-split="words" data-split-trigger="load" data-split-stagger="0.06" data-split-delay="0.2">
+          {produkt.title}
+        </h1>
+        <p class="pr-hero__lead" data-reveal data-reveal-delay="3">
+          {produkt.intro}
+        </p>
+        <div class="pr-hero__meta" data-reveal data-reveal-delay="4">
+          <a href="/makler-suche" class="pr-hero__link" data-cursor-label="Makler finden">
+            Zum Maklerfinder
+            <svg width="14" height="10" viewBox="0 0 14 10" fill="none" aria-hidden="true"><path d="M1 5h11M9 1l4 4-4 4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </a>
+          <span class="pr-hero__sep" aria-hidden="true">·</span>
+          <a href="/kunde" class="pr-hero__link" data-cursor-label="Übersicht">
+            Alle Bereiche
+          </a>
+        </div>
       </div>
-      <div class="hero-visual" data-reveal data-reveal-delay="1">
-        <div class="hero-visual-frame">
+      <div class="pr-hero__visual" data-reveal data-reveal-delay="1">
+        <div class="pr-hero__media">
           <img src={heroImage[slug]} alt="" width="1024" height="1024" loading="eager" fetchpriority="high" />
         </div>
       </div>
@@ -53,17 +65,24 @@ if (!produkt) {
   </section>
 
   {produkt.pots.length > 0 && (
-    <section class="section bg-soft">
-      <div class="container">
-        <div class="section-head" data-reveal>
-          <span class="eyebrow">Themen &amp; Tipps</span>
-          <h2>Wissenswertes auf einen Blick.</h2>
+    <section class="pr-pots">
+      <div class="pr-pots__container">
+        <div class="pr-pots__head">
+          <span class="pr-pots__caption">Themen &amp; Tipps</span>
+          <h2 class="pr-pots__title">
+            Wissenswertes,<br/>
+            <em>auf einen Blick.</em>
+          </h2>
         </div>
-        <div class="pots-grid">
+        <div class="pr-pots__grid">
           {produkt.pots.map((pot, i) => (
-            <div data-reveal data-reveal-delay={(i % 3) + 1}>
-              <TeaserCard headline={pot.headline} url={pot.url} />
-            </div>
+            <a href={pot.url} class="pr-pot" target="_blank" rel="noopener" data-reveal data-reveal-delay={(i % 3) + 1} data-cursor-label="Mehr lesen">
+              <span class="pr-pot__num">{String(i + 1).padStart(2, '0')}</span>
+              <h3 class="pr-pot__title">{pot.headline}</h3>
+              <span class="pr-pot__arrow" aria-hidden="true">
+                <svg width="20" height="14" viewBox="0 0 20 14" fill="none"><path d="M1 7h17M14 1l5 6-5 6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </span>
+            </a>
           ))}
         </div>
       </div>
@@ -71,71 +90,416 @@ if (!produkt) {
   )}
 
   {produkt.produkte.length > 0 && (
-    <section class="section">
-      <div class="container">
-        <div class="section-head" data-reveal>
-          <span class="eyebrow">Empfohlene Produkte</span>
-          <h2>Direkt berechnen<br />und abschließen.</h2>
+    <section class="pr-prod">
+      <div class="pr-prod__container">
+        <div class="pr-prod__head">
+          <span class="pr-prod__caption">Empfohlene Produkte</span>
+          <h2 class="pr-prod__title">
+            Direkt berechnen<br/>
+            und <em>abschließen.</em>
+          </h2>
+          <p class="pr-prod__lead">
+            Für konkrete Beratung ist Ihr persönlicher Makler da. Die Links führen zu externen
+            Rechnern unserer Partner-Versicherer.
+          </p>
         </div>
-        <div class="product-stack">
+        <div class="pr-prod__list">
           {produkt.produkte.map((p, i) => (
-            <div data-reveal data-reveal-delay={(i % 3) + 1}>
-              <ProductBlock name={p.name} text={p.text} logo={p.logo} url={p.url} />
-            </div>
+            <article class="pr-prod__item" data-reveal data-reveal-delay={(i % 3) + 1}>
+              <div class="pr-prod__logo">
+                <img src={p.logo} alt={p.name} loading="lazy" />
+              </div>
+              <div class="pr-prod__body">
+                <h3 class="pr-prod__name">{p.name}</h3>
+                <p class="pr-prod__text">{p.text}</p>
+              </div>
+              <a href={p.url} target="_blank" rel="noopener" class="btn btn-primary" data-magnetic data-cursor-label="Zum Rechner">
+                Berechnen
+                <svg width="14" height="10" viewBox="0 0 14 10" fill="none" aria-hidden="true"><path d="M1 5h11M9 1l4 4-4 4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </a>
+            </article>
           ))}
         </div>
       </div>
     </section>
   )}
 
-  <MaklerFindenCTA />
+  {/* Rückführung zum Maklerfinder (Meeting-Wunsch: von Produktseite auch auf Makler-finden) */}
+  <section class="pr-cta">
+    <div class="pr-cta__container">
+      <div class="pr-cta__inner" data-reveal>
+        <span class="pr-cta__caption">Ihr persönlicher Kontakt</span>
+        <h2 class="pr-cta__title">
+          Fragen zu diesem Bereich?<br/>
+          <em>Ihr Makler ist für Sie da.</em>
+        </h2>
+        <p class="pr-cta__lead">
+          Die Produkte oben sind eine Orientierungshilfe. Für eine konkrete Empfehlung — abgestimmt
+          auf Ihre Situation — wenden Sie sich bitte an Ihren persönlichen Versicherungsmakler aus
+          dem Phönix-Netzwerk.
+        </p>
+        <div class="pr-cta__actions">
+          <a href="/makler-suche" class="btn btn-accent btn-lg" data-magnetic data-cursor-label="Maklersuche">
+            Makler finden
+            <svg width="18" height="14" viewBox="0 0 18 14" fill="none" aria-hidden="true"><path d="M1 7h15M12 1l5 6-5 6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </a>
+          <a href="/kunde" class="pr-cta__link" data-cursor-label="Zurück">
+            Alle Leistungsbereiche
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <FooterCinematic />
 </BaseLayout>
 
 <style>
-  .hero {
-    padding-block: clamp(2.5rem, 5vw, 4.5rem) clamp(3rem, 6vw, 5rem);
+  /* HERO */
+  .pr-hero {
+    padding-block: clamp(5rem, 10vh, 8rem) clamp(3rem, 6vh, 5rem);
     background: var(--color-bg);
-    overflow: hidden;
   }
-
-  .hero-inner {
+  .pr-hero__container {
+    max-width: var(--content-max-width);
+    margin-inline: auto;
+    padding-inline: var(--padding-x);
     display: grid;
     grid-template-columns: 1.1fr 0.9fr;
     gap: clamp(2rem, 5vw, 5rem);
     align-items: center;
   }
+  .pr-hero__text { max-width: 620px; }
+  .pr-hero__caption {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-accent-dark);
+    margin-bottom: 1.25rem;
+  }
+  .pr-hero__title {
+    font-family: var(--font-display);
+    font-size: clamp(2.25rem, 5.5vw, 4.5rem);
+    font-weight: 400;
+    line-height: 0.98;
+    letter-spacing: -0.03em;
+    color: var(--color-ink);
+    margin: 0;
+    max-width: 18ch;
+    font-variation-settings: 'opsz' 144, 'SOFT' 100;
+  }
+  .pr-hero__lead {
+    margin-top: 1.75rem;
+    font-size: 1.08rem;
+    line-height: 1.55;
+    color: var(--color-text);
+    max-width: 54ch;
+  }
+  .pr-hero__meta {
+    margin-top: 2rem;
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .pr-hero__link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.82rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--color-accent-dark);
+    border-bottom: 1px solid rgba(184,134,91,0.3);
+    padding-bottom: 0.2rem;
+    transition: color 200ms, border-color 200ms, gap 250ms;
+  }
+  .pr-hero__link:hover {
+    color: var(--color-accent);
+    border-bottom-color: var(--color-accent);
+    gap: 0.75rem;
+  }
+  .pr-hero__sep { color: var(--color-text-muted); }
 
-  @media (max-width: 900px) { .hero-inner { grid-template-columns: 1fr; gap: 3rem; } }
-
-  .hero-text h1 { max-width: 18ch; margin-block: 0 1.5rem; }
-
-  .hero-visual-frame {
+  .pr-hero__media {
     aspect-ratio: 4/5;
     overflow: hidden;
     border-radius: var(--radius-lg);
     background: var(--color-bg-soft);
     box-shadow: var(--shadow-lg);
   }
+  .pr-hero__media img { width: 100%; height: 100%; object-fit: cover; }
 
-  @media (max-width: 900px) { .hero-visual-frame { aspect-ratio: 4/3; } }
+  @media (max-width: 960px) {
+    .pr-hero__container { grid-template-columns: 1fr; gap: 3rem; }
+    .pr-hero__media { aspect-ratio: 4/3; }
+  }
 
-  .hero-visual-frame img { width: 100%; height: 100%; object-fit: cover; }
-
-  .section-head { max-width: 640px; margin-bottom: clamp(2rem, 5vw, 3.5rem); }
-
-  .pots-grid {
+  /* POTS */
+  .pr-pots {
+    padding-block: clamp(5rem, 10vh, 8rem);
+    background: var(--color-bg-warm);
+  }
+  .pr-pots__container {
+    max-width: var(--content-max-width);
+    margin-inline: auto;
+    padding-inline: var(--padding-x);
+  }
+  .pr-pots__head {
+    max-width: 28ch;
+    margin-bottom: clamp(3rem, 6vh, 4.5rem);
+  }
+  .pr-pots__caption {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-accent-dark);
+    margin-bottom: 1rem;
+  }
+  .pr-pots__title {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 400;
+    line-height: 1.02;
+    letter-spacing: -0.025em;
+    color: var(--color-ink);
+    margin: 0;
+    font-variation-settings: 'opsz' 144, 'SOFT' 75;
+  }
+  .pr-pots__title em {
+    font-style: italic;
+    font-weight: 300;
+    color: var(--color-accent);
+  }
+  .pr-pots__grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 1.5rem;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.25rem;
+  }
+  @media (min-width: 820px) {
+    .pr-pots__grid { grid-template-columns: repeat(3, 1fr); }
   }
 
-  @media (min-width: 720px) {
-    .pots-grid { grid-template-columns: repeat(3, 1fr); }
-  }
-
-  .product-stack {
+  .pr-pot {
     display: flex;
     flex-direction: column;
-    gap: 1.25rem;
+    gap: 1rem;
+    padding: 2rem 1.75rem;
+    background: #fff;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    color: var(--color-ink);
+    text-decoration: none;
+    min-height: 13rem;
+    transition: border-color 280ms, transform 300ms var(--ease-out), box-shadow 280ms;
+  }
+  .pr-pot:hover {
+    border-color: var(--color-accent);
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-md);
+  }
+  .pr-pot__num {
+    font-family: var(--font-mono);
+    font-size: 0.74rem;
+    letter-spacing: 0.1em;
+    color: var(--color-accent-dark);
+  }
+  .pr-pot__title {
+    font-family: var(--font-display);
+    font-size: 1.2rem;
+    font-weight: 400;
+    line-height: 1.3;
+    letter-spacing: -0.015em;
+    color: var(--color-ink);
+    margin: 0;
+  }
+  .pr-pot__arrow {
+    margin-top: auto;
+    color: var(--color-accent-dark);
+    transition: transform 300ms, color 200ms;
+  }
+  .pr-pot:hover .pr-pot__arrow {
+    transform: translateX(4px);
+    color: var(--color-accent);
+  }
+
+  /* PRODUKTE */
+  .pr-prod {
+    padding-block: clamp(5rem, 10vh, 8rem);
+    background: var(--color-bg);
+  }
+  .pr-prod__container {
+    max-width: var(--content-max-width);
+    margin-inline: auto;
+    padding-inline: var(--padding-x);
+  }
+  .pr-prod__head {
+    max-width: 52ch;
+    margin-bottom: clamp(3rem, 6vh, 4.5rem);
+  }
+  .pr-prod__caption {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-accent-dark);
+    margin-bottom: 1rem;
+  }
+  .pr-prod__title {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 400;
+    line-height: 1.02;
+    letter-spacing: -0.025em;
+    color: var(--color-ink);
+    margin: 0 0 1rem;
+    font-variation-settings: 'opsz' 144, 'SOFT' 75;
+  }
+  .pr-prod__title em {
+    font-style: italic;
+    font-weight: 300;
+    color: var(--color-accent);
+  }
+  .pr-prod__lead {
+    font-size: 1rem;
+    line-height: 1.55;
+    color: var(--color-text-muted);
+    margin: 0;
+    max-width: 52ch;
+  }
+
+  .pr-prod__list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  .pr-prod__item {
+    display: grid;
+    grid-template-columns: 140px 1fr auto;
+    gap: 2rem;
+    align-items: center;
+    padding: 1.75rem 2rem;
+    background: #fff;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    transition: border-color 280ms, box-shadow 280ms;
+  }
+  .pr-prod__item:hover {
+    border-color: var(--color-accent);
+    box-shadow: var(--shadow-md);
+  }
+  .pr-prod__logo {
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+  }
+  .pr-prod__logo img {
+    max-height: 100%;
+    max-width: 140px;
+    width: auto;
+    filter: grayscale(1) contrast(0.9);
+    opacity: 0.85;
+    transition: filter 300ms, opacity 300ms;
+  }
+  .pr-prod__item:hover .pr-prod__logo img {
+    filter: grayscale(0) contrast(1);
+    opacity: 1;
+  }
+  .pr-prod__name {
+    font-family: var(--font-display);
+    font-size: 1.2rem;
+    font-weight: 400;
+    line-height: 1.2;
+    letter-spacing: -0.015em;
+    color: var(--color-ink);
+    margin: 0 0 0.35rem;
+  }
+  .pr-prod__text {
+    font-size: 0.94rem;
+    line-height: 1.5;
+    color: var(--color-text-muted);
+    margin: 0;
+    max-width: 62ch;
+  }
+
+  @media (max-width: 780px) {
+    .pr-prod__item { grid-template-columns: 1fr; gap: 1.25rem; }
+    .pr-prod__logo { height: 40px; }
+    .pr-prod__item .btn { align-self: flex-start; }
+  }
+
+  /* CTA — Makler finden (Meeting-Wunsch) */
+  .pr-cta {
+    padding-block: clamp(5rem, 10vh, 8rem);
+    background: var(--color-primary-darker);
+    color: #fff;
+  }
+  .pr-cta__container {
+    max-width: 900px;
+    margin-inline: auto;
+    padding-inline: var(--padding-x);
+  }
+  .pr-cta__inner {
+    text-align: center;
+  }
+  .pr-cta__caption {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-accent);
+    margin-bottom: 1.25rem;
+  }
+  .pr-cta__title {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 4.5vw, 3.25rem);
+    font-weight: 400;
+    line-height: 1.05;
+    letter-spacing: -0.025em;
+    color: #fff;
+    margin: 0 auto 1.5rem;
+    max-width: 22ch;
+    font-variation-settings: 'opsz' 144, 'SOFT' 75;
+  }
+  .pr-cta__title em {
+    font-style: italic;
+    font-weight: 300;
+    color: var(--color-accent);
+  }
+  .pr-cta__lead {
+    font-size: 1.02rem;
+    line-height: 1.6;
+    color: rgba(255,255,255,0.75);
+    max-width: 56ch;
+    margin: 0 auto 2.5rem;
+  }
+  .pr-cta__actions {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+  }
+  .pr-cta__link {
+    font-family: var(--font-mono);
+    font-size: 0.82rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.72);
+    border-bottom: 1px solid rgba(255,255,255,0.25);
+    padding-bottom: 0.2rem;
+    transition: color 200ms, border-color 200ms;
+  }
+  .pr-cta__link:hover {
+    color: var(--color-accent);
+    border-bottom-color: var(--color-accent);
   }
 </style>

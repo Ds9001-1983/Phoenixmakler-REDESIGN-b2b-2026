@@ -2,6 +2,8 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import ErstinformationModal from '../../components/ErstinformationModal.astro';
 import CookieConsent from '../../components/CookieConsent.astro';
+import InsurerMarquee from '../../components/sections/InsurerMarquee.astro';
+import FooterCinematic from '../../components/sections/FooterCinematic.astro';
 import kacheln from '../../data/kunde-kacheln.json';
 
 const kachelImage: Record<string, string> = {
@@ -13,132 +15,172 @@ const kachelImage: Record<string, string> = {
   'haus-wohnen': '/images/hero/pot-haus.png',
   vermoegensaufbau: '/images/hero/pot-vermoegen.png',
 };
+
+const kachelNum = (i: number) => String(i + 1).padStart(2, '0');
 ---
 
-<BaseLayout title="Für Kunden – Phönix Maklerverbund">
+<BaseLayout
+  title="Für Kunden – Phönix Maklerverbund"
+  description="Ihr Ansprechpartner ist Ihr Versicherungsmakler. Hier finden Sie Ihren Makler aus dem Phönix-Netzwerk."
+  hideFooter={true}
+>
   <ErstinformationModal />
   <CookieConsent />
 
-  {/* HERO — Pflicht-Wortlaut aus Meeting 15.04.2026, Maklersuche direkt integriert */}
-  <section class="hero">
-    <div class="container hero-inner">
-      <div class="hero-text" data-reveal>
-        <span class="badge">Für Kundinnen &amp; Kunden</span>
-        <h1>
-          Ihr Ansprechpartner<br />
-          <span class="accent">ist Ihr Makler.</span>
+  {/* HERO — Meeting-Wortlaut + integrierte Maklersuche */}
+  <section class="kd-hero">
+    <div class="kd-hero__container">
+      <div class="kd-hero__text">
+        <span class="kd-hero__caption">Für Kundinnen &amp; Kunden</span>
+        <h1 class="kd-hero__title" data-split="words" data-split-trigger="load" data-split-stagger="0.07" data-split-delay="0.2">
+          Ihr Ansprechpartner<br/>
+          <em>ist Ihr Makler.</em>
         </h1>
-        <p class="lead">
+        <p class="kd-hero__lead" data-reveal data-reveal-delay="3">
           Der Phönix Maklerverbund hilft Maklern bei der Abwicklung ihrer Geschäfte.
           Ansprechpartner für Sie als Kundin oder Kunde ist aber <strong>Ihr Versicherungsmakler</strong> —
           die Person, die Ihre Verträge betreut und Sie persönlich kennt.
         </p>
 
-        <div class="hero-search">
-          <p class="hero-search-label">Hier finden Sie Ihren Versicherungsmakler:</p>
-          <form class="hero-search-form" action="/makler-suche" method="get" role="search">
-            <label for="hero-search-query" class="visually-hidden">PLZ oder Name</label>
+        <div class="kd-hero__search" data-reveal data-reveal-delay="4">
+          <p class="kd-hero__search-label">Hier finden Sie Ihren Versicherungsmakler:</p>
+          <form class="kd-hero__form" action="/makler-suche" method="get" role="search">
+            <label for="kd-search" class="visually-hidden">PLZ oder Name</label>
             <input
               type="search"
-              id="hero-search-query"
+              id="kd-search"
               name="q"
               placeholder="PLZ oder Name eingeben"
               autocomplete="postal-code"
               required
             />
-            <button type="submit" class="btn btn-primary">Suchen →</button>
+            <button type="submit" class="btn btn-primary">
+              Suchen
+              <svg width="14" height="10" viewBox="0 0 14 10" fill="none" aria-hidden="true"><path d="M1 5h11M9 1l4 4-4 4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
           </form>
-          <p class="hero-search-hint">Über 120 Maklerinnen und Makler bundesweit.</p>
+          <p class="kd-hero__hint">
+            Über 120 Maklerinnen und Makler bundesweit · Direkter Kontakt zu Ihrem persönlichen Ansprechpartner
+          </p>
         </div>
       </div>
-      <div class="hero-visual" data-reveal data-reveal-delay="1">
-        <div class="hero-visual-frame">
+      <div class="kd-hero__visual" data-reveal data-reveal-delay="1">
+        <div class="kd-hero__media">
           <img src="/images/audience/kunde.png" alt="Familie im Wohnzimmer" width="1024" height="1280" loading="eager" fetchpriority="high" />
         </div>
       </div>
     </div>
   </section>
 
-  {/* LEISTUNGEN Bento */}
-  <section class="section">
-    <div class="container">
-      <div class="section-head" data-reveal>
-        <span class="eyebrow">Leistungsbereiche</span>
-        <h2>Sieben Bereiche.<br />Eine Beratung auf Augenhöhe.</h2>
+  {/* LEISTUNGEN */}
+  <section class="kd-leistungen">
+    <div class="kd-leistungen__container">
+      <div class="kd-leistungen__head">
+        <span class="kd-leistungen__caption">Leistungsbereiche</span>
+        <h2 class="kd-leistungen__title">
+          Sieben Bereiche.<br/>
+          <em>Eine</em> Beratung auf Augenhöhe.
+        </h2>
+        <p class="kd-leistungen__lead">
+          Diese Produktinformationen stellen wir als Service bereit. Für eine konkrete Beratung
+          ist Ihr persönlicher Makler da.
+        </p>
       </div>
 
-      <div class="leistungen-grid">
+      <div class="kd-leistungen__grid">
         {kacheln.map((k, i) => (
-          <a href={`/kunde/${k.slug}`} class="leistung-card" data-reveal data-reveal-delay={(i % 3) + 1}>
-            <div class="leistung-media">
-              <img src={kachelImage[k.slug]} alt="" loading="lazy" />
+          <a href={`/kunde/${k.slug}`} class="kd-tile" data-reveal data-reveal-delay={(i % 3) + 1} data-cursor-label="Mehr anzeigen">
+            <div class="kd-tile__media">
+              <img src={kachelImage[k.slug]} alt="" loading="lazy" decoding="async" />
             </div>
-            <div class="leistung-body">
-              <h3>{k.title}</h3>
-              <p>{k.text}</p>
-              <span class="leistung-arrow">Ansehen →</span>
+            <div class="kd-tile__body">
+              <span class="kd-tile__num">{kachelNum(i)}</span>
+              <h3 class="kd-tile__title">{k.title}</h3>
+              <p class="kd-tile__text">{k.text}</p>
+              <span class="kd-tile__arrow" aria-hidden="true">
+                <svg width="20" height="14" viewBox="0 0 20 14" fill="none"><path d="M1 7h17M14 1l5 6-5 6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </span>
             </div>
           </a>
         ))}
       </div>
     </div>
   </section>
+
+  <InsurerMarquee />
+  <FooterCinematic />
 </BaseLayout>
 
 <style>
   /* HERO */
-  .hero {
-    padding-block: clamp(2.5rem, 5vw, 4.5rem) clamp(3rem, 6vw, 5rem);
+  .kd-hero {
+    padding-block: clamp(5rem, 10vh, 8rem) clamp(4rem, 8vh, 6rem);
     background: var(--color-bg);
-    overflow: hidden;
   }
-
-  .hero-inner {
+  .kd-hero__container {
+    max-width: var(--content-max-width);
+    margin-inline: auto;
+    padding-inline: var(--padding-x);
     display: grid;
     grid-template-columns: 1.1fr 0.9fr;
     gap: clamp(2rem, 5vw, 5rem);
     align-items: center;
   }
-
-  @media (max-width: 900px) { .hero-inner { grid-template-columns: 1fr; gap: 3rem; } }
-
-  .hero-text h1 .accent { color: var(--color-primary); }
-  .hero-text .lead { margin-top: 1.5rem; }
-
-  .hero-visual-frame {
-    aspect-ratio: 4/5;
-    overflow: hidden;
-    border-radius: var(--radius-lg);
-    background: var(--color-bg-soft);
-    box-shadow: var(--shadow-lg);
+  .kd-hero__text { max-width: 620px; }
+  .kd-hero__caption {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-accent-dark);
+    margin-bottom: 1.5rem;
   }
+  .kd-hero__title {
+    font-family: var(--font-display);
+    font-size: clamp(2.75rem, 6.5vw, 5.5rem);
+    font-weight: 400;
+    line-height: 0.96;
+    letter-spacing: -0.035em;
+    color: var(--color-ink);
+    margin: 0;
+    font-variation-settings: 'opsz' 144, 'SOFT' 100;
+  }
+  .kd-hero__title em {
+    font-style: italic;
+    font-weight: 300;
+    color: var(--color-accent);
+  }
+  .kd-hero__lead {
+    margin-top: 1.75rem;
+    font-size: clamp(1rem, 1.3vw, 1.12rem);
+    line-height: 1.6;
+    color: var(--color-text);
+    max-width: 58ch;
+  }
+  .kd-hero__lead strong { color: var(--color-ink); font-weight: 500; }
 
-  @media (max-width: 900px) { .hero-visual-frame { aspect-ratio: 4/3; } }
-
-  .hero-visual-frame img { width: 100%; height: 100%; object-fit: cover; }
-
-  /* Hero-Maklersuche — direkt im Hero, nicht als separater Block */
-  .hero-search {
-    margin-top: 2rem;
-    padding: 1.5rem 1.5rem 1.25rem;
+  .kd-hero__search {
+    margin-top: 2.25rem;
+    padding: 1.5rem;
     background: var(--color-primary-dark);
     color: #fff;
     border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-lg);
+    box-shadow: var(--shadow-md);
   }
-  .hero-search-label {
-    font-size: 0.92rem;
-    font-weight: 600;
+  .kd-hero__search-label {
+    font-family: var(--font-body);
+    font-size: 0.98rem;
+    font-weight: 500;
     color: #fff;
-    margin-bottom: 0.9rem;
-    max-width: 100%;
+    margin: 0 0 0.9rem;
   }
-  .hero-search-form {
+  .kd-hero__form {
     display: flex;
     gap: 0.5rem;
-    margin-bottom: 0.6rem;
+    margin-bottom: 0.75rem;
   }
-  .hero-search-form input {
+  .kd-hero__form input {
     flex: 1;
     min-height: 52px;
     padding: 0.9rem 1.25rem;
@@ -148,32 +190,52 @@ const kachelImage: Record<string, string> = {
     font-size: 1rem;
     color: #fff;
   }
-  .hero-search-form input::placeholder { color: rgba(255,255,255,0.55); }
-  .hero-search-form input:focus {
+  .kd-hero__form input::placeholder { color: rgba(255,255,255,0.55); }
+  .kd-hero__form input:focus {
     outline: none;
     border-color: var(--color-accent);
     background: rgba(255,255,255,0.1);
   }
-  .hero-search-form .btn {
+  .kd-hero__form .btn {
     min-height: 52px;
     padding-inline: 1.5rem;
+    gap: 0.5rem;
     background: var(--color-accent);
     color: var(--color-ink);
     border-color: var(--color-accent);
   }
-  .hero-search-form .btn:hover {
+  .kd-hero__form .btn:hover {
     background: var(--color-accent-bright);
     border-color: var(--color-accent-bright);
   }
-  .hero-search-hint {
+  .kd-hero__hint {
     font-size: 0.82rem;
+    line-height: 1.5;
     color: rgba(255,255,255,0.55);
     margin: 0;
   }
 
+  .kd-hero__visual { position: relative; }
+  .kd-hero__media {
+    aspect-ratio: 4/5;
+    overflow: hidden;
+    border-radius: var(--radius-lg);
+    background: var(--color-bg-soft);
+    box-shadow: var(--shadow-lg);
+  }
+  .kd-hero__media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  @media (max-width: 960px) {
+    .kd-hero__container { grid-template-columns: 1fr; gap: 3rem; }
+    .kd-hero__media { aspect-ratio: 4/3; }
+  }
   @media (max-width: 520px) {
-    .hero-search-form { flex-direction: column; }
-    .hero-search-form .btn { width: 100%; }
+    .kd-hero__form { flex-direction: column; }
+    .kd-hero__form .btn { width: 100%; }
   }
 
   .visually-hidden {
@@ -186,17 +248,59 @@ const kachelImage: Record<string, string> = {
     border: 0;
   }
 
-  /* Section Head */
-  .section-head { max-width: 680px; margin-bottom: clamp(2.5rem, 5vw, 4rem); }
-
-  /* Leistungen */
-  .leistungen-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-    gap: 1.5rem;
+  /* LEISTUNGEN */
+  .kd-leistungen {
+    padding-block: clamp(5rem, 10vh, 8rem);
+    background: var(--color-bg-warm);
+  }
+  .kd-leistungen__container {
+    max-width: var(--content-max-width);
+    margin-inline: auto;
+    padding-inline: var(--padding-x);
+  }
+  .kd-leistungen__head {
+    max-width: 58ch;
+    margin-bottom: clamp(3rem, 6vh, 4.5rem);
+  }
+  .kd-leistungen__caption {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-accent-dark);
+    margin-bottom: 1rem;
+  }
+  .kd-leistungen__title {
+    font-family: var(--font-display);
+    font-size: clamp(2.25rem, 5vw, 4rem);
+    font-weight: 400;
+    line-height: 1.02;
+    letter-spacing: -0.025em;
+    color: var(--color-ink);
+    margin: 0 0 1rem;
+    font-variation-settings: 'opsz' 144, 'SOFT' 75;
+  }
+  .kd-leistungen__title em {
+    font-style: italic;
+    font-weight: 300;
+    color: var(--color-accent);
+  }
+  .kd-leistungen__lead {
+    font-size: 1rem;
+    line-height: 1.55;
+    color: var(--color-text-muted);
+    max-width: 52ch;
+    margin: 0;
   }
 
-  .leistung-card {
+  .kd-leistungen__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: clamp(1.25rem, 2.5vw, 1.75rem);
+  }
+
+  .kd-tile {
     display: flex;
     flex-direction: column;
     background: #fff;
@@ -204,48 +308,65 @@ const kachelImage: Record<string, string> = {
     border-radius: var(--radius-lg);
     overflow: hidden;
     color: var(--color-ink);
-    transition: border-color 260ms ease, transform 260ms var(--ease-out), box-shadow 260ms ease;
+    text-decoration: none;
+    transition: border-color 280ms ease, transform 320ms var(--ease-out), box-shadow 280ms ease;
   }
-
-  .leistung-card:hover {
-    border-color: var(--color-border-strong);
-    transform: translateY(-3px);
+  .kd-tile:hover {
+    border-color: var(--color-accent);
+    transform: translateY(-4px);
     box-shadow: var(--shadow-md);
   }
 
-  .leistung-media {
+  .kd-tile__media {
     aspect-ratio: 16/10;
     overflow: hidden;
     background: var(--color-bg-soft);
   }
-
-  .leistung-media img {
+  .kd-tile__media img {
     width: 100%;
     height: 100%;
     object-fit: cover;
     transition: transform 700ms var(--ease-out);
   }
+  .kd-tile:hover .kd-tile__media img { transform: scale(1.05); }
 
-  .leistung-card:hover .leistung-media img { transform: scale(1.04); }
-
-  .leistung-body {
-    padding: 1.75rem;
+  .kd-tile__body {
+    padding: 1.75rem 1.75rem 1.85rem;
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
     flex: 1;
+    position: relative;
   }
-
-  .leistung-card h3 { font-size: 1.2rem; }
-  .leistung-card p { color: var(--color-text-muted); font-size: 0.95rem; }
-
-  .leistung-arrow {
-    margin-top: 1rem;
-    font-size: 0.9rem;
-    font-weight: 600;
-    color: var(--color-primary);
-    transition: transform 240ms var(--ease-out);
+  .kd-tile__num {
+    font-family: var(--font-mono);
+    font-size: 0.74rem;
+    letter-spacing: 0.1em;
+    color: var(--color-accent-dark);
   }
-
-  .leistung-card:hover .leistung-arrow { transform: translateX(4px); }
+  .kd-tile__title {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-weight: 400;
+    line-height: 1.1;
+    letter-spacing: -0.015em;
+    color: var(--color-ink);
+    margin: 0;
+  }
+  .kd-tile__text {
+    font-size: 0.96rem;
+    line-height: 1.5;
+    color: var(--color-text-muted);
+    margin: 0 0 1rem;
+  }
+  .kd-tile__arrow {
+    margin-top: auto;
+    color: var(--color-accent-dark);
+    transition: transform 300ms ease, color 200ms ease;
+    display: inline-block;
+  }
+  .kd-tile:hover .kd-tile__arrow {
+    transform: translateX(4px);
+    color: var(--color-accent);
+  }
 </style>

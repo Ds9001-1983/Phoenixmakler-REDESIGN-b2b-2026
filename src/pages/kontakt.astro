@@ -1,123 +1,211 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import FooterCinematic from '../components/sections/FooterCinematic.astro';
 import navigation from '../data/navigation.json';
 const k = navigation.kontakt;
 ---
 
-<BaseLayout title="Kontakt – Phönix Maklerverbund">
-  <section class="hero-kontakt">
-    <div class="container" data-reveal>
-      <span class="eyebrow">Kontakt</span>
-      <h1>Persönlich.<br /><span class="accent">Direkt.</span></h1>
-      <p class="lead">
-        Telefon, E-Mail, persönliches Gespräch — wir sind für Sie erreichbar.
+<BaseLayout
+  title="Kontakt – Phönix Maklerverbund"
+  description="Telefon, E-Mail oder persönliches Gespräch — Phönix Maklerverbund in Oberhonnefeld-Gierend."
+  hideFooter={true}
+>
+  {/* HERO */}
+  <section class="kt-hero">
+    <div class="kt-hero__container">
+      <span class="kt-hero__caption">Kontakt</span>
+      <h1 class="kt-hero__title" data-split="words" data-split-trigger="load" data-split-stagger="0.07" data-split-delay="0.2">
+        Persönlich.<br/>
+        <em>Erreichbar.</em><br/>
+        Ohne Hotline.
+      </h1>
+      <p class="kt-hero__lead" data-reveal data-reveal-delay="3">
+        Wir sind ein kleines Team. Du erreichst uns direkt — keine Anrufverteilung,
+        keine Ticketsysteme. Montag bis Freitag von 9 bis 17 Uhr.
       </p>
     </div>
   </section>
 
-  <section class="section bg-white">
-    <div class="container kontakt-grid">
-      <article class="kontakt-card" data-reveal>
-        <div class="kontakt-icon" aria-hidden="true">☎</div>
-        <span class="kontakt-label">Telefon</span>
-        <a href={k.telefon_href} class="kontakt-large">{k.telefon}</a>
-        <p>Mo–Fr · 9–17 Uhr<br />Fax: {k.fax}</p>
+  {/* KONTAKT-GRID */}
+  <section class="kt-cards">
+    <div class="kt-cards__container">
+      <article class="kt-card" data-reveal>
+        <span class="kt-card__tag">Anruf</span>
+        <div class="kt-card__media kt-card__media--phone" aria-hidden="true">
+          <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><path d="M22.75 19.75c0 .4-.09.79-.28 1.16-.19.37-.44.7-.77 1.02-.56.54-1.17.93-1.85 1.19-.67.26-1.4.39-2.19.39-1.15 0-2.38-.27-3.68-.83-1.3-.55-2.6-1.3-3.89-2.24-1.3-.95-2.52-2-3.68-3.17-1.14-1.17-2.18-2.39-3.11-3.67-.92-1.28-1.66-2.56-2.2-3.84C.51 8.46.24 7.26.24 6.12c0-.75.13-1.47.39-2.12.27-.66.7-1.27 1.29-1.81.72-.7 1.5-1.05 2.32-1.05.32 0 .63.07.9.2.28.14.53.34.72.63l2.55 3.6c.19.27.34.52.43.76.1.23.16.46.16.67 0 .27-.08.54-.23.8-.15.26-.36.53-.63.8L6.9 8.42c-.12.12-.18.27-.18.44 0 .09.01.17.04.26.04.09.07.15.1.22.19.34.52.8 1 1.33.48.54 1 1.09 1.55 1.64.57.55 1.12 1.06 1.67 1.54.54.47 1 .79 1.33.98.05.03.11.06.2.1.08.04.17.05.27.05.18 0 .33-.07.45-.2l1.4-1.4c.28-.28.55-.49.81-.63.26-.15.52-.22.8-.22.22 0 .44.04.68.14.24.09.5.23.77.42l3.65 2.59c.28.19.48.42.61.68.12.26.19.51.19.8z" fill="currentColor"/></svg>
+        </div>
+        <a href={k.telefon_href} class="kt-card__big">{k.telefon}</a>
+        <p class="kt-card__meta">Mo–Fr · 9–17 Uhr<br/>Fax: {k.fax}</p>
       </article>
 
-      <article class="kontakt-card" data-reveal data-reveal-delay="1">
-        <div class="kontakt-icon" aria-hidden="true">✉</div>
-        <span class="kontakt-label">E-Mail</span>
-        <a href={`mailto:${k.email}`} class="kontakt-large">{k.email}</a>
-        <p>Wir antworten in der Regel innerhalb eines Werktages.</p>
+      <article class="kt-card" data-reveal data-reveal-delay="1">
+        <span class="kt-card__tag">E-Mail</span>
+        <div class="kt-card__media kt-card__media--mail" aria-hidden="true">
+          <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><path d="M25 6H3c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h22c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm0 4l-11 7L3 10V8l11 7 11-7v2z" fill="currentColor"/></svg>
+        </div>
+        <a href={`mailto:${k.email}`} class="kt-card__big">{k.email}</a>
+        <p class="kt-card__meta">Antwort in der Regel innerhalb eines Werktages.</p>
       </article>
 
-      <article class="kontakt-card" data-reveal data-reveal-delay="2">
-        <div class="kontakt-icon" aria-hidden="true">⌖</div>
-        <span class="kontakt-label">Adresse</span>
-        <address>
-          <strong>{k.firma}</strong><br />
-          {k.strasse}<br />
+      <article class="kt-card" data-reveal data-reveal-delay="2">
+        <span class="kt-card__tag">Adresse</span>
+        <div class="kt-card__media kt-card__media--pin" aria-hidden="true">
+          <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><path d="M14 1c-5 0-9 4-9 9 0 6.75 9 17 9 17s9-10.25 9-17c0-5-4-9-9-9zm0 12.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z" fill="currentColor"/></svg>
+        </div>
+        <address class="kt-card__address">
+          <strong>{k.firma}</strong><br/>
+          {k.strasse}<br/>
           {k.plz_ort}
         </address>
-        <a href={k.maps} target="_blank" rel="noopener" class="btn btn-ghost">In Google Maps öffnen</a>
+        <a href={k.maps} target="_blank" rel="noopener" class="kt-card__link" data-cursor-label="Google Maps">
+          In Google Maps öffnen
+          <svg width="14" height="10" viewBox="0 0 14 10" fill="none" aria-hidden="true"><path d="M1 5h11M9 1l4 4-4 4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
       </article>
     </div>
   </section>
+
+  <FooterCinematic />
 </BaseLayout>
 
 <style>
-  .hero-kontakt {
-    padding-block: clamp(3rem, 6vw, 5rem);
+  .kt-hero {
+    padding-block: clamp(6rem, 12vh, 10rem) clamp(3rem, 6vh, 5rem);
     background: var(--color-bg);
   }
-
-  .hero-kontakt h1 .accent { color: var(--color-primary); }
-  .hero-kontakt .lead { margin-top: 1.5rem; }
-
-  .kontakt-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 1.5rem;
+  .kt-hero__container {
+    max-width: var(--content-max-width);
+    margin-inline: auto;
+    padding-inline: var(--padding-x);
+  }
+  .kt-hero__caption {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-accent-dark);
+    margin-bottom: 1.5rem;
+  }
+  .kt-hero__title {
+    font-family: var(--font-display);
+    font-size: clamp(3rem, 8vw, 7rem);
+    font-weight: 400;
+    line-height: 0.96;
+    letter-spacing: -0.035em;
+    color: var(--color-ink);
+    margin: 0;
+    max-width: 14ch;
+    font-variation-settings: 'opsz' 144, 'SOFT' 100;
+  }
+  .kt-hero__title em {
+    font-style: italic;
+    font-weight: 300;
+    color: var(--color-accent);
+  }
+  .kt-hero__lead {
+    margin-top: 2rem;
+    font-size: clamp(1.05rem, 1.35vw, 1.2rem);
+    line-height: 1.55;
+    color: var(--color-text-muted);
+    max-width: 52ch;
   }
 
-  .kontakt-card {
-    padding: clamp(2rem, 3.5vw, 2.5rem);
-    background: #fff;
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-lg);
+  .kt-cards {
+    padding-block: clamp(3rem, 6vh, 5rem) clamp(5rem, 10vh, 8rem);
+    background: var(--color-bg);
+  }
+  .kt-cards__container {
+    max-width: var(--content-max-width);
+    margin-inline: auto;
+    padding-inline: var(--padding-x);
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: clamp(1.5rem, 3vw, 2.5rem);
+  }
+
+  .kt-card {
     display: flex;
     flex-direction: column;
-    gap: 0.85rem;
-    transition: border-color 260ms ease, transform 260ms var(--ease-out), box-shadow 260ms ease;
+    gap: 1rem;
+    padding: 2rem 1.75rem;
+    background: var(--color-bg-warm);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    transition: border-color 280ms, transform 280ms var(--ease-out), box-shadow 280ms;
   }
-
-  .kontakt-card:hover {
-    border-color: var(--color-border-strong);
+  .kt-card:hover {
+    border-color: var(--color-accent);
     transform: translateY(-3px);
     box-shadow: var(--shadow-md);
   }
 
-  .kontakt-icon {
-    font-size: 1.75rem;
-    width: 56px;
-    height: 56px;
+  .kt-card__tag {
+    font-family: var(--font-mono);
+    font-size: 0.74rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-accent-dark);
+  }
+  .kt-card__media {
+    width: 52px;
+    height: 52px;
+    border-radius: 999px;
+    background: var(--color-primary-dark);
+    color: #fff;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: var(--radius-md);
-    background: var(--color-bg-soft);
-    color: var(--color-accent);
     margin-bottom: 0.5rem;
   }
-
-  .kontakt-label {
-    font-size: 0.78rem;
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
-    color: var(--color-text-muted);
-    font-weight: 600;
-  }
-
-  .kontakt-large {
+  .kt-card__media--mail { background: var(--color-accent); color: var(--color-ink); }
+  .kt-card__media--pin { background: #fff; border: 1px solid var(--color-border-strong); color: var(--color-ink); }
+  .kt-card__big {
     font-family: var(--font-display);
-    font-size: clamp(1.2rem, 2vw, 1.5rem);
-    font-weight: 700;
+    font-size: clamp(1.35rem, 2.2vw, 1.65rem);
+    font-weight: 400;
+    line-height: 1.1;
+    letter-spacing: -0.015em;
     color: var(--color-ink);
+    text-decoration: none;
     word-break: break-word;
-    letter-spacing: -0.02em;
-    transition: color 220ms ease;
+    border-bottom: 1px solid transparent;
+    transition: color 200ms, border-color 200ms;
   }
-
-  .kontakt-large:hover { color: var(--color-primary); }
-
-  .kontakt-card address {
+  .kt-card__big:hover {
+    color: var(--color-accent-dark);
+    border-bottom-color: var(--color-accent);
+  }
+  .kt-card__meta {
+    font-size: 0.92rem;
+    line-height: 1.5;
+    color: var(--color-text-muted);
+    margin: 0;
+  }
+  .kt-card__address {
     font-style: normal;
-    line-height: 1.6;
+    font-size: 0.98rem;
+    line-height: 1.55;
     color: var(--color-text);
   }
+  .kt-card__link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: auto;
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-accent-dark);
+    transition: gap 250ms ease, color 200ms ease;
+  }
+  .kt-card__link:hover {
+    gap: 0.75rem;
+    color: var(--color-accent);
+  }
 
-  .kontakt-card p {
-    color: var(--color-text-muted);
-    font-size: 0.9rem;
+  @media (max-width: 820px) {
+    .kt-cards__container { grid-template-columns: 1fr; }
   }
 </style>
