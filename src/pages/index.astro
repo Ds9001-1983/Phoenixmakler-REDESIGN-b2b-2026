@@ -1,27 +1,28 @@
 ---
+// Startseite: 100% B2B (Meeting 15.04.2026).
+// Kein B2C, keine Produkt-Tiles, keine Audience-Weiche — der Kunden-Pfad
+// läuft über den Sekundärlink im Hero nach /kunde.
 import BaseLayout from '../layouts/BaseLayout.astro';
 import HeroCinematic from '../components/sections/HeroCinematic.astro';
-import HookStatement from '../components/sections/HookStatement.astro';
-import AudienceSplit from '../components/sections/AudienceSplit.astro';
-import ProductShowcase from '../components/sections/ProductShowcase.astro';
+import StatsBand from '../components/sections/StatsBand.astro';
+import ValueProps from '../components/sections/ValueProps.astro';
 import ProcessPin from '../components/sections/ProcessPin.astro';
-import TestimonialsMarquee from '../components/sections/TestimonialsMarquee.astro';
+import FoundersQuote from '../components/sections/FoundersQuote.astro';
 import InsurerMarquee from '../components/sections/InsurerMarquee.astro';
 import SplitCTA from '../components/sections/SplitCTA.astro';
 import FooterCinematic from '../components/sections/FooterCinematic.astro';
 ---
 
 <BaseLayout
-  title="Phönix Maklerverbund – Versichern ist Vertrauenssache"
-  description="Ungebundener Versicherungsmakler-Verbund. Echte Beratung für Privatkunden und echte Partnerschaft für Makler. Inhabergeführt seit 2012."
+  title="Phönix Maklerverbund – Ungebunden. Verbunden."
+  description="Der Verbund für ungebundene Versicherungsmaklerinnen und -makler. Inhabergeführt seit 2012, über 120 Partner im Netzwerk."
   hideFooter={true}
 >
   <HeroCinematic />
-  <HookStatement />
-  <AudienceSplit />
-  <ProductShowcase />
+  <StatsBand />
+  <ValueProps />
   <ProcessPin />
-  <TestimonialsMarquee />
+  <FoundersQuote />
   <InsurerMarquee />
   <SplitCTA />
   <FooterCinematic />

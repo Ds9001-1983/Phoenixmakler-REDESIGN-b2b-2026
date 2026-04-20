@@ -1,0 +1,122 @@
+---
+// Großes, statisches Statement der Geschäftsführung.
+// Ersetzt die erfundene Testimonials-Marquee auf der Startseite.
+// Zitat inhaltlich aus V3 + Meeting-Tonalität.
+---
+
+<section class="founders">
+  <div class="founders__container">
+    <div class="founders__quote-wrap" data-reveal>
+      <svg class="founders__mark" width="48" height="36" viewBox="0 0 48 36" fill="none" aria-hidden="true">
+        <path d="M0 36V22.5C0 16.2 1.5 10.9 4.5 6.5C7.5 2.2 11.8 0 17.3 0.2L18.5 4.5C15.1 4.7 12.5 6.2 10.8 9C9.1 11.6 8.3 14.8 8.3 18.7H18V36H0ZM28.8 36V22.5C28.8 16.2 30.3 10.9 33.3 6.5C36.3 2.2 40.7 0 46.1 0.2L47.3 4.5C43.9 4.7 41.4 6.2 39.6 9C37.9 11.6 37.1 14.8 37.1 18.7H46.8V36H28.8Z" fill="currentColor"/>
+      </svg>
+      <blockquote class="founders__quote" data-split="words" data-split-stagger="0.05">
+        Wir sind keine Zentrale, die Produkte verordnet — wir sind ein Verbund, der Maklern <em>Entscheidungsfreiheit zurückgibt.</em>
+      </blockquote>
+    </div>
+
+    <footer class="founders__authors" data-reveal data-reveal-delay="2">
+      <div class="founders__people">
+        <div class="founders__person">
+          <img src="/images/torsten-deterding.jpg" alt="Torsten Deterding" loading="lazy" decoding="async" />
+        </div>
+        <div class="founders__person founders__person--overlap">
+          <img src="/images/lothar-nast.jpg" alt="Lothar Nast" loading="lazy" decoding="async" />
+        </div>
+      </div>
+      <div class="founders__meta">
+        <span class="founders__names">Torsten Deterding &amp; Lothar Nast</span>
+        <span class="founders__role">Geschäftsführer · Phönix Maklerverbund GmbH</span>
+      </div>
+    </footer>
+  </div>
+</section>
+
+<style>
+  .founders {
+    padding-block: clamp(5rem, 10vh, 8rem);
+    background: var(--color-primary-darker);
+    color: #fff;
+    overflow: hidden;
+  }
+  .founders__container {
+    max-width: 1040px;
+    margin-inline: auto;
+    padding-inline: var(--padding-x);
+    display: flex;
+    flex-direction: column;
+    gap: clamp(2rem, 4vh, 3.5rem);
+    align-items: flex-start;
+  }
+
+  .founders__quote-wrap {
+    position: relative;
+    padding-top: 2rem;
+  }
+  .founders__mark {
+    color: var(--color-accent);
+    opacity: 0.7;
+    margin-bottom: 1.5rem;
+  }
+  .founders__quote {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 4vw, 3.5rem);
+    font-weight: 300;
+    line-height: 1.12;
+    letter-spacing: -0.025em;
+    color: #fff;
+    margin: 0;
+    max-width: 22ch;
+    font-variation-settings: 'opsz' 144, 'SOFT' 100;
+  }
+  .founders__quote em {
+    font-style: italic;
+    color: var(--color-accent);
+    font-weight: 300;
+  }
+
+  .founders__authors {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    padding-top: 2rem;
+    border-top: 1px solid rgba(255,255,255,0.15);
+    width: 100%;
+    max-width: 560px;
+  }
+  .founders__people {
+    display: flex;
+    position: relative;
+  }
+  .founders__person {
+    width: 56px;
+    height: 56px;
+    border-radius: 999px;
+    overflow: hidden;
+    border: 2px solid var(--color-primary-darker);
+    background: #222;
+  }
+  .founders__person--overlap { margin-left: -18px; }
+  .founders__person img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .founders__meta {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+  }
+  .founders__names {
+    font-family: var(--font-body);
+    font-size: 0.98rem;
+    font-weight: 500;
+    color: #fff;
+  }
+  .founders__role {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    letter-spacing: 0.04em;
+    color: rgba(255,255,255,0.6);
+  }
+</style>
