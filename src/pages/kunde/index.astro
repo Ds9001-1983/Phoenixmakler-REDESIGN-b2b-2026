@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import ErstinformationModal from '../../components/ErstinformationModal.astro';
+import CookieConsent from '../../components/CookieConsent.astro';
 import kacheln from '../../data/kunde-kacheln.json';
 
 const kachelImage: Record<string, string> = {
@@ -16,6 +17,7 @@ const kachelImage: Record<string, string> = {
 
 <BaseLayout title="Für Kunden – Phönix Maklerverbund">
   <ErstinformationModal />
+  <CookieConsent />
 
   {/* HERO — Pflicht-Wortlaut aus Meeting 15.04.2026, Maklersuche direkt integriert */}
   <section class="hero">

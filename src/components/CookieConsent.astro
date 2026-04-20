@@ -1,0 +1,120 @@
+---
+// Cookie-/Tracking-Hinweis — triggert gemäß Meeting 15.04.2026 nur auf /kunde-Routen.
+// Aktuelle Site nutzt keine Tracking-Cookies (Plausible ist cookie-frei), der Banner
+// dokumentiert trotzdem die Datenverarbeitung nach TTDSG + DSGVO.
+// Wird über sessionStorage einmalig akzeptiert und dann nicht wieder gezeigt.
+---
+
+<div class="cc" id="cookie-consent" role="region" aria-label="Datenschutz-Hinweis" hidden>
+  <div class="cc__inner">
+    <div class="cc__text">
+      <p>
+        <strong>Hinweis:</strong> Diese Seite nutzt technisch notwendigen Speicher im Browser
+        (z.&nbsp;B. für die Erstinformation) und&nbsp;— sofern aktiviert&nbsp;— eine
+        datenschutzfreundliche Reichweitenmessung ohne Cookies. Keine Tracking-Cookies,
+        keine Weitergabe an Dritte. Details in der
+        <a href="/datenschutz">Datenschutzerklärung</a>.
+      </p>
+    </div>
+    <div class="cc__actions">
+      <button type="button" class="cc__btn" id="cookie-consent-accept">
+        Verstanden
+      </button>
+    </div>
+  </div>
+</div>
+
+<style>
+  .cc {
+    position: fixed;
+    left: 1rem;
+    right: 1rem;
+    bottom: 1rem;
+    z-index: 9500;
+    max-width: 720px;
+    margin-inline: auto;
+    background: var(--color-primary-darker);
+    color: #fff;
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-xl);
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 400ms cubic-bezier(0.16, 1, 0.3, 1), transform 400ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .cc[hidden] { display: none; }
+  .cc.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .cc__inner {
+    padding: 1.25rem 1.4rem;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: 1.25rem;
+  }
+  .cc__text p {
+    font-size: 0.88rem;
+    line-height: 1.55;
+    color: rgba(255,255,255,0.82);
+    max-width: 58ch;
+    margin: 0;
+  }
+  .cc__text strong { color: #fff; }
+  .cc__text a {
+    color: var(--color-accent);
+    border-bottom: 1px solid rgba(184,134,91,0.4);
+    transition: border-color 200ms;
+  }
+  .cc__text a:hover { border-bottom-color: var(--color-accent); }
+
+  .cc__btn {
+    padding: 0.7rem 1.3rem;
+    background: var(--color-accent);
+    color: var(--color-ink);
+    border: 0;
+    border-radius: 999px;
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background-color 200ms ease, transform 200ms ease;
+  }
+  .cc__btn:hover {
+    background: var(--color-accent-bright);
+    transform: translateY(-1px);
+  }
+  .cc__btn:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 3px;
+  }
+
+  @media (max-width: 640px) {
+    .cc__inner {
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+    .cc__btn { width: 100%; }
+  }
+</style>
+
+<script>
+  const STORAGE_KEY = 'phoenix_cookie_consent_v1';
+  const el = document.getElementById('cookie-consent');
+  const btn = document.getElementById('cookie-consent-accept');
+
+  if (el && btn && !localStorage.getItem(STORAGE_KEY)) {
+    el.hidden = false;
+    requestAnimationFrame(() => {
+      setTimeout(() => el.classList.add('is-visible'), 600);
+    });
+
+    btn.addEventListener('click', () => {
+      localStorage.setItem(STORAGE_KEY, new Date().toISOString());
+      el.classList.remove('is-visible');
+      setTimeout(() => { el.hidden = true; }, 400);
+    });
+  }
+</script>

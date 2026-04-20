@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import ErstinformationModal from '../../components/ErstinformationModal.astro';
+import CookieConsent from '../../components/CookieConsent.astro';
 import TeaserCard from '../../components/TeaserCard.astro';
 import ProductBlock from '../../components/ProductBlock.astro';
 import MaklerFindenCTA from '../../components/MaklerFindenCTA.astro';
@@ -33,6 +34,7 @@ if (!produkt) {
 
 <BaseLayout title={produkt.title}>
   <ErstinformationModal />
+  <CookieConsent />
 
   {/* HERO asymmetric mit Pot-Bild */}
   <section class="hero">
