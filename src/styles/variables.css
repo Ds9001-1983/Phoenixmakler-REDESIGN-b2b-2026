@@ -6,11 +6,11 @@
   --color-primary-light: #e8eaf5;
   --color-primary-softer: #c3cae6;
 
-  /* Gold-Akzent */
-  --color-accent: #c9a66b;
-  --color-accent-dark: #9f7e49;
-  --color-accent-light: #f0e4cc;
-  --color-accent-bright: #e2b870;
+  /* Kupfer-Akzent (Cinematic Editorial Navy) */
+  --color-accent: #b8865b;
+  --color-accent-dark: #8f6a47;
+  --color-accent-light: #e8d4bc;
+  --color-accent-bright: #cc9b6f;
 
   /* Enterprise-Neutral — inspired by Stripe/Mercury/Brex */
   --color-ink: #0a1940;       /* Deep Navy als Haupttext */
@@ -27,10 +27,10 @@
   --color-border-strong: #d2d7e2;
   --color-line: #ecf0f6;
 
-  /* Typografie */
-  --font-body: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
-  --font-display: 'Inter', system-ui, -apple-system, sans-serif;
-  --font-mono: ui-monospace, 'SF Mono', 'Menlo', monospace;
+  /* Typografie — Cinematic Editorial */
+  --font-body: 'Geist', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-display: 'Fraunces', 'Times New Roman', serif;
+  --font-mono: 'Geist Mono', ui-monospace, 'SF Mono', 'Menlo', monospace;
   --font-size-base: 16px;
   --line-height: 1.55;
 

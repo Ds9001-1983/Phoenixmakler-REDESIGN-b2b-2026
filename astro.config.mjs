@@ -1,4 +1,5 @@
 import { defineConfig } from 'astro/config';
+import react from '@astrojs/react';
 
 export default defineConfig({
   site: 'https://www.phoenix-maklerverbund.de',
@@ -6,4 +7,5 @@ export default defineConfig({
   build: {
     format: 'directory',
   },
+  integrations: [react()],
 });

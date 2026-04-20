@@ -21,3 +21,4 @@ pnpm-debug.log*
 
 # astro
 .astro/
+src/pages/_index.v3.astro.bak

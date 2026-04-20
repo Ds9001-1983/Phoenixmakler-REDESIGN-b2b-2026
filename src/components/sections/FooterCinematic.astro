@@ -1,0 +1,188 @@
+---
+// Sektion 9: Footer Cinematic mit Aurora-Shader (SM-09)
+// Ersetzt den Standard-Footer auf der Startseite
+import AuroraCanvas from '../shaders/AuroraCanvas.tsx';
+
+const year = new Date().getFullYear();
+---
+
+<footer class="cinematic-footer">
+  <div class="cinematic-footer__shader" aria-hidden="true">
+    <AuroraCanvas client:only="react" />
+  </div>
+  <div class="cinematic-footer__overlay" aria-hidden="true"></div>
+
+  <div class="cinematic-footer__container">
+    <div class="cinematic-footer__claim">
+      <p class="cinematic-footer__caption">Phönix Maklerverbund</p>
+      <h2 class="mega cinematic-footer__mega" data-split="words" data-split-stagger="0.05">
+        Versichern ist<br/><em>Vertrauenssache.</em>
+      </h2>
+    </div>
+
+    <div class="cinematic-footer__grid">
+      <div class="cinematic-footer__col">
+        <span class="cinematic-footer__col-title">Kontakt</span>
+        <a href="mailto:info@phoenix-maklerverbund.de">info@phoenix-maklerverbund.de</a>
+        <a href="tel:+4951211234567">+49 5121 123 45 67</a>
+        <address>
+          Phönix Maklerverbund GmbH<br/>
+          Hildesheim, Niedersachsen
+        </address>
+      </div>
+
+      <nav class="cinematic-footer__col" aria-label="Navigation">
+        <span class="cinematic-footer__col-title">Navigation</span>
+        <a href="/makler-werden">Makler werden</a>
+        <a href="/kunde">Kunde werden</a>
+        <a href="/makler-suche">Maklerfinder</a>
+        <a href="/ueber-uns">Über uns</a>
+        <a href="/kontakt">Kontakt</a>
+      </nav>
+
+      <nav class="cinematic-footer__col" aria-label="Rechtliches">
+        <span class="cinematic-footer__col-title">Rechtliches</span>
+        <a href="/impressum">Impressum</a>
+        <a href="/datenschutz">Datenschutz</a>
+        <a href="/erstinformation">Erstinformation</a>
+        <a href="/barrierefreiheit">Barrierefreiheit</a>
+        <a href="/beschwerdemanagement">Beschwerden</a>
+      </nav>
+    </div>
+
+    <div class="cinematic-footer__bottom">
+      <p class="cinematic-footer__copy">© {year} Phönix Maklerverbund GmbH</p>
+      <p class="cinematic-footer__superbrand">
+        Made with <span aria-hidden="true">♥</span> by
+        <a href="https://superbrand.marketing" target="_blank" rel="noopener">SUPERBRAND.marketing</a>
+        — Dein Superheld für deine Werbung.
+      </p>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .cinematic-footer {
+    position: relative;
+    isolation: isolate;
+    padding: clamp(6rem, 12vh, 10rem) var(--padding-x) 2rem;
+    color: #fff;
+    overflow: hidden;
+    background: var(--color-primary-darker);
+  }
+
+  .cinematic-footer__shader {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    background:
+      radial-gradient(ellipse 60% 50% at 15% 25%, rgba(184,134,91,0.35), transparent 60%),
+      radial-gradient(ellipse 70% 55% at 85% 70%, rgba(30,58,138,0.55), transparent 65%),
+      radial-gradient(ellipse 50% 40% at 50% 50%, rgba(250,247,242,0.05), transparent 70%),
+      linear-gradient(165deg, #050d26 0%, #0a1940 100%);
+    animation: aurora-shift 22s ease-in-out infinite alternate;
+  }
+  @keyframes aurora-shift {
+    0% { filter: hue-rotate(0deg) brightness(1); }
+    100% { filter: hue-rotate(15deg) brightness(1.08); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .cinematic-footer__shader { animation: none; }
+  }
+  .cinematic-footer__overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background:
+      linear-gradient(180deg, rgba(5,13,38,0.35) 0%, rgba(5,13,38,0.75) 100%);
+  }
+
+  .cinematic-footer__container {
+    position: relative;
+    z-index: 2;
+    max-width: var(--content-max-width);
+    margin-inline: auto;
+    display: flex;
+    flex-direction: column;
+    gap: clamp(4rem, 10vh, 7rem);
+  }
+
+  .cinematic-footer__caption {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-accent);
+    margin-bottom: 1.5rem;
+  }
+  .cinematic-footer__mega {
+    font-size: clamp(3.5rem, 13vw, 13rem);
+    font-weight: 300;
+    line-height: 0.88;
+    letter-spacing: -0.045em;
+    color: #fff;
+    margin: 0;
+    font-variation-settings: 'opsz' 144, 'SOFT' 100;
+  }
+  .cinematic-footer__mega em {
+    font-style: italic;
+    color: var(--color-accent);
+    font-weight: 300;
+  }
+
+  .cinematic-footer__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 3rem;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    padding-top: 3rem;
+  }
+  .cinematic-footer__col {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    font-size: 0.95rem;
+    color: rgba(255,255,255,0.7);
+  }
+  .cinematic-footer__col-title {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-accent);
+    margin-bottom: 0.5rem;
+  }
+  .cinematic-footer__col a,
+  .cinematic-footer__col address {
+    color: rgba(255,255,255,0.82);
+    transition: color 200ms ease;
+    font-style: normal;
+    line-height: 1.55;
+  }
+  .cinematic-footer__col a:hover { color: var(--color-accent); }
+
+  .cinematic-footer__bottom {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+    padding-top: 2.5rem;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    font-size: 0.82rem;
+    color: rgba(255,255,255,0.55);
+  }
+  .cinematic-footer__superbrand a {
+    color: rgba(255,255,255,0.82);
+    border-bottom: 1px solid rgba(255,255,255,0.2);
+    transition: color 200ms, border-color 200ms;
+  }
+  .cinematic-footer__superbrand a:hover {
+    color: var(--color-accent);
+    border-bottom-color: var(--color-accent);
+  }
+
+  @media (max-width: 820px) {
+    .cinematic-footer__grid { grid-template-columns: 1fr; gap: 2.25rem; }
+    .cinematic-footer__bottom { flex-direction: column; }
+  }
+</style>

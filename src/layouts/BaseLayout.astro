@@ -2,17 +2,21 @@
 import '../styles/global.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import Preloader from '../components/Preloader.astro';
+import CustomCursor from '../components/CustomCursor.astro';
 
 interface Props {
   title: string;
   description?: string;
   ogImage?: string;
+  hideFooter?: boolean;
 }
 
 const {
   title,
   description = 'Phönix Maklerverbund – Ihr ungebundener Partner für Finanz- und Versicherungslösungen. Inhabergeführt seit 2012.',
   ogImage = '/images/hero/hero-home.png',
+  hideFooter = false,
 } = Astro.props;
 
 const siteTitle = title.includes('Phönix') ? title : `${title} | Phönix Maklerverbund`;
@@ -28,9 +32,8 @@ const canonical = new URL(Astro.url.pathname, Astro.site).toString();
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
     <link rel="icon" type="image/png" href="/images/logo.png" />
-    <link rel="preload" href="/fonts/Inter-Regular.woff2" as="font" type="font/woff2" crossorigin />
-    <link rel="preload" href="/fonts/Inter-SemiBold.woff2" as="font" type="font/woff2" crossorigin />
-    <link rel="preload" href="/fonts/Inter-ExtraBold.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <meta property="og:title" content={siteTitle} />
     <meta property="og:description" content={description} />
     <meta property="og:image" content={ogImage} />
@@ -42,13 +45,31 @@ const canonical = new URL(Astro.url.pathname, Astro.site).toString();
   </head>
   <body>
     <a href="#main" class="skip-link">Zum Inhalt springen</a>
+    <Preloader />
+    <CustomCursor />
+    <div class="scroll-progress" data-scroll-progress aria-hidden="true"></div>
     <Header />
     <main id="main">
       <slot />
     </main>
-    <Footer />
+    {!hideFooter && <Footer />}
     <script>
       import '../scripts/motion.ts';
     </script>
   </body>
 </html>
+
+<style is:global>
+  .scroll-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: var(--color-accent);
+    transform: scaleX(0);
+    transform-origin: left center;
+    z-index: 9997;
+    pointer-events: none;
+  }
+</style>

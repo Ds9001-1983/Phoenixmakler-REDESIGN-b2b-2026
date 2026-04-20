@@ -1,0 +1,170 @@
+---
+// Sektion 3: B2B / B2C Split
+// Die entscheidende Weiche der Site — Makler vs. Kunde
+// Hover-Video-Tiles (SM-10) – Poster bis Video-Asset geliefert
+const maklerPoster = '/images/audience/makler.png';
+const kundePoster = '/images/audience/kunde.png';
+---
+
+<section class="audience" id="audience">
+  <div class="audience__container">
+    <p class="audience__caption" data-reveal>Was führt dich hierher</p>
+    <div class="audience__grid">
+      <a href="/makler-werden" class="audience__card audience__card--b2b" data-hover-video data-cursor-label="Makler werden" data-reveal>
+        <div class="audience__media">
+          <img src={maklerPoster} alt="" loading="lazy" decoding="async" />
+        </div>
+        <div class="audience__body">
+          <span class="audience__tag">Für Makler</span>
+          <h3 class="audience__headline">Dein Verbund,<br/><em>nicht nur dein Pool.</em></h3>
+          <p class="audience__sub">Überdurchschnittliche Courtagen, echte Rückendeckung, digitale Prozesse. Seit 2012 inhabergeführt.</p>
+          <span class="audience__arrow" aria-hidden="true">
+            <svg width="32" height="32" viewBox="0 0 32 32" fill="none"><path d="M8 16h16M18 10l6 6-6 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span>
+        </div>
+      </a>
+
+      <a href="/kunde" class="audience__card audience__card--b2c" data-hover-video data-cursor-label="Zu den Kundenlösungen" data-reveal data-reveal-delay="1">
+        <div class="audience__media">
+          <img src={kundePoster} alt="" loading="lazy" decoding="async" />
+        </div>
+        <div class="audience__body">
+          <span class="audience__tag">Für Kunden</span>
+          <h3 class="audience__headline">Echte Beratung.<br/><em>Ohne Leine.</em></h3>
+          <p class="audience__sub">Vergleich über alle Versicherer hinweg. Deine Situation, dein Produkt — nicht umgekehrt.</p>
+          <span class="audience__arrow" aria-hidden="true">
+            <svg width="32" height="32" viewBox="0 0 32 32" fill="none"><path d="M8 16h16M18 10l6 6-6 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span>
+        </div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .audience {
+    padding-block: clamp(5rem, 10vw, 9rem);
+    background: var(--color-bg);
+  }
+  .audience__container {
+    max-width: var(--content-max-width);
+    margin-inline: auto;
+    padding-inline: var(--padding-x);
+  }
+  .audience__caption {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-accent-dark);
+    margin-bottom: 2.5rem;
+  }
+
+  .audience__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem;
+  }
+
+  .audience__card {
+    position: relative;
+    display: grid;
+    grid-template-rows: 56% auto;
+    aspect-ratio: 4 / 5;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    background: var(--color-primary-dark);
+    color: #fff;
+    text-decoration: none;
+    isolation: isolate;
+    transition: transform 400ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .audience__card:hover {
+    transform: translateY(-4px);
+  }
+
+  .audience__media {
+    position: relative;
+    overflow: hidden;
+  }
+  .audience__media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 900ms cubic-bezier(0.16, 1, 0.3, 1), filter 400ms ease;
+    filter: brightness(0.82) saturate(0.95);
+  }
+  .audience__card:hover .audience__media img {
+    transform: scale(1.06);
+    filter: brightness(0.95) saturate(1);
+  }
+  .audience__media::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(5,13,38,0.1) 0%, rgba(5,13,38,0.55) 100%);
+  }
+
+  .audience__body {
+    padding: 2.25rem 2rem 2rem;
+    background: var(--color-primary-dark);
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+    position: relative;
+  }
+  .audience__card--b2c .audience__body {
+    background: var(--color-bg-warm);
+    color: var(--color-ink);
+  }
+
+  .audience__tag {
+    font-family: var(--font-mono);
+    font-size: 0.74rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-accent);
+  }
+  .audience__card--b2c .audience__tag { color: var(--color-accent-dark); }
+
+  .audience__headline {
+    font-family: var(--font-display);
+    font-size: clamp(1.75rem, 3.3vw, 2.5rem);
+    font-weight: 400;
+    line-height: 1.02;
+    letter-spacing: -0.025em;
+    color: inherit;
+    margin: 0;
+    font-variation-settings: 'opsz' 144, 'SOFT' 75;
+  }
+  .audience__headline em {
+    font-style: italic;
+    font-weight: 300;
+    color: var(--color-accent);
+  }
+  .audience__card--b2c .audience__headline em { color: var(--color-accent-dark); }
+
+  .audience__sub {
+    font-size: 0.95rem;
+    line-height: 1.55;
+    opacity: 0.8;
+    max-width: 32ch;
+  }
+
+  .audience__arrow {
+    position: absolute;
+    top: 2rem;
+    right: 2rem;
+    opacity: 0.6;
+    transition: transform 400ms cubic-bezier(0.16, 1, 0.3, 1), opacity 300ms ease;
+  }
+  .audience__card:hover .audience__arrow {
+    transform: translateX(8px);
+    opacity: 1;
+  }
+
+  @media (max-width: 720px) {
+    .audience__grid { grid-template-columns: 1fr; }
+    .audience__card { aspect-ratio: 5 / 6; }
+  }
+</style>

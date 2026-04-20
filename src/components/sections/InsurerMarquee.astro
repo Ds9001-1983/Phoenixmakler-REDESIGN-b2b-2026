@@ -1,0 +1,113 @@
+---
+// Sektion 7: Versicherer-Partner Marquee (SM-07)
+const insurers = [
+  { name: 'Barmenia', file: '/images/logos/barmenia.png' },
+  { name: 'SDK', file: '/images/logos/sdk.png' },
+  { name: 'HanseMerkur', file: '/images/logos/hansemerkur.png' },
+  { name: 'ARAG', file: '/images/logos/arag.png' },
+  { name: 'IDEAL', file: '/images/logos/ideal.webp' },
+  { name: 'DELA', file: '/images/logos/dela.jpg' },
+  { name: 'Neodigital', file: '/images/logos/neodigital.png' },
+  { name: 'Ammerländer', file: '/images/logos/ammerlaender.png' },
+];
+---
+
+<section class="insurers">
+  <div class="insurers__header">
+    <span class="insurers__caption">Ausgewählte Partner</span>
+    <h2 class="insurers__title">Ohne Leine.<br/><em>Mit starkem Netzwerk.</em></h2>
+    <p class="insurers__sub">Über diese und viele weitere Versicherer vergleichen wir — immer in deinem Interesse.</p>
+  </div>
+
+  <div class="insurers__marquee" data-marquee data-marquee-speed="28">
+    <div class="marquee-track">
+      {[...insurers, ...insurers].map((logo) => (
+        <div class="insurer-logo">
+          <img src={logo.file} alt={logo.name} loading="lazy" decoding="async" />
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .insurers {
+    padding-block: clamp(4rem, 8vh, 6rem);
+    background: var(--color-bg-warm);
+    overflow: hidden;
+  }
+  .insurers__header {
+    max-width: var(--content-max-width);
+    margin: 0 auto 3rem;
+    padding-inline: var(--padding-x);
+    text-align: center;
+  }
+  .insurers__caption {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-accent-dark);
+    margin-bottom: 1rem;
+  }
+  .insurers__title {
+    font-family: var(--font-display);
+    font-size: clamp(1.85rem, 3.5vw, 2.75rem);
+    font-weight: 400;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    color: var(--color-ink);
+    margin: 0 auto;
+    max-width: 26ch;
+    font-variation-settings: 'opsz' 144, 'SOFT' 50;
+  }
+  .insurers__title em {
+    font-style: italic;
+    font-weight: 300;
+    color: var(--color-accent);
+  }
+  .insurers__sub {
+    margin: 1rem auto 0;
+    max-width: 54ch;
+    font-size: 0.98rem;
+    line-height: 1.55;
+    color: var(--color-text-muted);
+  }
+
+  .insurers__marquee {
+    overflow: hidden;
+    mask-image: linear-gradient(90deg, transparent, black 8%, black 92%, transparent);
+    -webkit-mask-image: linear-gradient(90deg, transparent, black 8%, black 92%, transparent);
+  }
+  .marquee-track {
+    display: flex;
+    gap: clamp(2.5rem, 6vw, 5rem);
+    width: fit-content;
+    align-items: center;
+    will-change: transform;
+    padding-block: 1.5rem;
+  }
+
+  .insurer-logo {
+    flex: 0 0 auto;
+    height: clamp(36px, 5vh, 56px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: filter 500ms ease, opacity 400ms ease;
+  }
+  .insurer-logo img {
+    height: 100%;
+    width: auto;
+    max-width: 180px;
+    object-fit: contain;
+    filter: grayscale(1) contrast(0.85);
+    opacity: 0.55;
+    transition: filter 500ms ease, opacity 400ms ease;
+  }
+  .insurer-logo:hover img {
+    filter: grayscale(0) contrast(1);
+    opacity: 1;
+  }
+</style>

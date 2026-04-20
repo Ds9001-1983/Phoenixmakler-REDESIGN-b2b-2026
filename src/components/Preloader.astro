@@ -1,0 +1,143 @@
+---
+// SM-15: Preloader mit echtem Progress
+// Nutzt window.load + Bild-Preloading für realistischen Fortschritt
+---
+
+<div class="preloader" id="preloader" aria-hidden="true">
+  <div class="preloader__inner">
+    <div class="preloader__brand">Phönix</div>
+    <div class="preloader__bar">
+      <div class="preloader__bar-fill" id="preloader-fill"></div>
+    </div>
+    <div class="preloader__count">
+      <span id="preloader-count">0</span><span class="preloader__unit">%</span>
+    </div>
+  </div>
+</div>
+
+<style>
+  .preloader {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: var(--color-primary-dark);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 600ms cubic-bezier(0.7, 0, 0.2, 1), visibility 600ms;
+    will-change: opacity;
+  }
+  .preloader.is-done {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+  .preloader__inner {
+    width: min(420px, 80vw);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2rem;
+  }
+  .preloader__brand {
+    font-family: var(--font-display);
+    font-weight: 300;
+    font-style: italic;
+    font-size: clamp(3rem, 6vw, 4.5rem);
+    letter-spacing: -0.03em;
+    line-height: 1;
+    color: var(--color-accent);
+    font-variation-settings: 'opsz' 144, 'SOFT' 100;
+  }
+  .preloader__bar {
+    width: 100%;
+    height: 1px;
+    background: rgba(255, 255, 255, 0.12);
+    overflow: hidden;
+    position: relative;
+  }
+  .preloader__bar-fill {
+    position: absolute;
+    inset: 0;
+    background: var(--color-accent);
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition: transform 220ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .preloader__count {
+    font-family: var(--font-mono);
+    font-weight: 400;
+    font-size: 0.82rem;
+    letter-spacing: 0.06em;
+    color: rgba(255, 255, 255, 0.5);
+    font-variant-numeric: tabular-nums;
+  }
+  .preloader__unit { margin-left: 0.1em; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .preloader__bar-fill { transition: none; }
+  }
+</style>
+
+<script>
+  const el = document.getElementById('preloader');
+  const fill = document.getElementById('preloader-fill');
+  const countEl = document.getElementById('preloader-count');
+  if (el && fill && countEl) {
+    let progress = 0;
+    const render = () => {
+      fill.style.transform = `scaleX(${progress / 100})`;
+      countEl.textContent = String(Math.floor(progress));
+    };
+
+    // Drive progress from image loading + a minimum time
+    const images = Array.from(document.images);
+    const total = Math.max(images.length, 1);
+    let loaded = 0;
+
+    const tickImage = () => {
+      loaded = Math.min(loaded + 1, total);
+      const imgProgress = (loaded / total) * 70; // images = 70%
+      progress = Math.max(progress, imgProgress);
+      render();
+    };
+
+    images.forEach((img) => {
+      if (img.complete) tickImage();
+      else {
+        img.addEventListener('load', tickImage, { once: true });
+        img.addEventListener('error', tickImage, { once: true });
+      }
+    });
+
+    // Min-duration fill from 0 → 85% over ~900ms, synced with load event
+    const start = performance.now();
+    const minDuration = 900;
+    const timeTick = () => {
+      const elapsed = performance.now() - start;
+      const timeProgress = Math.min(elapsed / minDuration, 1) * 85;
+      progress = Math.max(progress, timeProgress);
+      render();
+      if (elapsed < minDuration + 100) requestAnimationFrame(timeTick);
+    };
+    requestAnimationFrame(timeTick);
+
+    const finish = () => {
+      progress = 100;
+      render();
+      setTimeout(() => {
+        el.classList.add('is-done');
+        document.documentElement.classList.add('preloader-done');
+      }, 280);
+    };
+
+    if (document.readyState === 'complete') {
+      setTimeout(finish, Math.max(0, minDuration - (performance.now() - start)));
+    } else {
+      window.addEventListener('load', () => {
+        setTimeout(finish, Math.max(0, minDuration - (performance.now() - start)));
+      });
+    }
+  }
+</script>

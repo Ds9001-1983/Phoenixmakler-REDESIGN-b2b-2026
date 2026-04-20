@@ -1,0 +1,127 @@
+---
+// SM-06: Custom Cursor, site-wide
+// Mix-Blend-Mode + kontextuelle Labels via [data-cursor="label"] oder data-cursor-label="Text"
+// Auf Touch/Coarse-Pointer automatisch deaktiviert.
+---
+
+<div class="cursor" id="cursor" aria-hidden="true">
+  <div class="cursor__dot" id="cursor-dot"></div>
+  <div class="cursor__label" id="cursor-label"></div>
+</div>
+
+<style>
+  .cursor {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 9998;
+    pointer-events: none;
+    transform: translate3d(-50%, -50%, 0);
+    mix-blend-mode: difference;
+    opacity: 0;
+    transition: opacity 200ms ease;
+  }
+  .cursor.is-active { opacity: 1; }
+
+  .cursor__dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 999px;
+    background: #faf7f2;
+    transition: width 260ms cubic-bezier(0.16, 1, 0.3, 1),
+                height 260ms cubic-bezier(0.16, 1, 0.3, 1),
+                background-color 200ms ease;
+  }
+  .cursor.is-hover .cursor__dot {
+    width: 44px;
+    height: 44px;
+  }
+  .cursor.is-label .cursor__dot {
+    width: auto;
+    height: auto;
+    padding: 0.55rem 0.9rem;
+    border-radius: 999px;
+    background: #b8865b;
+    mix-blend-mode: normal;
+  }
+  .cursor__label {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-family: var(--font-mono, monospace);
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #0a1940;
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity 180ms ease;
+  }
+  .cursor.is-label .cursor__label { opacity: 1; }
+  .cursor.is-label { mix-blend-mode: normal; }
+
+  /* Hide native cursor on interactive elements when custom is active */
+  @media (hover: hover) and (pointer: fine) {
+    .cursor-active, .cursor-active a, .cursor-active button, .cursor-active [data-magnetic] {
+      cursor: none;
+    }
+  }
+
+  @media (hover: none), (pointer: coarse) {
+    .cursor { display: none; }
+  }
+</style>
+
+<script>
+  const cursor = document.getElementById('cursor');
+  const dot = document.getElementById('cursor-dot');
+  const label = document.getElementById('cursor-label');
+  const supportsHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+
+  if (cursor && dot && label && supportsHover) {
+    document.documentElement.classList.add('cursor-active');
+    let tx = window.innerWidth / 2;
+    let ty = window.innerHeight / 2;
+    let cx = tx;
+    let cy = ty;
+
+    const onMove = (e: MouseEvent) => {
+      tx = e.clientX;
+      ty = e.clientY;
+      if (!cursor.classList.contains('is-active')) {
+        cursor.classList.add('is-active');
+      }
+    };
+    document.addEventListener('mousemove', onMove, { passive: true });
+    document.addEventListener('mouseleave', () => cursor.classList.remove('is-active'));
+    document.addEventListener('mouseenter', () => cursor.classList.add('is-active'));
+
+    const loop = () => {
+      cx += (tx - cx) * 0.22;
+      cy += (ty - cy) * 0.22;
+      cursor.style.transform = `translate3d(${cx.toFixed(2)}px, ${cy.toFixed(2)}px, 0) translate(-50%, -50%)`;
+      requestAnimationFrame(loop);
+    };
+    requestAnimationFrame(loop);
+
+    // Contextual hover — interactive elements grow the dot
+    const interactiveSel = 'a, button, [role="button"], [data-magnetic], [data-cursor]';
+    document.addEventListener('mouseover', (e) => {
+      const target = (e.target as HTMLElement).closest(interactiveSel);
+      if (!target) return;
+      cursor.classList.add('is-hover');
+      const lbl = (target as HTMLElement).dataset.cursorLabel;
+      if (lbl) {
+        cursor.classList.add('is-label');
+        label.textContent = lbl;
+      }
+    });
+    document.addEventListener('mouseout', (e) => {
+      const target = (e.target as HTMLElement).closest(interactiveSel);
+      if (!target) return;
+      cursor.classList.remove('is-hover', 'is-label');
+      label.textContent = '';
+    });
+  }
+</script>
