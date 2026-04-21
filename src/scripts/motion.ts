@@ -208,19 +208,21 @@ document.querySelectorAll<HTMLElement>('[data-marquee]').forEach((el) => {
 
 // --- SM-03: Pin-Section Scroll-Story ---
 // Markup: <section data-pin data-pin-length="3"> mit Kindern .pin-step
+// Auf mobil (≤820px) Pin deaktivieren — Schritte stacken per CSS-Grid.
+const pinMobileQuery = window.matchMedia('(max-width: 820px)');
 document.querySelectorAll<HTMLElement>('[data-pin]').forEach((section) => {
   const steps = section.querySelectorAll<HTMLElement>('.pin-step');
   if (!steps.length) return;
   const scrollLen = parseFloat(section.dataset.pinLength ?? '3'); // vh multiples
 
+  if (prefersReduced || pinMobileQuery.matches) {
+    gsap.set(steps, { opacity: 1, y: 0, clearProps: 'all' });
+    return;
+  }
+
   // Hide all except first
   gsap.set(steps, { opacity: 0, y: 30 });
   gsap.set(steps[0], { opacity: 1, y: 0 });
-
-  if (prefersReduced) {
-    gsap.set(steps, { opacity: 1, y: 0 });
-    return;
-  }
 
   ScrollTrigger.create({
     trigger: section,
