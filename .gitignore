@@ -21,7 +21,7 @@ pnpm-debug.log*
 
 # astro
 .astro/
-src/pages/_index.v3.astro.bak
-src/pages/_makler-werden.v3.astro.bak
-src/pages/_*.astro.bak
-src/pages/**/_*.astro.bak
+
+# editor/tooling backups
+*.astro.bak
+**/*.astro.bak
