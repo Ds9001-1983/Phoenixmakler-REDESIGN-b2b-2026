@@ -79,35 +79,55 @@ document.querySelectorAll<HTMLElement>('[data-count]').forEach((el) => {
 
 // --- SM-01: Split-Text Reveal (Words + Letters) ---
 // Markup: <h1 data-split="words" data-split-stagger="0.06">...</h1>
-function splitTextIntoWords(el: HTMLElement) {
-  const text = el.textContent ?? '';
-  // Preserve original for a11y via aria-label
-  el.setAttribute('aria-label', text.trim());
-  el.innerHTML = '';
-  const segmenter = 'Segmenter' in Intl
-    ? new Intl.Segmenter('de', { granularity: 'word' })
-    : null;
-  const tokens = segmenter
-    ? [...segmenter.segment(text)].map((s) => s.segment)
-    : text.split(/(\s+)/);
-  tokens.forEach((token) => {
-    if (/^\s+$/.test(token)) {
-      el.appendChild(document.createTextNode(token));
-      return;
+// Rekursiver DOM-Walker: splittet Text-Nodes an Whitespace in Wort-Spans,
+// erhält dabei Strukturelemente (<em>, <br/>, <strong>, …) und deren Styling.
+function wrapWord(token: string): HTMLSpanElement {
+  const wrap = document.createElement('span');
+  wrap.className = 'split-word';
+  wrap.style.display = 'inline-block';
+  wrap.style.overflow = 'hidden';
+  wrap.style.verticalAlign = 'top';
+  const inner = document.createElement('span');
+  inner.className = 'split-word-inner';
+  inner.style.display = 'inline-block';
+  inner.style.willChange = 'transform, opacity';
+  inner.textContent = token;
+  wrap.appendChild(inner);
+  return wrap;
+}
+
+function processSplitNode(node: Node): Node {
+  if (node.nodeType === Node.TEXT_NODE) {
+    const frag = document.createDocumentFragment();
+    const tokens = (node.textContent ?? '').split(/(\s+)/);
+    for (const token of tokens) {
+      if (!token) continue;
+      if (/^\s+$/.test(token)) {
+        frag.appendChild(document.createTextNode(token));
+      } else {
+        frag.appendChild(wrapWord(token));
+      }
     }
-    const wrap = document.createElement('span');
-    wrap.className = 'split-word';
-    wrap.style.display = 'inline-block';
-    wrap.style.overflow = 'hidden';
-    wrap.style.verticalAlign = 'top';
-    const inner = document.createElement('span');
-    inner.className = 'split-word-inner';
-    inner.style.display = 'inline-block';
-    inner.style.willChange = 'transform, opacity';
-    inner.textContent = token;
-    wrap.appendChild(inner);
-    el.appendChild(wrap);
-  });
+    return frag;
+  }
+  if (node.nodeType === Node.ELEMENT_NODE) {
+    const el = node as Element;
+    const clone = el.cloneNode(false) as Element;
+    for (const child of Array.from(el.childNodes)) {
+      clone.appendChild(processSplitNode(child));
+    }
+    return clone;
+  }
+  return node.cloneNode(true);
+}
+
+function splitTextIntoWords(el: HTMLElement) {
+  el.setAttribute('aria-label', (el.textContent ?? '').replace(/\s+/g, ' ').trim());
+  const children = Array.from(el.childNodes);
+  el.innerHTML = '';
+  for (const child of children) {
+    el.appendChild(processSplitNode(child));
+  }
   return el.querySelectorAll('.split-word-inner');
 }
 
