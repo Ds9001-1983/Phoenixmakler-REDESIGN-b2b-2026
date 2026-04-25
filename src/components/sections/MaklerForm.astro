@@ -119,8 +119,13 @@
       </div>
 
       <div class="mform__success" data-form-success role="status" aria-live="polite" hidden>
-        <h3>Vielen Dank für dein Interesse!</h3>
-        <p>Wir melden uns in Kürze persönlich bei dir.</p>
+        <h3>Fast geschafft!</h3>
+        <p>
+          Wir haben dein Mail-Programm geöffnet — bitte klicke dort auf <strong>Senden</strong>,
+          damit deine Anfrage bei uns ankommt. Falls sich nichts geöffnet hat, schreib uns
+          direkt an <a href="mailto:info@phoenix-maklerverbund.de">info@phoenix-maklerverbund.de</a>
+          oder ruf <a href="tel:+4926346598580">02634 659858-0</a> an.
+        </p>
       </div>
     </form>
   </div>
@@ -294,16 +299,46 @@
 </style>
 
 <script>
+  // Submission-Fallback bis Professional-Work-API live ist (Meeting 15.04.2026):
+  // 1. Form-Daten als strukturierte mailto-Body an info@phoenix-maklerverbund.de.
+  // 2. User klickt Send im eigenen Mail-Client — Datenfluss bleibt im Browser,
+  //    keine Drittanbieter, kein Backend-Call. DSGVO-sicher.
+  // Wenn das CRM-Token vorliegt: hier den fetch() ergaenzen, mailto als Fallback
+  // bei Netzwerk-Fehler stehen lassen.
   const form = document.querySelector<HTMLFormElement>('[data-registrierung]');
   const success = document.querySelector<HTMLElement>('[data-form-success]');
+
+  const labels: Record<string, string> = {
+    anrede: 'Anrede', vorname: 'Vorname', nachname: 'Nachname',
+    strasse: 'Strasse & Hausnummer', plz: 'PLZ', ort: 'Ort',
+    telefon: 'Telefon', email: 'E-Mail',
+    geburtsdatum: 'Geburtsdatum', nationalitaet: 'Nationalitaet',
+    ihk: 'IHK-Vermittlerregisternummer',
+    datenschutz: 'Datenschutz akzeptiert', kontakt_ok: 'Kontaktaufnahme erlaubt',
+  };
 
   form?.addEventListener('submit', (e) => {
     e.preventDefault();
     if (!form.reportValidity()) return;
 
-    // TODO: Professional-Work-API-Call sobald Token vorliegt.
-    // Aktuell: mailto-Fallback oder lokaler State.
-    // Siehe Meeting 15.04.2026, Status "storniert" beim Anlegen.
+    const fd = new FormData(form);
+    const lines: string[] = ['Neue Partner-Anfrage ueber phoenix-maklerverbund.de', ''];
+    for (const key of Object.keys(labels)) {
+      const value = fd.get(key);
+      if (value === null) continue;
+      const display = typeof value === 'string' && value.length ? value :
+        (key === 'datenschutz' || key === 'kontakt_ok' ? 'Ja' : '');
+      lines.push(`${labels[key]}: ${display}`);
+    }
+    lines.push('', '— Gesendet ueber das Registrierungsformular');
+
+    const subject = `Partner-Anfrage: ${fd.get('vorname') ?? ''} ${fd.get('nachname') ?? ''}`.trim();
+    const body = lines.join('\n');
+    const mailto = `mailto:info@phoenix-maklerverbund.de?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+
+    // Mail-Client oeffnen; Fokus bleibt auf Tab. Falls Browser blockiert, faellt
+    // der User zumindest auf den manuellen Mail-Pfad zurueck.
+    window.location.href = mailto;
 
     form.style.display = 'none';
     if (success) {

@@ -8,7 +8,7 @@ const isActive = (href: string) => pathname === href || (href !== '/' && pathnam
 <header class="site-header" data-header>
   <div class="container header-inner">
     <a href="/" class="logo" aria-label="Phönix Maklerverbund – Startseite">
-      <img src="/images/logo.png" alt="Phönix Maklerverbund" width="180" height="48" />
+      <img src="/images/logo.png" alt="Phönix Maklerverbund" width="180" height="48" loading="eager" fetchpriority="high" decoding="async" />
     </a>
 
     <button

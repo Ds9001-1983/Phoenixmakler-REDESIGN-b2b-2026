@@ -1,15 +1,13 @@
 ---
-// Sektion 9: Footer Cinematic mit Aurora-Shader (SM-09)
-// Ersetzt den Standard-Footer auf der Startseite
-import AuroraCanvas from '../shaders/AuroraCanvas.tsx';
+// Sektion 9: Footer Cinematic mit CSS-Aurora (SM-09)
+// Ersetzt den Standard-Footer auf der Startseite. Aurora-Effekt rein per
+// Radial-Gradient + CSS-Animation — kein WebGL-Bundle (~640 kB gespart).
 
 const year = new Date().getFullYear();
 ---
 
 <footer class="cinematic-footer">
-  <div class="cinematic-footer__shader" aria-hidden="true">
-    <AuroraCanvas client:only="react" />
-  </div>
+  <div class="cinematic-footer__shader" aria-hidden="true"></div>
   <div class="cinematic-footer__overlay" aria-hidden="true"></div>
 
   <div class="cinematic-footer__container">
