@@ -1,0 +1,247 @@
+/* Accessibility-Layer.
+   Reagiert auf data-a11y-* Attribute auf <html>, gesteuert vom A11y-Widget.
+   Nichts hier ueberschreibt das Branding "von alleine" — nur wenn ein User
+   aktiv den entsprechenden Modus waehlt (oder das Betriebssystem es signalisiert).
+*/
+
+/* === Skip-Link (sichtbar bei Tastatur-Fokus) ============================ */
+.skip-link {
+  position: fixed;
+  top: -100px;
+  left: 1rem;
+  padding: 0.85rem 1.2rem;
+  background: var(--color-ink);
+  color: #fff;
+  border-radius: var(--radius-sm);
+  z-index: 10001;
+  font-weight: 600;
+  text-decoration: underline;
+  transition: top 200ms ease;
+}
+.skip-link:focus,
+.skip-link:focus-visible {
+  top: 1rem;
+  outline: 3px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+/* === Sichtbarer Fokus auf allen interaktiven Elementen ================== */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[role="button"]:focus-visible,
+[tabindex="0"]:focus-visible,
+[data-magnetic]:focus-visible {
+  outline: 3px solid var(--color-accent);
+  outline-offset: 3px;
+  border-radius: 3px;
+}
+
+/* === Schriftgroesse ===================================================== */
+html[data-a11y-text="115"] { font-size: calc(var(--font-size-base) * 1.15); }
+html[data-a11y-text="130"] { font-size: calc(var(--font-size-base) * 1.30); }
+html[data-a11y-text="150"] { font-size: calc(var(--font-size-base) * 1.50); }
+
+/* WCAG 1.4.4: bei extrem grosser Skalierung Headlines etwas ein-fangen,
+   damit sie nicht das Layout sprengen. Wir reduzieren clamp-Maxima. */
+html[data-a11y-text="130"] h1,
+html[data-a11y-text="150"] h1 { font-size: clamp(2.5rem, 6vw, 4.5rem); }
+html[data-a11y-text="130"] .mega,
+html[data-a11y-text="150"] .mega { font-size: clamp(3rem, 9vw, 7rem); }
+
+/* === Zeilenabstand (Lesbarkeits-Boost) ================================== */
+html[data-a11y-spacing="relaxed"] {
+  --line-height: 1.85;
+}
+html[data-a11y-spacing="relaxed"] body { line-height: 1.85; }
+html[data-a11y-spacing="relaxed"] p,
+html[data-a11y-spacing="relaxed"] li,
+html[data-a11y-spacing="relaxed"] dd,
+html[data-a11y-spacing="relaxed"] dt {
+  line-height: 1.85 !important;
+  letter-spacing: 0.01em;
+  word-spacing: 0.06em;
+}
+html[data-a11y-spacing="relaxed"] p { margin-bottom: 1.25rem; }
+
+/* === Hochkontrast-Modus =================================================
+   WCAG 1.4.6 (AAA-naehe): Kontrast >= 7:1. Wir setzen ein eigenes Farbschema
+   direkt auf die CSS-Variablen, sodass alle Komponenten automatisch ziehen.
+*/
+html[data-a11y-contrast="high"] {
+  --color-ink: #000000;
+  --color-text: #000000;
+  --color-text-muted: #1a1a1a;
+  --color-text-subtle: #1a1a1a;
+  --color-bg: #ffffff;
+  --color-bg-soft: #ffffff;
+  --color-bg-warm: #ffffff;
+  --color-bg-light: #ffffff;
+  --color-border: #000000;
+  --color-border-strong: #000000;
+  --color-line: #000000;
+  --color-primary: #003366;
+  --color-primary-dark: #001a33;
+  --color-primary-darker: #000000;
+  --color-primary-light: #ffffff;
+  --color-accent: #b35900;
+  --color-accent-dark: #803d00;
+  --color-accent-bright: #cc6600;
+  --color-accent-light: #fff2e0;
+  --grad-navy: #000000;
+  --shadow-xs: none;
+  --shadow-sm: none;
+  --shadow-md: 0 0 0 1px #000;
+  --shadow-lg: 0 0 0 2px #000;
+  --shadow-xl: 0 0 0 2px #000;
+}
+html[data-a11y-contrast="high"] body { background: #fff !important; color: #000 !important; }
+html[data-a11y-contrast="high"] .bg-navy,
+html[data-a11y-contrast="high"] .site-footer,
+html[data-a11y-contrast="high"] .preloader,
+html[data-a11y-contrast="high"] .hero-cinematic {
+  background: #000 !important;
+  color: #fff !important;
+}
+html[data-a11y-contrast="high"] .bg-navy *,
+html[data-a11y-contrast="high"] .site-footer *,
+html[data-a11y-contrast="high"] .hero-cinematic * { color: #fff !important; }
+html[data-a11y-contrast="high"] .bg-navy a,
+html[data-a11y-contrast="high"] .site-footer a,
+html[data-a11y-contrast="high"] .hero-cinematic a {
+  color: #ffd966 !important;
+  text-decoration: underline !important;
+}
+html[data-a11y-contrast="high"] a {
+  color: #003366 !important;
+  text-decoration: underline !important;
+}
+html[data-a11y-contrast="high"] .btn,
+html[data-a11y-contrast="high"] button {
+  border: 2px solid currentColor !important;
+}
+html[data-a11y-contrast="high"] .btn-primary,
+html[data-a11y-contrast="high"] .btn-accent {
+  background: #000 !important;
+  color: #fff !important;
+  border-color: #000 !important;
+}
+html[data-a11y-contrast="high"] .hero-cinematic__tint,
+html[data-a11y-contrast="high"] .hero-cinematic__grain { display: none !important; }
+html[data-a11y-contrast="high"] :focus-visible {
+  outline: 3px solid #ffbf00 !important;
+  outline-offset: 3px !important;
+}
+
+/* === Bewegungen reduzieren ==============================================
+   Wirkt zusaetzlich zur @media (prefers-reduced-motion). Schaltet jegliche
+   CSS-Animation/Transition global ab und blendet decorative Elemente aus.
+*/
+html[data-a11y-motion="reduced"] *,
+html[data-a11y-motion="reduced"] *::before,
+html[data-a11y-motion="reduced"] *::after {
+  animation-duration: 0.001ms !important;
+  animation-delay: 0ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.001ms !important;
+  transition-delay: 0ms !important;
+  scroll-behavior: auto !important;
+}
+
+html[data-a11y-motion="reduced"] [data-reveal] {
+  opacity: 1 !important;
+  transform: none !important;
+}
+
+/* Hero-Video durch Standbild ersetzen, dekorative Loop-Animation aus */
+html[data-a11y-motion="reduced"] .hero-cinematic__video {
+  display: none !important;
+}
+html[data-a11y-motion="reduced"] .hero-cinematic__media::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url('/images/hero/hero-home-cinematic.jpg');
+  background-size: cover;
+  background-position: center;
+}
+html[data-a11y-motion="reduced"] .hero-cinematic__grain { display: none !important; }
+html[data-a11y-motion="reduced"] .hero-cinematic__scroll-line::after { animation: none !important; }
+html[data-a11y-motion="reduced"] .hero-cinematic__scroll-hint { display: none !important; }
+
+/* Dekorative Marquees / Pinned Scroll Stories: still rendern, ohne Loop */
+html[data-a11y-motion="reduced"] [data-marquee] .marquee-track {
+  transform: none !important;
+}
+html[data-a11y-motion="reduced"] .scroll-progress { display: none !important; }
+
+/* Custom Cursor: greift schon ueber JS, hier nur visueller Fallback */
+html[data-a11y-cursor="system"] .cursor,
+html[data-a11y-motion="reduced"] .cursor { display: none !important; }
+html[data-a11y-cursor="system"] *,
+html[data-a11y-cursor="system"] a,
+html[data-a11y-cursor="system"] button,
+html[data-a11y-cursor="system"] [data-magnetic] { cursor: auto !important; }
+html[data-a11y-cursor="system"] a,
+html[data-a11y-cursor="system"] button { cursor: pointer !important; }
+
+/* Magnetic-Buttons: wenn Bewegung reduziert, Position fixieren */
+html[data-a11y-motion="reduced"] [data-magnetic] {
+  transform: none !important;
+}
+
+/* === Links unterstreichen =============================================== */
+html[data-a11y-links="underlined"] a:not(.btn):not(.logo):not(.skip-link):not(.a11y-widget__toggle) {
+  text-decoration: underline !important;
+  text-underline-offset: 3px !important;
+  text-decoration-thickness: 1.5px !important;
+}
+html[data-a11y-links="underlined"] .nav-link::after { display: none; }
+
+/* === Lesemodus ==========================================================
+   Blendet dekorative Bilder und Hintergrund-Medien aus, fokussiert Inhalt.
+   Erhalten bleiben semantische Bilder (in <article>, <figure>, kt-card etc.).
+*/
+html[data-a11y-reading="on"] .hero-cinematic__media,
+html[data-a11y-reading="on"] .hero-cinematic__grain,
+html[data-a11y-reading="on"] .preloader,
+html[data-a11y-reading="on"] .scroll-progress,
+html[data-a11y-reading="on"] [aria-hidden="true"] svg,
+html[data-a11y-reading="on"] .marquee-track img {
+  /* nicht display:none, damit Layout nicht kollabiert */
+}
+html[data-a11y-reading="on"] .hero-cinematic {
+  background: var(--color-bg-soft) !important;
+  color: var(--color-ink) !important;
+}
+html[data-a11y-reading="on"] .hero-cinematic__media { opacity: 0 !important; }
+html[data-a11y-reading="on"] .hero-cinematic__headline,
+html[data-a11y-reading="on"] .hero-cinematic__sub,
+html[data-a11y-reading="on"] .hero-cinematic__eyebrow {
+  color: var(--color-ink) !important;
+}
+html[data-a11y-reading="on"] .hero-cinematic__sub { color: var(--color-text) !important; }
+html[data-a11y-reading="on"] body {
+  font-family: 'Geist', system-ui, sans-serif;
+}
+html[data-a11y-reading="on"] p,
+html[data-a11y-reading="on"] li {
+  max-width: 65ch !important;
+  line-height: 1.75 !important;
+}
+
+/* === Print: Cursor und Widget aus ======================================= */
+@media print {
+  .cursor, .preloader, .scroll-progress, .a11y-widget, .cookie-consent, .cc { display: none !important; }
+  body { color: #000; background: #fff; }
+  a { color: #000; text-decoration: underline; }
+  a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 0.85em; }
+}
+
+/* === Forced-Colors-Modus (Windows High-Contrast) ======================== */
+@media (forced-colors: active) {
+  .btn, button, input, textarea, select { border: 1px solid CanvasText; }
+  :focus-visible { outline: 2px solid Highlight; outline-offset: 2px; }
+}

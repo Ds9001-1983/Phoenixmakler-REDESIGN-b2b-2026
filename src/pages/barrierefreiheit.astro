@@ -5,9 +5,9 @@ import LegalLayout from '../layouts/LegalLayout.astro';
 <LegalLayout title="Erklärung zur Barrierefreiheit" eyebrow="Rechtliches">
   <p class="legal-note">
     <strong>Hinweis:</strong> Diese Erklärung orientiert sich an den Anforderungen des
-    Barrierefreiheitsstärkungsgesetzes (BFSG, gültig ab 28. Juni 2025) und der WCAG 2.1
-    (Level AA). Vor Live-Gang sollte ein Accessibility-Audit durchgeführt werden, um den
-    aktuellen Konformitätsstatus zu bestätigen.
+    Barrierefreiheitsstärkungsgesetzes (BFSG, gültig ab 28. Juni 2025) und der
+    WCAG 2.2 (Level AA). Vor Live-Gang sollte ein finales Accessibility-Audit
+    durchgeführt werden, um den Konformitätsstatus formell zu bestätigen.
   </p>
 
   <h2>Geltungsbereich</h2>
@@ -16,20 +16,44 @@ import LegalLayout from '../layouts/LegalLayout.astro';
     <a href="https://www.phoenix-maklerverbund.de">www.phoenix-maklerverbund.de</a>.
   </p>
 
+  <h2>Anpassungen über das Barrierefreiheits-Widget</h2>
+  <p>
+    Über die Schaltfläche <strong>„Barrierefreiheit"</strong> rechts unten auf jeder Seite
+    können Sie die Darstellung an Ihre Bedürfnisse anpassen. Folgende Optionen stehen zur
+    Verfügung:
+  </p>
+  <ul>
+    <li><strong>Schriftgröße</strong> in vier Stufen (100&nbsp;%, 115&nbsp;%, 130&nbsp;%, 150&nbsp;%)</li>
+    <li><strong>Erhöhter Zeilen- und Wortabstand</strong> für bessere Lesbarkeit (z.&nbsp;B. bei Legasthenie)</li>
+    <li><strong>Hochkontrast-Modus</strong> nach WCAG-AAA-Niveau (Schwarz/Weiß/Goldgelb für Links)</li>
+    <li><strong>Bewegungen reduzieren</strong> – deaktiviert Hero-Video, Smooth-Scroll, Scroll-Animationen und dekorative Effekte</li>
+    <li><strong>Standard-Mauszeiger</strong> statt Custom-Cursor</li>
+    <li><strong>Links unterstreichen</strong> – Hervorhebung aller Verweise</li>
+    <li><strong>Lesemodus</strong> – blendet Hintergrund-Medien aus und maximiert Textlesbarkeit</li>
+  </ul>
+  <p>
+    Die Einstellungen werden lokal in Ihrem Browser (localStorage) gespeichert,
+    es findet keinerlei Datenübertragung an Dritte oder an unseren Server statt.
+  </p>
+
   <h2>Stand der Vereinbarkeit mit den Anforderungen</h2>
   <p>
-    Die Webseite wurde so entwickelt, dass sie die Anforderungen der WCAG 2.1 Level AA
+    Die Webseite wurde so entwickelt, dass sie die Anforderungen der WCAG 2.2 Level AA
     weitestgehend erfüllt. Zu den umgesetzten Maßnahmen gehören:
   </p>
   <ul>
     <li>Semantisches HTML und korrekte Überschriften-Hierarchie</li>
-    <li>Sichtbare Fokus-Indikatoren für Tastaturnavigation</li>
-    <li>Ausreichende Farbkontraste (mindestens 4.5:1 für Fließtext)</li>
-    <li>Alternativtexte für informative Bilder</li>
-    <li>Mindest-Touch-Targets von 44&nbsp;×&nbsp;44&nbsp;px auf mobilen Geräten</li>
+    <li>Sichtbare Fokus-Indikatoren für Tastaturnavigation in markenkonformer Farbe</li>
+    <li>Skip-Link „Zum Inhalt springen" für Tastatur- und Screenreader-Nutzer</li>
+    <li>Ausreichende Farbkontraste (mindestens 4.5:1 für Fließtext, 7:1+ im Hochkontrast-Modus)</li>
+    <li>Alternativtexte für informative Bilder, dekorative Bilder mit <code>aria-hidden</code></li>
+    <li>Mindest-Touch-Targets von 44&nbsp;×&nbsp;44&nbsp;px (WCAG 2.5.5)</li>
     <li>Responsive Design ohne horizontales Scrollen bei 320&nbsp;px Breite</li>
-    <li>Formulare mit klar zugeordneten Labels</li>
-    <li>Respekt von <code>prefers-reduced-motion</code> bei Animationen</li>
+    <li>Formulare mit klar zugeordneten Labels, <code>autocomplete</code>-Attributen und Pflichtfeld-Kennzeichnung</li>
+    <li>ARIA-konforme modale Dialoge (Erstinformation, Mobile-Menü, Barrierefreiheits-Widget) mit Focus-Trap und Escape-Schließen</li>
+    <li>Respekt von <code>prefers-reduced-motion</code> systemweit – Animationen, Hero-Video und WebGL-Shader werden bei aktivem Setting nicht geladen</li>
+    <li>Unterstützung des Windows-Hochkontrastmodus (<code>forced-colors</code>)</li>
+    <li>Tastatur-Bedienbarkeit aller Funktionen, inklusive Pfeiltasten-Navigation in Auswahlgruppen</li>
   </ul>
 
   <h2>Nicht barrierefreie Inhalte</h2>

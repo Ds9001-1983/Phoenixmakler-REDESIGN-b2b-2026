@@ -15,7 +15,11 @@
       </p>
     </div>
 
-    <form class="mform__form" data-registrierung novalidate data-reveal>
+    <p class="mform__required-hint" id="mform-req-hint">
+      Mit <span aria-hidden="true">*</span> markierte Felder sind Pflichtfelder.
+    </p>
+
+    <form class="mform__form" data-registrierung novalidate data-reveal aria-label="Registrierungs-Formular fuer Maklerpartnerschaft" aria-describedby="mform-req-hint">
       <div class="mform__row">
         <div class="mform__field">
           <label for="anrede">Anrede *</label>
@@ -114,7 +118,7 @@
         </p>
       </div>
 
-      <div class="mform__success" data-form-success hidden>
+      <div class="mform__success" data-form-success role="status" aria-live="polite" hidden>
         <h3>Vielen Dank für dein Interesse!</h3>
         <p>Wir melden uns in Kürze persönlich bei dir.</p>
       </div>
@@ -168,6 +172,14 @@
     color: var(--color-text-muted);
     max-width: 54ch;
     margin: 0 auto;
+  }
+
+  .mform__required-hint {
+    text-align: center;
+    font-size: 0.82rem;
+    color: var(--color-text-muted);
+    margin: 0 auto 1.25rem;
+    max-width: 54ch;
   }
 
   .mform__form {
@@ -296,7 +308,9 @@
     form.style.display = 'none';
     if (success) {
       success.hidden = false;
+      success.setAttribute('tabindex', '-1');
       success.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      success.focus();
     }
   });
 </script>

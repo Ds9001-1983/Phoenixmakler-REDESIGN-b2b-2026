@@ -5,9 +5,9 @@
 // Wird über sessionStorage einmalig akzeptiert und dann nicht wieder gezeigt.
 ---
 
-<div class="cc" id="cookie-consent" role="region" aria-label="Datenschutz-Hinweis" hidden>
+<div class="cc" id="cookie-consent" role="region" aria-label="Datenschutz-Hinweis" aria-live="polite" hidden>
   <div class="cc__inner">
-    <div class="cc__text">
+    <div class="cc__text" id="cc-text">
       <p>
         <strong>Hinweis:</strong> Diese Seite nutzt technisch notwendigen Speicher im Browser
         (z.&nbsp;B. für die Erstinformation) und&nbsp;— sofern aktiviert&nbsp;— eine
@@ -17,7 +17,7 @@
       </p>
     </div>
     <div class="cc__actions">
-      <button type="button" class="cc__btn" id="cookie-consent-accept">
+      <button type="button" class="cc__btn" id="cookie-consent-accept" aria-describedby="cc-text">
         Verstanden
       </button>
     </div>

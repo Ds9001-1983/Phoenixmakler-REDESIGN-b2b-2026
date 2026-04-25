@@ -1,5 +1,5 @@
 import { Canvas, useFrame } from '@react-three/fiber';
-import { useMemo, useRef } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import * as THREE from 'three';
 
 const vertexShader = /* glsl */ `
@@ -71,6 +71,20 @@ function Plane({ intensity }: { intensity: number }) {
 }
 
 export default function NoiseGrainCanvas({ intensity = 0.22 }: { intensity?: number }) {
+  // A11y: Bei reduced-motion (Widget oder System) Shader gar nicht mounten —
+  // spart GPU-Zeit. Das CSS-SVG-Grain im Hero bleibt als statischer Ersatz.
+  const [reduced, setReduced] = useState(false);
+  useEffect(() => {
+    const html = document.documentElement;
+    const check = () =>
+      setReduced(html.getAttribute('data-a11y-motion') === 'reduced');
+    check();
+    const obs = new MutationObserver(check);
+    obs.observe(html, { attributes: true, attributeFilter: ['data-a11y-motion'] });
+    return () => obs.disconnect();
+  }, []);
+  if (reduced) return null;
+
   return (
     <Canvas
       orthographic
