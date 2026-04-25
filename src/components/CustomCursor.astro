@@ -78,8 +78,13 @@
   const dot = document.getElementById('cursor-dot');
   const label = document.getElementById('cursor-label');
   const supportsHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+  // A11y: Wenn "Standard-Mauszeiger" oder "Bewegungen reduzieren" aktiv,
+  // Custom-Cursor-Logik gar nicht erst initialisieren (CSS blendet das Element schon aus).
+  const html = document.documentElement;
+  const cursorDisabled = html.getAttribute('data-a11y-cursor') === 'system'
+    || html.getAttribute('data-a11y-motion') === 'reduced';
 
-  if (cursor && dot && label && supportsHover) {
+  if (cursor && dot && label && supportsHover && !cursorDisabled) {
     document.documentElement.classList.add('cursor-active');
     let tx = window.innerWidth / 2;
     let ty = window.innerHeight / 2;

@@ -1,10 +1,18 @@
 import Lenis from 'lenis';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+// Stellt sicher, dass das A11y-State-Modul fuer Module-Reihenfolge bekannt ist
+// (das Inline-Skript im <head> hat data-a11y-motion bereits gesetzt).
+import './a11y.ts';
 
 gsap.registerPlugin(ScrollTrigger);
 
-const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+// "reduced" gewinnt wenn entweder der User es im Widget gewaehlt hat
+// oder das System prefers-reduced-motion meldet (das Inline-Skript hat
+// data-a11y-motion auf html schon gesetzt).
+const prefersReduced =
+  document.documentElement.getAttribute('data-a11y-motion') === 'reduced'
+  || window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 // --- Smooth Scroll (Lenis) ---
 let lenis: Lenis | null = null;

@@ -1,9 +1,11 @@
 ---
 import '../styles/global.css';
+import '../styles/a11y.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import Preloader from '../components/Preloader.astro';
 import CustomCursor from '../components/CustomCursor.astro';
+import AccessibilityWidget from '../components/AccessibilityWidget.astro';
 
 interface Props {
   title: string;
@@ -55,6 +57,41 @@ const umamiId = import.meta.env.PUBLIC_UMAMI_ID;
     {umamiUrl && umamiId && (
       <script defer src={umamiUrl} data-website-id={umamiId}></script>
     )}
+    {/* A11y First-Paint: setzt data-a11y-* Attribute SYNCHRON vor dem ersten Render,
+        sodass CSS-Variablen (Hochkontrast, Schriftgroesse, Reduce-Motion) sofort
+        greifen und kein Flash entsteht. Muss inline und blockierend laufen. */}
+    <script is:inline>
+      (function () {
+        try {
+          var KEY = 'phoenix_a11y_v1';
+          var defaults = {
+            textSize: '100', spacing: 'normal', contrast: 'normal',
+            motion: 'full', cursor: 'custom', links: 'normal', reading: 'off'
+          };
+          var raw = localStorage.getItem(KEY);
+          var s = defaults;
+          if (raw) {
+            try {
+              var p = JSON.parse(raw);
+              if (p && typeof p === 'object') {
+                for (var k in defaults) if (p[k]) s[k] = p[k];
+              }
+            } catch (e) {}
+          }
+          var prefersReduce = window.matchMedia &&
+            window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+          var motion = (s.motion === 'reduced' || prefersReduce) ? 'reduced' : 'full';
+          var html = document.documentElement;
+          html.setAttribute('data-a11y-text', s.textSize);
+          html.setAttribute('data-a11y-spacing', s.spacing);
+          html.setAttribute('data-a11y-contrast', s.contrast);
+          html.setAttribute('data-a11y-motion', motion);
+          html.setAttribute('data-a11y-cursor', s.cursor);
+          html.setAttribute('data-a11y-links', s.links);
+          html.setAttribute('data-a11y-reading', s.reading);
+        } catch (e) {}
+      })();
+    </script>
   </head>
   <body>
     <a href="#main" class="skip-link">Zum Inhalt springen</a>
@@ -62,10 +99,11 @@ const umamiId = import.meta.env.PUBLIC_UMAMI_ID;
     <CustomCursor />
     <div class="scroll-progress" data-scroll-progress aria-hidden="true"></div>
     <Header />
-    <main id="main">
+    <main id="main" tabindex="-1">
       <slot />
     </main>
     {!hideFooter && <Footer />}
+    <AccessibilityWidget />
     <script>
       import '../scripts/motion.ts';
     </script>

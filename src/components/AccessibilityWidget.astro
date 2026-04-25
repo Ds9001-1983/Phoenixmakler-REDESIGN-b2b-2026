@@ -1,0 +1,528 @@
+---
+// Barrierefreiheits-Widget (BFSG / WCAG 2.2 AA).
+// Floating-Button rechts unten, oeffnet ein modales Panel mit Praeferenzen
+// fuer Schriftgroesse, Zeilenabstand, Hochkontrast, Bewegungen reduzieren,
+// Cursor, Link-Unterstreichung und Lesemodus.
+//
+// Persistierung in localStorage via /scripts/a11y.ts. Fuer "kein Flash" wird
+// in BaseLayout.astro ein winziges Inline-Skript im <head> ausgefuehrt, das
+// die data-a11y-* Attribute schon vor dem ersten Paint setzt.
+---
+
+<button
+  type="button"
+  class="a11y-widget__toggle"
+  data-a11y-toggle
+  aria-label="Barrierefreiheits-Einstellungen oeffnen"
+  aria-haspopup="dialog"
+  aria-controls="a11y-panel"
+  aria-expanded="false"
+>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <circle cx="12" cy="12" r="11" stroke="currentColor" stroke-width="1.5" />
+    <circle cx="12" cy="5.5" r="1.6" fill="currentColor" />
+    <path d="M5.5 8.5h13M12 8.5v6M9 19l3-4.5 3 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+  </svg>
+  <span class="a11y-widget__toggle-label">Barrierefreiheit</span>
+</button>
+
+<div
+  class="a11y-widget__panel"
+  id="a11y-panel"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="a11y-panel-title"
+  data-a11y-panel
+  hidden
+>
+  <div class="a11y-widget__panel-inner">
+    <header class="a11y-widget__header">
+      <div>
+        <span class="a11y-widget__eyebrow">Barrierefreiheit</span>
+        <h2 id="a11y-panel-title">Anzeige anpassen</h2>
+      </div>
+      <button type="button" class="a11y-widget__close" data-a11y-close aria-label="Panel schliessen">
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
+          <path d="M2 2l14 14M16 2L2 16" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
+        </svg>
+      </button>
+    </header>
+
+    <p class="a11y-widget__intro">
+      Passen Sie die Darstellung an Ihre Beduerfnisse an. Ihre Auswahl wird in diesem Browser
+      gespeichert und gilt fuer alle Seiten von phoenix-maklerverbund.de.
+    </p>
+
+    <div class="a11y-widget__group" role="group" aria-labelledby="a11y-text-label">
+      <span class="a11y-widget__label" id="a11y-text-label">Schriftgroesse</span>
+      <div class="a11y-widget__seg" role="radiogroup" aria-labelledby="a11y-text-label">
+        <button type="button" role="radio" aria-checked="true" data-a11y-set="textSize" data-a11y-value="100">100&nbsp;%</button>
+        <button type="button" role="radio" aria-checked="false" data-a11y-set="textSize" data-a11y-value="115">115&nbsp;%</button>
+        <button type="button" role="radio" aria-checked="false" data-a11y-set="textSize" data-a11y-value="130">130&nbsp;%</button>
+        <button type="button" role="radio" aria-checked="false" data-a11y-set="textSize" data-a11y-value="150">150&nbsp;%</button>
+      </div>
+    </div>
+
+    <div class="a11y-widget__group" role="group" aria-labelledby="a11y-spacing-label">
+      <span class="a11y-widget__label" id="a11y-spacing-label">Zeilenabstand</span>
+      <div class="a11y-widget__seg" role="radiogroup" aria-labelledby="a11y-spacing-label">
+        <button type="button" role="radio" aria-checked="true" data-a11y-set="spacing" data-a11y-value="normal">Normal</button>
+        <button type="button" role="radio" aria-checked="false" data-a11y-set="spacing" data-a11y-value="relaxed">Erhoeht</button>
+      </div>
+    </div>
+
+    <div class="a11y-widget__group" role="group" aria-labelledby="a11y-contrast-label">
+      <span class="a11y-widget__label" id="a11y-contrast-label">Kontrast</span>
+      <div class="a11y-widget__seg" role="radiogroup" aria-labelledby="a11y-contrast-label">
+        <button type="button" role="radio" aria-checked="true" data-a11y-set="contrast" data-a11y-value="normal">Standard</button>
+        <button type="button" role="radio" aria-checked="false" data-a11y-set="contrast" data-a11y-value="high">Hochkontrast</button>
+      </div>
+    </div>
+
+    <div class="a11y-widget__toggles">
+      <label class="a11y-widget__switch">
+        <input type="checkbox" data-a11y-switch="motion" data-a11y-on="reduced" data-a11y-off="full" />
+        <span class="a11y-widget__switch-track" aria-hidden="true"><span class="a11y-widget__switch-thumb"></span></span>
+        <span class="a11y-widget__switch-text">
+          <strong>Bewegungen reduzieren</strong>
+          <span>Animationen, Hero-Video und Auto-Scroll abschalten.</span>
+        </span>
+      </label>
+
+      <label class="a11y-widget__switch">
+        <input type="checkbox" data-a11y-switch="cursor" data-a11y-on="system" data-a11y-off="custom" />
+        <span class="a11y-widget__switch-track" aria-hidden="true"><span class="a11y-widget__switch-thumb"></span></span>
+        <span class="a11y-widget__switch-text">
+          <strong>Standard-Mauszeiger</strong>
+          <span>Custom-Cursor deaktivieren, System-Zeiger nutzen.</span>
+        </span>
+      </label>
+
+      <label class="a11y-widget__switch">
+        <input type="checkbox" data-a11y-switch="links" data-a11y-on="underlined" data-a11y-off="normal" />
+        <span class="a11y-widget__switch-track" aria-hidden="true"><span class="a11y-widget__switch-thumb"></span></span>
+        <span class="a11y-widget__switch-text">
+          <strong>Links unterstreichen</strong>
+          <span>Verweise erhalten dauerhaft eine Unterstreichung.</span>
+        </span>
+      </label>
+
+      <label class="a11y-widget__switch">
+        <input type="checkbox" data-a11y-switch="reading" data-a11y-on="on" data-a11y-off="off" />
+        <span class="a11y-widget__switch-track" aria-hidden="true"><span class="a11y-widget__switch-thumb"></span></span>
+        <span class="a11y-widget__switch-text">
+          <strong>Lesemodus</strong>
+          <span>Hintergrund-Video und dekorative Effekte ausblenden.</span>
+        </span>
+      </label>
+    </div>
+
+    <footer class="a11y-widget__footer">
+      <button type="button" class="a11y-widget__reset" data-a11y-reset>Zuruecksetzen</button>
+      <a href="/barrierefreiheit" class="a11y-widget__link">Erklaerung zur Barrierefreiheit</a>
+    </footer>
+  </div>
+</div>
+
+<style>
+  .a11y-widget__toggle {
+    position: fixed;
+    right: 1rem;
+    bottom: 5.5rem;
+    z-index: 9600;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    padding: 0.7rem 1rem 0.7rem 0.85rem;
+    background: var(--color-primary-dark, #0a1940);
+    color: #fff;
+    border: 0;
+    border-radius: 999px;
+    box-shadow: 0 10px 30px rgba(10, 25, 64, 0.28);
+    font-family: var(--font-body, system-ui, sans-serif);
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    min-height: 44px;
+    transition: transform 220ms ease, box-shadow 220ms ease, background-color 220ms ease;
+  }
+  .a11y-widget__toggle:hover {
+    background: var(--color-primary, #1e3a8a);
+    transform: translateY(-1px);
+    box-shadow: 0 14px 40px rgba(10, 25, 64, 0.34);
+  }
+  .a11y-widget__toggle:focus-visible {
+    outline: 3px solid var(--color-accent, #b8865b);
+    outline-offset: 3px;
+  }
+  .a11y-widget__toggle svg { flex-shrink: 0; }
+
+  @media (max-width: 720px) {
+    .a11y-widget__toggle {
+      padding: 0.7rem;
+      bottom: 5rem;
+    }
+    .a11y-widget__toggle-label { display: none; }
+  }
+
+  /* Panel als modaler Dialog (eigenes Markup statt <dialog> — wir wollen
+     das Panel auch ueber dem CookieConsent stapeln und nahtlos animieren). */
+  .a11y-widget__panel {
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+    display: flex;
+    align-items: stretch;
+    justify-content: flex-end;
+    background: rgba(5, 13, 38, 0.55);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    opacity: 0;
+    transition: opacity 220ms ease;
+  }
+  .a11y-widget__panel[hidden] { display: none; }
+  .a11y-widget__panel.is-visible { opacity: 1; }
+
+  .a11y-widget__panel-inner {
+    width: min(420px, 100%);
+    height: 100%;
+    background: #fff;
+    color: var(--color-text, #1a1f36);
+    overflow-y: auto;
+    padding: 1.75rem 1.6rem 2.5rem;
+    box-shadow: -24px 0 60px rgba(10, 25, 64, 0.18);
+    transform: translateX(20px);
+    transition: transform 280ms cubic-bezier(0.16, 1, 0.3, 1);
+    font-family: var(--font-body, system-ui, sans-serif);
+  }
+  .a11y-widget__panel.is-visible .a11y-widget__panel-inner { transform: translateX(0); }
+
+  .a11y-widget__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+  }
+  .a11y-widget__eyebrow {
+    display: block;
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-accent-dark, #8f6a47);
+    font-weight: 600;
+    margin-bottom: 0.4rem;
+  }
+  .a11y-widget__header h2 {
+    font-family: var(--font-display, serif);
+    font-size: 1.55rem;
+    font-weight: 500;
+    line-height: 1.1;
+    color: var(--color-ink, #0a1940);
+    margin: 0;
+  }
+  .a11y-widget__close {
+    width: 36px;
+    height: 36px;
+    background: transparent;
+    border: 1px solid var(--color-border, #e4e7ef);
+    border-radius: 999px;
+    color: var(--color-ink, #0a1940);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 180ms, border-color 180ms;
+  }
+  .a11y-widget__close:hover {
+    background: var(--color-bg-soft, #f7f8fb);
+    border-color: var(--color-border-strong, #d2d7e2);
+  }
+
+  .a11y-widget__intro {
+    font-size: 0.9rem;
+    line-height: 1.55;
+    color: var(--color-text-muted, #555d7a);
+    margin-bottom: 1.5rem;
+    max-width: none;
+  }
+
+  .a11y-widget__group { margin-bottom: 1.25rem; }
+  .a11y-widget__label {
+    display: block;
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-text-muted, #555d7a);
+    margin-bottom: 0.55rem;
+  }
+
+  .a11y-widget__seg {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(64px, 1fr));
+    gap: 4px;
+    background: var(--color-bg-soft, #f7f8fb);
+    border: 1px solid var(--color-border, #e4e7ef);
+    border-radius: 10px;
+    padding: 4px;
+  }
+  .a11y-widget__seg button {
+    appearance: none;
+    background: transparent;
+    border: 0;
+    padding: 0.55rem 0.5rem;
+    border-radius: 7px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--color-text, #1a1f36);
+    cursor: pointer;
+    min-height: 36px;
+    transition: background-color 160ms, color 160ms;
+  }
+  .a11y-widget__seg button:hover { background: rgba(10, 25, 64, 0.05); }
+  .a11y-widget__seg button[aria-checked="true"] {
+    background: var(--color-ink, #0a1940);
+    color: #fff;
+  }
+  .a11y-widget__seg button:focus-visible {
+    outline: 2px solid var(--color-accent, #b8865b);
+    outline-offset: 2px;
+  }
+
+  .a11y-widget__toggles {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    border-top: 1px solid var(--color-border, #e4e7ef);
+    padding-top: 1.25rem;
+    margin-top: 0.5rem;
+  }
+
+  .a11y-widget__switch {
+    display: grid;
+    grid-template-columns: 44px 1fr;
+    align-items: start;
+    gap: 0.85rem;
+    padding: 0.65rem 0.4rem;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color 160ms;
+  }
+  .a11y-widget__switch:hover { background: var(--color-bg-soft, #f7f8fb); }
+
+  .a11y-widget__switch input { position: absolute; opacity: 0; pointer-events: none; }
+
+  .a11y-widget__switch-track {
+    display: inline-block;
+    width: 40px;
+    height: 22px;
+    background: var(--color-border-strong, #d2d7e2);
+    border-radius: 999px;
+    position: relative;
+    transition: background-color 200ms ease;
+    margin-top: 2px;
+  }
+  .a11y-widget__switch-thumb {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 18px;
+    height: 18px;
+    background: #fff;
+    border-radius: 999px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.18);
+    transition: transform 200ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .a11y-widget__switch input:checked + .a11y-widget__switch-track {
+    background: var(--color-ink, #0a1940);
+  }
+  .a11y-widget__switch input:checked + .a11y-widget__switch-track .a11y-widget__switch-thumb {
+    transform: translateX(18px);
+  }
+  .a11y-widget__switch input:focus-visible + .a11y-widget__switch-track {
+    outline: 2px solid var(--color-accent, #b8865b);
+    outline-offset: 3px;
+  }
+
+  .a11y-widget__switch-text {
+    display: block;
+    font-size: 0.88rem;
+    line-height: 1.35;
+  }
+  .a11y-widget__switch-text strong {
+    display: block;
+    color: var(--color-ink, #0a1940);
+    font-weight: 600;
+    margin-bottom: 0.15rem;
+  }
+  .a11y-widget__switch-text span {
+    display: block;
+    color: var(--color-text-muted, #555d7a);
+    font-size: 0.82rem;
+  }
+
+  .a11y-widget__footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--color-border, #e4e7ef);
+  }
+  .a11y-widget__reset {
+    appearance: none;
+    background: transparent;
+    border: 1px solid var(--color-border-strong, #d2d7e2);
+    border-radius: 999px;
+    padding: 0.55rem 1rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--color-ink, #0a1940);
+    cursor: pointer;
+    min-height: 38px;
+    transition: background-color 180ms, border-color 180ms;
+  }
+  .a11y-widget__reset:hover {
+    background: var(--color-bg-soft, #f7f8fb);
+    border-color: var(--color-ink, #0a1940);
+  }
+  .a11y-widget__link {
+    font-size: 0.82rem;
+    color: var(--color-primary, #1e3a8a);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  /* Reduced-Motion: keine Slide-In, nur Fade */
+  html[data-a11y-motion="reduced"] .a11y-widget__panel-inner { transform: none !important; transition: none !important; }
+  html[data-a11y-motion="reduced"] .a11y-widget__panel { transition: none !important; }
+</style>
+
+<script>
+  import { readSettings, updateSettings, resetSettings, A11Y_EVENT, type A11ySettings } from '../scripts/a11y.ts';
+
+  const toggle = document.querySelector<HTMLButtonElement>('[data-a11y-toggle]');
+  const panel = document.querySelector<HTMLElement>('[data-a11y-panel]');
+  const closeBtn = document.querySelector<HTMLButtonElement>('[data-a11y-close]');
+  const resetBtn = document.querySelector<HTMLButtonElement>('[data-a11y-reset]');
+
+  if (!toggle || !panel || !closeBtn) {
+    console.warn('[a11y-widget] missing markup');
+  } else {
+    let lastFocus: HTMLElement | null = null;
+
+    const focusable = () => Array.from(
+      panel.querySelectorAll<HTMLElement>(
+        'a[href], button:not([disabled]), input:not([disabled]), [tabindex]:not([tabindex="-1"])'
+      )
+    );
+
+    const open = () => {
+      lastFocus = document.activeElement as HTMLElement;
+      panel.hidden = false;
+      requestAnimationFrame(() => panel.classList.add('is-visible'));
+      toggle.setAttribute('aria-expanded', 'true');
+      document.body.style.overflow = 'hidden';
+      const first = focusable()[0];
+      first?.focus();
+    };
+
+    const close = () => {
+      panel.classList.remove('is-visible');
+      toggle.setAttribute('aria-expanded', 'false');
+      document.body.style.overflow = '';
+      setTimeout(() => { panel.hidden = true; }, 240);
+      lastFocus?.focus?.();
+    };
+
+    toggle.addEventListener('click', () => {
+      if (panel.hidden) open(); else close();
+    });
+    closeBtn.addEventListener('click', close);
+
+    // Klick auf Backdrop schliesst
+    panel.addEventListener('click', (e) => {
+      if (e.target === panel) close();
+    });
+
+    // Esc + Focus-Trap
+    document.addEventListener('keydown', (e) => {
+      if (panel.hidden) return;
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        close();
+        return;
+      }
+      if (e.key === 'Tab') {
+        const items = focusable();
+        if (!items.length) return;
+        const first = items[0];
+        const last = items[items.length - 1];
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault(); last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault(); first.focus();
+        }
+      }
+    });
+
+    // Segmented Buttons (Radio-Group)
+    panel.querySelectorAll<HTMLButtonElement>('[data-a11y-set]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const key = btn.dataset.a11ySet as keyof A11ySettings;
+        const value = btn.dataset.a11yValue as string;
+        if (!key || !value) return;
+        updateSettings({ [key]: value } as Partial<A11ySettings>);
+      });
+      // Tastatur-Navigation in der Seg-Gruppe (Pfeile)
+      btn.addEventListener('keydown', (e) => {
+        const group = btn.parentElement;
+        if (!group) return;
+        const items = Array.from(group.querySelectorAll<HTMLButtonElement>('[role="radio"]'));
+        const idx = items.indexOf(btn);
+        if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+          e.preventDefault(); items[(idx + 1) % items.length]?.focus();
+        } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+          e.preventDefault(); items[(idx - 1 + items.length) % items.length]?.focus();
+        }
+      });
+    });
+
+    // Switches
+    panel.querySelectorAll<HTMLInputElement>('[data-a11y-switch]').forEach((input) => {
+      input.addEventListener('change', () => {
+        const key = input.dataset.a11ySwitch as keyof A11ySettings;
+        const onValue = input.dataset.a11yOn as string;
+        const offValue = input.dataset.a11yOff as string;
+        if (!key) return;
+        updateSettings({ [key]: input.checked ? onValue : offValue } as Partial<A11ySettings>);
+      });
+    });
+
+    // Reset
+    resetBtn?.addEventListener('click', () => {
+      resetSettings();
+    });
+
+    // UI-Sync mit aktuellem State
+    const syncUI = (s: A11ySettings) => {
+      panel.querySelectorAll<HTMLButtonElement>('[data-a11y-set]').forEach((btn) => {
+        const key = btn.dataset.a11ySet as keyof A11ySettings;
+        const value = btn.dataset.a11yValue;
+        const active = s[key] === value;
+        btn.setAttribute('aria-checked', String(active));
+        btn.tabIndex = active ? 0 : -1;
+      });
+      panel.querySelectorAll<HTMLInputElement>('[data-a11y-switch]').forEach((input) => {
+        const key = input.dataset.a11ySwitch as keyof A11ySettings;
+        const onValue = input.dataset.a11yOn;
+        input.checked = s[key] === onValue;
+      });
+    };
+
+    syncUI(readSettings());
+    window.addEventListener(A11Y_EVENT, ((e: CustomEvent<A11ySettings>) => syncUI(e.detail)) as EventListener);
+  }
+</script>

@@ -223,8 +223,20 @@ const videoWebm = '/videos/hero-home.webm';
 <script>
   // Autoplay-Fallback: manche Browser verzögern autoplay trotz muted+playsinline.
   // Nach DOMContentLoaded einmalig play() erzwingen (Promise kann ignoriert werden).
+  // A11y: bei reduced-motion das Video gar nicht erst starten — der Poster
+  // bzw. das CSS-Background-Image dient als Standbild.
   const v = document.querySelector<HTMLVideoElement>('.hero-cinematic__video');
-  if (v) {
+  const motionReduced = document.documentElement.getAttribute('data-a11y-motion') === 'reduced';
+
+  if (v && motionReduced) {
+    try {
+      v.pause();
+      v.removeAttribute('autoplay');
+      // Source-Loading verhindern, sodass kein Bandbreitenverbrauch entsteht
+      v.querySelectorAll('source').forEach((s) => s.removeAttribute('src'));
+      v.load();
+    } catch {}
+  } else if (v) {
     const kick = () => v.play().catch(() => {});
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', kick, { once: true });

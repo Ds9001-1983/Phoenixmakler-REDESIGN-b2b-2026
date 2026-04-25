@@ -225,20 +225,50 @@ const isActive = (href: string) => pathname === href || (href !== '/' && pathnam
   const nav = document.querySelector<HTMLElement>('[data-nav]');
   const header = document.querySelector<HTMLElement>('[data-header]');
 
+  const navFocusable = () => nav
+    ? Array.from(nav.querySelectorAll<HTMLElement>('a[href], button:not([disabled])'))
+    : [];
+
+  const setOpen = (open: boolean) => {
+    if (!burger || !nav) return;
+    burger.setAttribute('aria-expanded', String(open));
+    burger.setAttribute('aria-label', open ? 'Menü schließen' : 'Menü öffnen');
+    nav.setAttribute('data-open', String(open));
+    document.body.style.overflow = open ? 'hidden' : '';
+    if (open) {
+      navFocusable()[0]?.focus();
+    }
+  };
+
   burger?.addEventListener('click', () => {
-    const open = burger.getAttribute('aria-expanded') === 'true';
-    burger.setAttribute('aria-expanded', String(!open));
-    burger.setAttribute('aria-label', open ? 'Menü öffnen' : 'Menü schließen');
-    nav?.setAttribute('data-open', String(!open));
-    document.body.style.overflow = !open ? 'hidden' : '';
+    const isOpen = burger.getAttribute('aria-expanded') === 'true';
+    setOpen(!isOpen);
   });
 
   document.querySelectorAll('[data-nav] a').forEach((link) => {
-    link.addEventListener('click', () => {
-      burger?.setAttribute('aria-expanded', 'false');
-      nav?.setAttribute('data-open', 'false');
-      document.body.style.overflow = '';
-    });
+    link.addEventListener('click', () => setOpen(false));
+  });
+
+  // Esc und Focus-Trap, aber nur wenn Menue offen ist (Mobile)
+  document.addEventListener('keydown', (e) => {
+    if (burger?.getAttribute('aria-expanded') !== 'true') return;
+    if (e.key === 'Escape') {
+      e.preventDefault();
+      setOpen(false);
+      burger.focus();
+      return;
+    }
+    if (e.key === 'Tab') {
+      const items = navFocusable();
+      if (!items.length) return;
+      const first = items[0];
+      const last = items[items.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault(); last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault(); first.focus();
+      }
+    }
   });
 
   window.addEventListener('scroll', () => {

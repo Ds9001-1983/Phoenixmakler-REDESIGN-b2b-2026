@@ -84,7 +84,17 @@
   const el = document.getElementById('preloader');
   const fill = document.getElementById('preloader-fill');
   const countEl = document.getElementById('preloader-count');
-  if (el && fill && countEl) {
+
+  // A11y: bei "Bewegungen reduzieren" (per Widget oder System-Setting) den
+  // Preloader sofort entfernen — kein Decor, das den Inhalt verzoegert.
+  const motionReduced = document.documentElement.getAttribute('data-a11y-motion') === 'reduced';
+  if (el && motionReduced) {
+    el.classList.add('is-done');
+    document.documentElement.classList.add('preloader-done');
+    setTimeout(() => { try { el.remove(); } catch {} }, 100);
+  }
+
+  if (el && fill && countEl && !motionReduced) {
     let progress = 0;
     const render = () => {
       fill.style.transform = `scaleX(${progress / 100})`;
