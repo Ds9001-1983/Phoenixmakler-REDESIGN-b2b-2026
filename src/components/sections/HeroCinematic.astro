@@ -2,7 +2,7 @@
 // Video: Starling-Murmuration (Pexels 3851642 / Egor Kunovsky, Pexels License).
 // Visuelle Metapher: „Ungebunden. Verbunden." — Einzelne im Schwarm.
 // Leicht gegradeter 10s-Loop, 1280x720, <3MB. Kein Fade (saubere Loop-Naht).
-import NoiseGrainCanvas from '../shaders/NoiseGrainCanvas.tsx';
+// Grain ist reines CSS-SVG (data-URL) — kein WebGL-Bundle (~250 kB gespart).
 
 const posterPath = '/images/hero/hero-home-cinematic.jpg';
 const videoMp4 = '/videos/hero-home.mp4';
@@ -17,16 +17,14 @@ const videoWebm = '/videos/hero-home.webm';
       muted
       loop
       playsinline
-      preload="auto"
+      preload="metadata"
       poster={posterPath}
     >
       <source src={videoMp4} type="video/mp4" />
       <source src={videoWebm} type="video/webm" />
     </video>
     <div class="hero-cinematic__tint" aria-hidden="true"></div>
-    <div class="hero-cinematic__grain" aria-hidden="true">
-      <NoiseGrainCanvas client:only="react" intensity={0.22} />
-    </div>
+    <div class="hero-cinematic__grain" aria-hidden="true"></div>
   </div>
 
   <div class="hero-cinematic__content">

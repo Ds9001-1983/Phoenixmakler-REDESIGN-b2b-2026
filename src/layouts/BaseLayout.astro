@@ -6,6 +6,7 @@ import Footer from '../components/Footer.astro';
 import Preloader from '../components/Preloader.astro';
 import CustomCursor from '../components/CustomCursor.astro';
 import AccessibilityWidget from '../components/AccessibilityWidget.astro';
+import navigation from '../data/navigation.json';
 
 interface Props {
   title: string;
@@ -23,6 +24,39 @@ const {
 
 const siteTitle = title.includes('Phönix') ? title : `${title} | Phönix Maklerverbund`;
 const canonical = new URL(Astro.url.pathname, Astro.site).toString();
+const siteOrigin = Astro.site?.origin ?? 'https://www.phoenix-maklerverbund.de';
+
+// JSON-LD: nur auf der Startseite ausgeben — sonst dupliziert sich das Schema
+// und Google bewertet Konsistenz hoeher als Mehrfach-Wiederholung.
+const isHome = Astro.url.pathname === '/';
+const jsonLd = isHome ? {
+  '@context': 'https://schema.org',
+  '@type': 'InsuranceAgency',
+  name: navigation.kontakt.firma,
+  url: siteOrigin,
+  logo: `${siteOrigin}/images/logo.png`,
+  image: `${siteOrigin}/images/hero/hero-home.png`,
+  telephone: navigation.kontakt.telefon,
+  email: navigation.kontakt.email,
+  description: 'Inhabergefuehrter Maklerverbund fuer ungebundene Versicherungsmaklerinnen und -makler. Seit 2012 in Oberhonnefeld-Gierend.',
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: navigation.kontakt.strasse,
+    postalCode: '56587',
+    addressLocality: 'Oberhonnefeld-Gierend',
+    addressRegion: 'Rheinland-Pfalz',
+    addressCountry: 'DE',
+  },
+  openingHoursSpecification: [{
+    '@type': 'OpeningHoursSpecification',
+    dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
+    opens: '09:00',
+    closes: '17:00',
+  }],
+  foundingDate: '2012',
+  areaServed: 'DE',
+  sameAs: [],
+} : null;
 
 // Datenschutzfreundliches Tracking ohne Cookies (Plausible oder Umami).
 // Nur aktiv, wenn PUBLIC_PLAUSIBLE_DOMAIN oder PUBLIC_UMAMI_URL in .env gesetzt ist.
@@ -40,7 +74,9 @@ const umamiId = import.meta.env.PUBLIC_UMAMI_ID;
     <title>{siteTitle}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
-    <link rel="icon" type="image/png" href="/images/logo.png" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="alternate icon" type="image/png" href="/images/logo.png" />
+    <link rel="apple-touch-icon" href="/images/logo.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <meta property="og:title" content={siteTitle} />
@@ -56,6 +92,9 @@ const umamiId = import.meta.env.PUBLIC_UMAMI_ID;
     )}
     {umamiUrl && umamiId && (
       <script defer src={umamiUrl} data-website-id={umamiId}></script>
+    )}
+    {jsonLd && (
+      <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
     )}
     {/* A11y First-Paint: setzt data-a11y-* Attribute SYNCHRON vor dem ersten Render,
         sodass CSS-Variablen (Hochkontrast, Schriftgroesse, Reduce-Motion) sofort
