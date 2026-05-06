@@ -69,8 +69,9 @@ export const POST: APIRoute = async ({ request }) => {
     });
     url = result.url;
   } catch (e) {
-    console.error('Vercel Blob put failed', (e as Error).message);
-    return j({ error: 'storage_error' }, 502);
+    const msg = (e as Error).message;
+    console.error('Vercel Blob put failed', msg);
+    return j({ error: 'storage_error', detail: msg.slice(0, 300) }, 502);
   }
 
   invalidatePhotoCache();
