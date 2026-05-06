@@ -134,29 +134,40 @@ export const POST: APIRoute = async ({ request }) => {
   const userJson = (await userRes.json()) as { data?: { id?: number } };
   const newUserId = userJson?.data?.id ?? null;
 
-  // 2) IBAN als Bankverbindung beim Vermittler hinterlegen — nicht-blockierend
+  // 2) IBAN als Bankverbindung beim Vermittler hinterlegen — mit 1× Retry,
+  //    weil dieser Call gelegentlich an PW-Latenz-Spitzen scheitert.
   let bankStatus: 'ok' | 'failed' | 'skipped' = 'skipped';
   if (newUserId && iban) {
-    try {
-      const bankRes = await fetch(`${base}/api/v1/${slug}/bank-accounts/user`, {
-        method: 'POST',
-        headers,
-        body: JSON.stringify({
-          user_id: newUserId,
-          iban_code: iban,
-          depositor: `${vorname} ${nachname}`,
-          validate_iban: false,
-        }),
-      });
-      if (bankRes.ok) {
-        bankStatus = 'ok';
-      } else {
+    const bankBody = JSON.stringify({
+      user_id: newUserId,
+      iban_code: iban,
+      depositor: `${vorname} ${nachname}`,
+      validate_iban: false,
+    });
+    for (let attempt = 1; attempt <= 2; attempt++) {
+      try {
+        const bankRes = await fetch(`${base}/api/v1/${slug}/bank-accounts/user`, {
+          method: 'POST',
+          headers,
+          body: bankBody,
+        });
+        if (bankRes.ok) {
+          bankStatus = 'ok';
+          break;
+        }
+        const errBody = (await bankRes.text()).slice(0, 400);
+        console.error(`PW bank-account error (attempt ${attempt})`, bankRes.status, errBody);
+        // 4xx (außer 429) ist kein Retry-Grund — Body ist falsch / Berechtigung
+        if (bankRes.status < 500 && bankRes.status !== 429) {
+          bankStatus = 'failed';
+          break;
+        }
         bankStatus = 'failed';
-        console.error('PW bank-account error', bankRes.status, (await bankRes.text()).slice(0, 400));
+      } catch (e) {
+        console.error(`PW bank-account fetch failed (attempt ${attempt})`, (e as Error).message);
+        bankStatus = 'failed';
       }
-    } catch (e) {
-      bankStatus = 'failed';
-      console.error('PW bank-account fetch failed', e);
+      if (attempt === 1) await new Promise((r) => setTimeout(r, 600));
     }
   }
 
