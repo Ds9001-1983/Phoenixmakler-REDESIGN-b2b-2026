@@ -4,11 +4,10 @@ import LegalLayout from '../layouts/LegalLayout.astro';
 
 <LegalLayout title="Datenschutzerklärung" eyebrow="Rechtliches">
   <p class="legal-note">
-    <strong>Hinweis:</strong> Dieser Datenschutztext ist eine Grundversion für die statische
-    Website ohne Tracking, Analyse-Cookies oder externe Scripts. Vor Live-Gang sollte der Text
-    durch einen Fachanwalt oder eine DSGVO-Prüfung final abgenommen werden. Der Abschnitt zum
-    Partner-Registrierungsformular ergänzt sich automatisch, sobald die PW-API-Anbindung in
-    Phase 2 aktiviert wird.
+    <strong>Hinweis:</strong> Vor finaler Veröffentlichung sollte dieser Text durch einen
+    Fachanwalt oder eine DSGVO-Prüfung abgenommen werden. Insbesondere die Angaben zu den
+    eingebundenen Auftragsverarbeitern (DEMV, goneo, Vercel) sind anhand der jeweiligen
+    Vertragsstände zu verifizieren.
   </p>
 
   <h2>1. Verantwortlicher</h2>
@@ -76,17 +75,57 @@ import LegalLayout from '../layouts/LegalLayout.astro';
 
   <h2>7. Partner-Registrierungsformular</h2>
   <p>
-    Sollten Sie das Formular „Jetzt Partner werden" ausfüllen, übermitteln wir die angegebenen
-    Daten an unser Maklerverwaltungsprogramm (Professional Works) zur Vertragsanbahnung.
-    Rechtsgrundlage: Art. 6 Abs. 1 lit. b DSGVO. Die Daten werden zweckgebunden für die Prüfung
-    und ggf. Aufnahme ins Netzwerk verarbeitet.
+    Mit Absenden des Formulars „Jetzt Partner werden" werden folgende Datenkategorien zum Zweck
+    der Vertragsanbahnung verarbeitet:
+  </p>
+  <ul>
+    <li>Stammdaten (Anrede, Vor- und Nachname, Geburtsdatum, Nationalität)</li>
+    <li>Kontaktdaten (Anschrift, Telefon, E-Mail-Adresse)</li>
+    <li>Berufliche Daten (IHK-Registrierungsnummer §34d)</li>
+    <li>Bankverbindung (IBAN) zur späteren Courtage-Abrechnung</li>
+    <li>Optionale Angaben zur Lead-Herkunft (Quelle, empfehlende Person)</li>
+    <li>Im weiteren Onboarding ein optional übermitteltes Profilfoto</li>
+  </ul>
+  <p>
+    Rechtsgrundlage: Art. 6 Abs. 1 lit. b DSGVO (Maßnahmen zur Vertragsanbahnung) sowie Art. 6
+    Abs. 1 lit. a DSGVO (Einwilligung in die Datenschutzerklärung). Die Daten werden im
+    Maklerverwaltungsprogramm <em>Professional Works</em> der Phönix Maklerverbund GmbH gespeichert
+    und durch unseren Innendienst geprüft. Bei Nichtaufnahme werden die Daten gelöscht, soweit
+    keine gesetzlichen Aufbewahrungsfristen entgegenstehen.
   </p>
 
-  <h2>8. Weitergabe an Dritte</h2>
+  <h2>8. Auftragsverarbeitung</h2>
   <p>
-    Eine Weitergabe Ihrer personenbezogenen Daten an Dritte erfolgt nur, soweit dies zur
-    Vertragserfüllung erforderlich ist, eine gesetzliche Verpflichtung besteht oder Sie
-    ausdrücklich eingewilligt haben.
+    Zur Bereitstellung der Webseite und zur Verarbeitung Ihrer Anfrage setzen wir die folgenden
+    Dienstleister ein, mit denen wir jeweils einen Auftragsverarbeitungsvertrag gemäß Art. 28
+    DSGVO geschlossen haben:
+  </p>
+  <ul>
+    <li>
+      <strong>DEMV — Deutscher Maklerverbund GmbH</strong>, Hauptstraße 41a, 51491 Overath
+      (Anbieter des Maklerverwaltungsprogramms <em>Professional Works</em>): Verarbeitung der
+      über das Partner-Registrierungsformular übermittelten Stamm-, Kontakt- und Bankdaten zur
+      Vertragsanbahnung und Aufnahme in den Maklerverbund. Server-Standort Deutschland.
+    </li>
+    <li>
+      <strong>goneo Internet GmbH</strong>, Lina-Ammon-Straße 19b, 90471 Nürnberg
+      (E-Mail-Provider, IMAP/SMTP für die Adresse <em>neuerpartner@phoenix-maklerverbund.de</em>):
+      Versand der Eingangsbestätigung und der internen Benachrichtigungs-E-Mail beim Eingang einer
+      Bewerbung. Server-Standort Deutschland.
+    </li>
+    <li>
+      <strong>Vercel Inc.</strong>, 340 S Lemon Ave #4133, Walnut, CA 91789, USA
+      (Hosting der Webseite und der Funktionen für das Partner-Formular): Bereitstellung der
+      statischen Seiten und Ausführung der Server-Funktionen für die CRM-Anbindung. Die
+      Verarbeitung erfolgt in der EU-Region Frankfurt (fra1). Vercel ist nach dem
+      EU-US-Data-Privacy-Framework zertifiziert; ergänzend werden die EU-Standardvertragsklauseln
+      angewendet.
+    </li>
+  </ul>
+  <p>
+    Eine darüber hinausgehende Weitergabe Ihrer personenbezogenen Daten an Dritte erfolgt nur,
+    soweit dies zur Vertragserfüllung erforderlich ist, eine gesetzliche Verpflichtung besteht
+    oder Sie ausdrücklich eingewilligt haben.
   </p>
 
   <h2>9. Ihre Rechte</h2>
