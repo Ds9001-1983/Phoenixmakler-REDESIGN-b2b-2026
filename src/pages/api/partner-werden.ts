@@ -128,7 +128,7 @@ export const POST: APIRoute = async ({ request }) => {
   if (newUserId) {
     const clientBody: Record<string, unknown> = {
       user_id: newUserId,
-      status_id: 6,
+      status_id: 1,
       salutation_id: SALUTATION[str(data.anrede).toLowerCase()] ?? 4,
       first_name: str(data.vorname),
       last_name: str(data.nachname),
