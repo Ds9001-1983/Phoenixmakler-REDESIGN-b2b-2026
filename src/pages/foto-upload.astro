@@ -1,0 +1,76 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Foto-Upload — Phönix Maklerverbund" description="Lade dein Profilfoto für den Phönix-Maklerverbund hoch.">
+  <section class="upload-page">
+    <div class="upload-card">
+      <span class="upload-kicker">Onboarding · Foto</span>
+      <h1 class="upload-title" data-greeting>Hallo,</h1>
+      <p class="upload-text">
+        wir freuen uns, dass du Teil des Phönix-Maklerverbunds wirst. Damit wir dein Profil
+        komplettieren können, brauchen wir noch ein Foto von dir.
+      </p>
+
+      <div class="upload-soon" data-state="loading">
+        <p>Link wird geprüft…</p>
+      </div>
+
+      <div class="upload-soon" data-state="ok" hidden>
+        <p>
+          Der direkte Foto-Upload geht in Kürze online. Bitte sende dein Foto bis dahin per
+          E-Mail an <a href="mailto:info@phoenix-maklerverbund.de">info@phoenix-maklerverbund.de</a>
+          mit dem Betreff <strong>"Onboarding-Foto"</strong>.
+        </p>
+        <p class="upload-meta">Dein Token bleibt gültig — sobald der Upload bereitsteht, kannst du diese Seite erneut aufrufen.</p>
+      </div>
+
+      <div class="upload-soon" data-state="invalid" hidden>
+        <p>Der Link ist nicht mehr gültig. Bitte wende dich an <a href="mailto:info@phoenix-maklerverbund.de">info@phoenix-maklerverbund.de</a>.</p>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .upload-page { padding-block: clamp(4rem, 10vh, 8rem); background: var(--color-bg-warm); min-height: 70vh; display: grid; place-items: center; }
+  .upload-card { max-width: 560px; background: #fff; border-radius: var(--radius-lg, 12px); padding: clamp(2rem, 5vw, 3rem); box-shadow: var(--shadow-md, 0 2px 12px rgba(0,0,0,.06)); margin-inline: var(--padding-x, 1.25rem); }
+  .upload-kicker { display: inline-block; font-family: var(--font-mono, monospace); font-size: 0.78rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--color-accent-dark, #b8865b); margin-bottom: 1rem; }
+  .upload-title { font-family: var(--font-display, Georgia, serif); font-size: clamp(2rem, 4vw, 2.75rem); font-weight: 400; line-height: 1.1; margin: 0 0 1.25rem; }
+  .upload-text { font-size: 1.05rem; line-height: 1.6; color: var(--color-text-muted, #555); margin: 0 0 1.5rem; }
+  .upload-soon p { font-size: 0.95rem; line-height: 1.6; }
+  .upload-soon a { color: var(--color-accent-dark, #b8865b); border-bottom: 1px solid currentColor; }
+  .upload-meta { font-size: 0.82rem; color: var(--color-text-muted, #777); margin-top: 1rem; }
+</style>
+
+<script>
+  const params = new URLSearchParams(window.location.search);
+  const token = params.get('token');
+  const greeting = document.querySelector<HTMLElement>('[data-greeting]');
+  const setState = (s: 'loading' | 'ok' | 'invalid') => {
+    document.querySelectorAll<HTMLElement>('.upload-soon').forEach((el) => {
+      el.hidden = el.dataset.state !== s;
+    });
+  };
+
+  const titleCase = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
+
+  if (!token) {
+    setState('invalid');
+  } else {
+    fetch('/api/foto-upload-info?token=' + encodeURIComponent(token))
+      .then(async (r) => {
+        if (!r.ok) {
+          setState('invalid');
+          return;
+        }
+        const j = (await r.json()) as { email?: string };
+        if (greeting && j?.email) {
+          const local = j.email.split('@')[0].split('.')[0] || 'da';
+          greeting.textContent = `Hallo ${titleCase(local)},`;
+        }
+        setState('ok');
+      })
+      .catch(() => setState('invalid'));
+  }
+</script>

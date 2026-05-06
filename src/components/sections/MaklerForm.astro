@@ -90,8 +90,15 @@
 
       <div class="mform__row">
         <div class="mform__field">
-          <label for="ihk">IHK-Vermittlerregisternummer <span class="mform__optional">(optional)</span></label>
-          <input type="text" id="ihk" name="ihk" />
+          <label for="ihk">IHK-Registrierungsnummer §34d *</label>
+          <input type="text" id="ihk" name="ihk" autocomplete="off" required />
+        </div>
+      </div>
+
+      <div class="mform__row">
+        <div class="mform__field">
+          <label for="iban">IBAN *</label>
+          <input type="text" id="iban" name="iban" autocomplete="off" inputmode="text" pattern="[A-Za-z]{2}[0-9]{2}[A-Za-z0-9 ]{11,32}" placeholder="DE…" required />
         </div>
       </div>
 
