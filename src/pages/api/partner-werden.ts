@@ -193,7 +193,7 @@ export const POST: APIRoute = async ({ request }) => {
   let mailStatus: 'ok' | 'failed' | 'skipped' = 'skipped';
   if (newUserId && triggerSecret && appBaseUrl && phoenixTo) {
     try {
-      const triggerToken = buildTriggerToken(newUserId, clientId, email, triggerSecret);
+      const triggerToken = buildTriggerToken(newUserId, clientId, email, vorname, triggerSecret);
       const triggerLink = `${appBaseUrl.replace(/\/+$/, '')}/api/onboarding-trigger?token=${encodeURIComponent(triggerToken)}`;
       const applicant: ApplicantData = {
         vorname,

@@ -6,6 +6,7 @@ export interface TokenPayload {
   uid: number;
   cid: number | null;
   email: string;
+  name?: string;
   kind: TokenKind;
   exp: number;
 }
@@ -52,16 +53,16 @@ export function verifyToken(token: string, kind: TokenKind, secret: string): Tok
   return payload;
 }
 
-export function buildTriggerToken(uid: number, cid: number | null, email: string, secret: string, ttlDays = 14): string {
+export function buildTriggerToken(uid: number, cid: number | null, email: string, name: string, secret: string, ttlDays = 14): string {
   return signToken(
-    { uid, cid, email, kind: 'trigger', exp: Math.floor(Date.now() / 1000) + ttlDays * 86400 },
+    { uid, cid, email, name, kind: 'trigger', exp: Math.floor(Date.now() / 1000) + ttlDays * 86400 },
     secret,
   );
 }
 
-export function buildUploadToken(uid: number, cid: number | null, email: string, secret: string, ttlDays = 30): string {
+export function buildUploadToken(uid: number, cid: number | null, email: string, name: string, secret: string, ttlDays = 30): string {
   return signToken(
-    { uid, cid, email, kind: 'upload', exp: Math.floor(Date.now() / 1000) + ttlDays * 86400 },
+    { uid, cid, email, name, kind: 'upload', exp: Math.floor(Date.now() / 1000) + ttlDays * 86400 },
     secret,
   );
 }

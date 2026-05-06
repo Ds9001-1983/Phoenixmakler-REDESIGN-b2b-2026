@@ -12,20 +12,44 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         komplettieren können, brauchen wir noch ein Foto von dir.
       </p>
 
-      <div class="upload-soon" data-state="loading">
-        <p>Link wird geprüft…</p>
+      <div class="upload-state" data-state="loading">
+        <p>Link wird geprüft …</p>
       </div>
 
-      <div class="upload-soon" data-state="ok" hidden>
-        <p>
-          Der direkte Foto-Upload geht in Kürze online. Bitte sende dein Foto bis dahin per
-          E-Mail an <a href="mailto:info@phoenix-maklerverbund.de">info@phoenix-maklerverbund.de</a>
-          mit dem Betreff <strong>"Onboarding-Foto"</strong>.
-        </p>
-        <p class="upload-meta">Dein Token bleibt gültig — sobald der Upload bereitsteht, kannst du diese Seite erneut aufrufen.</p>
+      <form class="upload-form" data-state="ready" hidden>
+        <label class="upload-drop" tabindex="0">
+          <input type="file" name="file" accept="image/jpeg,image/png,image/webp,image/heic,image/heif" hidden data-file />
+          <div class="upload-drop__inner">
+            <svg width="44" height="44" viewBox="0 0 44 44" fill="none" aria-hidden="true">
+              <path d="M22 8v18M14 16l8-8 8 8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+              <rect x="6" y="28" width="32" height="10" rx="2" stroke="currentColor" stroke-width="1.6"/>
+            </svg>
+            <span class="upload-drop__title" data-drop-title>Foto auswählen oder hierhin ziehen</span>
+            <span class="upload-drop__hint">JPG, PNG, WEBP oder HEIC — max. 8 MB</span>
+          </div>
+          <img class="upload-preview" alt="" data-preview hidden />
+        </label>
+
+        <p class="upload-msg" data-msg></p>
+
+        <button type="submit" class="btn btn-accent btn-lg" disabled data-submit>
+          <span data-submit-label>Foto hochladen</span>
+          <svg width="18" height="14" viewBox="0 0 18 14" fill="none" aria-hidden="true"><path d="M1 7h15M12 1l5 6-5 6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </form>
+
+      <div class="upload-state upload-state--ok" data-state="success" hidden>
+        <div class="upload-check">
+          <svg width="44" height="44" viewBox="0 0 44 44" fill="none" aria-hidden="true">
+            <circle cx="22" cy="22" r="20" stroke="currentColor" stroke-width="1.6"/>
+            <path d="M14 22.5l6 6 11-13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <h2>Foto erhalten — danke!</h2>
+        <p>Wir haben dein Foto gespeichert. Phoenix prüft alles und meldet sich, falls noch etwas fehlt.</p>
       </div>
 
-      <div class="upload-soon" data-state="invalid" hidden>
+      <div class="upload-state" data-state="invalid" hidden>
         <p>Der Link ist nicht mehr gültig. Bitte wende dich an <a href="mailto:info@phoenix-maklerverbund.de">info@phoenix-maklerverbund.de</a>.</p>
       </div>
     </div>
@@ -34,26 +58,63 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
 <style>
   .upload-page { padding-block: clamp(4rem, 10vh, 8rem); background: var(--color-bg-warm); min-height: 70vh; display: grid; place-items: center; }
-  .upload-card { max-width: 560px; background: #fff; border-radius: var(--radius-lg, 12px); padding: clamp(2rem, 5vw, 3rem); box-shadow: var(--shadow-md, 0 2px 12px rgba(0,0,0,.06)); margin-inline: var(--padding-x, 1.25rem); }
+  .upload-card { max-width: 560px; width: 100%; background: #fff; border-radius: var(--radius-lg, 12px); padding: clamp(2rem, 5vw, 3rem); box-shadow: var(--shadow-md, 0 2px 12px rgba(0,0,0,.06)); margin-inline: var(--padding-x, 1.25rem); }
   .upload-kicker { display: inline-block; font-family: var(--font-mono, monospace); font-size: 0.78rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--color-accent-dark, #b8865b); margin-bottom: 1rem; }
   .upload-title { font-family: var(--font-display, Georgia, serif); font-size: clamp(2rem, 4vw, 2.75rem); font-weight: 400; line-height: 1.1; margin: 0 0 1.25rem; }
   .upload-text { font-size: 1.05rem; line-height: 1.6; color: var(--color-text-muted, #555); margin: 0 0 1.5rem; }
-  .upload-soon p { font-size: 0.95rem; line-height: 1.6; }
-  .upload-soon a { color: var(--color-accent-dark, #b8865b); border-bottom: 1px solid currentColor; }
-  .upload-meta { font-size: 0.82rem; color: var(--color-text-muted, #777); margin-top: 1rem; }
+
+  .upload-form { display: flex; flex-direction: column; gap: 1.25rem; }
+  .upload-drop { display: block; border: 2px dashed var(--color-border-strong, #d4cfc4); border-radius: var(--radius-md, 8px); padding: 2rem 1.5rem; text-align: center; cursor: pointer; transition: border-color 180ms ease, background 180ms ease; position: relative; min-height: 180px; }
+  .upload-drop:hover, .upload-drop:focus-visible, .upload-drop.is-drag { border-color: var(--color-accent, #b8865b); background: var(--color-accent-light, #faf6ee); outline: none; }
+  .upload-drop__inner { display: flex; flex-direction: column; align-items: center; gap: 0.5rem; color: var(--color-text-muted, #777); }
+  .upload-drop__title { font-size: 1rem; color: var(--color-ink, #1a1a1a); }
+  .upload-drop__hint { font-size: 0.82rem; }
+  .upload-preview { display: block; width: 100%; max-height: 320px; object-fit: contain; border-radius: var(--radius-sm, 4px); }
+  .upload-drop:has(.upload-preview:not([hidden])) { padding: 0.75rem; }
+  .upload-drop:has(.upload-preview:not([hidden])) .upload-drop__inner { display: none; }
+
+  .upload-msg { font-size: 0.88rem; min-height: 1.2em; margin: 0; }
+  .upload-msg.is-error { color: #c93c3c; }
+  .upload-msg.is-info { color: var(--color-text-muted, #777); }
+
+  .upload-state { padding: 1.25rem 0; }
+  .upload-state--ok { text-align: center; }
+  .upload-check { color: var(--color-accent-dark, #b8865b); margin: 0 auto 0.75rem; line-height: 0; }
+  .upload-state h2 { font-family: var(--font-display, Georgia, serif); font-size: 1.6rem; font-weight: 400; margin: 0 0 0.5rem; }
+  .upload-state p { color: var(--color-text-muted, #555); }
+  .upload-state a { color: var(--color-accent-dark, #b8865b); border-bottom: 1px solid currentColor; }
+
+  button[disabled] { opacity: 0.5; cursor: not-allowed; }
 </style>
 
 <script>
+  type InfoResp = { ok?: boolean; email?: string; name?: string | null; error?: string };
+
   const params = new URLSearchParams(window.location.search);
-  const token = params.get('token');
+  const token = params.get('token') ?? '';
   const greeting = document.querySelector<HTMLElement>('[data-greeting]');
-  const setState = (s: 'loading' | 'ok' | 'invalid') => {
-    document.querySelectorAll<HTMLElement>('.upload-soon').forEach((el) => {
+  const form = document.querySelector<HTMLFormElement>('.upload-form');
+  const fileInput = document.querySelector<HTMLInputElement>('[data-file]');
+  const drop = document.querySelector<HTMLLabelElement>('.upload-drop');
+  const preview = document.querySelector<HTMLImageElement>('[data-preview]');
+  const submit = document.querySelector<HTMLButtonElement>('[data-submit]');
+  const submitLabel = document.querySelector<HTMLElement>('[data-submit-label]');
+  const dropTitle = document.querySelector<HTMLElement>('[data-drop-title]');
+  const msg = document.querySelector<HTMLElement>('[data-msg]');
+
+  const setState = (s: 'loading' | 'ready' | 'success' | 'invalid') => {
+    document.querySelectorAll<HTMLElement>('[data-state]').forEach((el) => {
       el.hidden = el.dataset.state !== s;
     });
   };
 
   const titleCase = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
+
+  const setMsg = (text: string, kind: 'error' | 'info' | '' = '') => {
+    if (!msg) return;
+    msg.textContent = text;
+    msg.className = 'upload-msg' + (kind ? ` is-${kind}` : '');
+  };
 
   if (!token) {
     setState('invalid');
@@ -64,13 +125,83 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           setState('invalid');
           return;
         }
-        const j = (await r.json()) as { email?: string };
-        if (greeting && j?.email) {
-          const local = j.email.split('@')[0].split('.')[0] || 'da';
-          greeting.textContent = `Hallo ${titleCase(local)},`;
-        }
-        setState('ok');
+        const j = (await r.json()) as InfoResp;
+        const display = j.name?.trim() || (j.email?.split('@')[0].split('.')[0] ?? '');
+        if (greeting && display) greeting.textContent = `Hallo ${titleCase(display)},`;
+        setState('ready');
       })
       .catch(() => setState('invalid'));
   }
+
+  const handleFile = (file: File | null) => {
+    if (!file || !preview || !submit || !dropTitle) return;
+    if (file.size > 8 * 1024 * 1024) {
+      setMsg('Datei ist größer als 8 MB.', 'error');
+      submit.disabled = true;
+      return;
+    }
+    if (!file.type.startsWith('image/')) {
+      setMsg('Bitte eine Bild-Datei wählen (JPG, PNG, WEBP, HEIC).', 'error');
+      submit.disabled = true;
+      return;
+    }
+    setMsg('');
+    const url = URL.createObjectURL(file);
+    preview.src = url;
+    preview.hidden = false;
+    dropTitle.textContent = file.name;
+    submit.disabled = false;
+  };
+
+  fileInput?.addEventListener('change', () => handleFile(fileInput.files?.[0] ?? null));
+
+  drop?.addEventListener('dragover', (e) => { e.preventDefault(); drop.classList.add('is-drag'); });
+  drop?.addEventListener('dragleave', () => drop.classList.remove('is-drag'));
+  drop?.addEventListener('drop', (e) => {
+    e.preventDefault();
+    drop.classList.remove('is-drag');
+    const f = e.dataTransfer?.files?.[0];
+    if (f && fileInput) {
+      const dt = new DataTransfer();
+      dt.items.add(f);
+      fileInput.files = dt.files;
+      handleFile(f);
+    }
+  });
+
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const file = fileInput?.files?.[0];
+    if (!file || !submit) return;
+    submit.disabled = true;
+    if (submitLabel) submitLabel.textContent = 'Wird hochgeladen …';
+    setMsg('Foto wird übertragen, bitte einen Moment …', 'info');
+
+    const fd = new FormData();
+    fd.append('token', token);
+    fd.append('file', file);
+
+    try {
+      const r = await fetch('/api/foto-upload', { method: 'POST', body: fd });
+      if (r.ok) {
+        setState('success');
+        return;
+      }
+      let detail: { error?: string } = {};
+      try { detail = await r.json(); } catch {}
+      const map: Record<string, string> = {
+        invalid_or_expired: 'Der Link ist abgelaufen. Bitte wende dich an Phönix.',
+        file_too_large: 'Die Datei ist zu groß (max. 8 MB).',
+        unsupported_type: 'Dateityp wird nicht unterstützt.',
+        empty_file: 'Die Datei ist leer.',
+        no_file: 'Es wurde keine Datei ausgewählt.',
+      };
+      setMsg(map[detail.error ?? ''] ?? 'Upload fehlgeschlagen — bitte erneut versuchen.', 'error');
+    } catch {
+      setMsg('Netzwerkfehler — bitte erneut versuchen.', 'error');
+    } finally {
+      submit.disabled = false;
+      if (submitLabel) submitLabel.textContent = 'Foto hochladen';
+    }
+  });
 </script>

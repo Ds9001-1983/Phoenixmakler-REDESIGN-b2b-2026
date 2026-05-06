@@ -16,5 +16,5 @@ export const GET: APIRoute = async ({ url }) => {
   const payload = verifyToken(token, 'upload', secret);
   if (!payload) return j({ error: 'invalid_or_expired' }, 410);
 
-  return j({ ok: true, email: payload.email });
+  return j({ ok: true, email: payload.email, name: payload.name ?? null });
 };

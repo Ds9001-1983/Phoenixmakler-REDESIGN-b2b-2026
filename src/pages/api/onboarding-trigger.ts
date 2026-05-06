@@ -33,7 +33,9 @@ export const GET: APIRoute = async ({ url }) => {
     Accept: 'application/json',
   };
 
-  const uploadToken = buildUploadToken(payload.uid, payload.cid, payload.email, secret);
+  const firstName = payload.name?.trim() || payload.email.split('@')[0].split('.')[0];
+  const prettyFirst = firstName.charAt(0).toUpperCase() + firstName.slice(1);
+  const uploadToken = buildUploadToken(payload.uid, payload.cid, payload.email, firstName, secret);
   const uploadLink = `${appBaseUrl.replace(/\/+$/, '')}/foto-upload?token=${encodeURIComponent(uploadToken)}`;
 
   // 1) Notiz beim Kunden anlegen — nicht-blockierend
@@ -59,8 +61,6 @@ export const GET: APIRoute = async ({ url }) => {
   // 2) Mail an Bewerber
   let mailOk = false;
   try {
-    const firstName = payload.email.split('@')[0].split('.')[0] || 'da';
-    const prettyFirst = firstName.charAt(0).toUpperCase() + firstName.slice(1);
     await sendApplicantPhoto(payload.email, prettyFirst, uploadLink);
     mailOk = true;
   } catch (e) {
