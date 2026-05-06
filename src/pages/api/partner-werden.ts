@@ -75,6 +75,13 @@ export const POST: APIRoute = async ({ request }) => {
   // PW-Policy: Groß+Klein+(Zahl/Sonderzeichen), ≥8. Bewerber nutzt das Passwort nicht aktiv.
   const password = `${crypto.randomUUID().slice(0, 8).toUpperCase()}!${crypto.randomUUID().slice(0, 16)}`;
 
+  // PW-Login muss systemweit eindeutig sein. E-Mail kann mit bestehenden Bestandsmaklern
+  // kollidieren, daher zusätzlicher Random-Suffix. Bewerber nutzt das nie zum Login.
+  const loginSuffix = crypto.randomUUID().slice(0, 6);
+  const loginBase = `${vorname.toLowerCase()}.${nachname.toLowerCase()}`
+    .normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9.]/g, '');
+  const login = `${loginBase}.${loginSuffix}`.slice(0, 64);
+
   const userBody: Record<string, unknown> = {
     status_id: 3,
     role_id: 1,
@@ -83,7 +90,7 @@ export const POST: APIRoute = async ({ request }) => {
     last_name: nachname,
     birth_date: geburtsdatum,
     family_status: 6,
-    login: email.slice(0, 64),
+    login,
     password,
     email,
     affiliation: { agency_id: agencyId, superior_user_id: SUPERIOR_USER_ID },
