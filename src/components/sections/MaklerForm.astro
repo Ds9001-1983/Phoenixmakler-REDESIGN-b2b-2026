@@ -1,7 +1,6 @@
 ---
 // Registrierungs-Formular "Partner werden"
-// Premium-10K-Stil. Felder nach Professional Work API "Nutzer erstellen" (Meeting 15.04.2026).
-// Automatische CRM-Übermittlung wird aktiviert, sobald CRM-Token vorliegt.
+// Submit geht an /api/partner-werden → Professional.Works CRM (status_id=3 storniert).
 ---
 
 <section class="mform" id="partner-werden">
@@ -107,25 +106,34 @@
         </label>
       </div>
 
+      <div class="mform__hp" aria-hidden="true">
+        <label>Bitte leer lassen<input type="text" name="_hp" tabindex="-1" autocomplete="off" /></label>
+      </div>
+
       <div class="mform__submit">
         <button type="submit" class="btn btn-accent btn-lg" data-magnetic data-cursor-label="Absenden">
-          Jetzt Partner werden
+          <span data-submit-label>Jetzt Partner werden</span>
           <svg width="18" height="14" viewBox="0 0 18 14" fill="none" aria-hidden="true"><path d="M1 7h15M12 1l5 6-5 6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </button>
         <p class="mform__hint">
-          Die automatische CRM-Übermittlung wird nach Freischaltung des Professional-Work-Zugangs aktiviert.
-          Bis dahin gehen Anfragen direkt per E-Mail an Torsten &amp; Lothar.
+          Wir prüfen deine Bewerbung im Backoffice und melden uns persönlich.
+          Deine Daten werden verschlüsselt direkt an Phönix übertragen.
         </p>
       </div>
 
       <div class="mform__success" data-form-success role="status" aria-live="polite" hidden>
-        <h3>Fast geschafft!</h3>
+        <h3>Bewerbung eingegangen!</h3>
         <p>
-          Wir haben dein Mail-Programm geöffnet — bitte klicke dort auf <strong>Senden</strong>,
-          damit deine Anfrage bei uns ankommt. Falls sich nichts geöffnet hat, schreib uns
-          direkt an <a href="mailto:info@phoenix-maklerverbund.de">info@phoenix-maklerverbund.de</a>
-          oder ruf <a href="tel:+4926346598580">02634 659858-0</a> an.
+          Danke — Torsten oder Lothar prüfen deine Daten und melden sich persönlich
+          bei dir, in der Regel innerhalb von zwei Werktagen.
         </p>
+      </div>
+
+      <div class="mform__error" data-form-error role="alert" hidden>
+        <h3>Da ist etwas schiefgelaufen.</h3>
+        <p data-form-error-msg>Bitte versuch es in einem Moment noch einmal — oder schreib uns direkt an
+          <a href="mailto:info@phoenix-maklerverbund.de">info@phoenix-maklerverbund.de</a>
+          oder ruf <a href="tel:+4926346598580">02634 659858-0</a> an.</p>
       </div>
     </form>
   </div>
@@ -282,70 +290,107 @@
     margin: 0;
   }
 
-  .mform__success {
+  .mform__success,
+  .mform__error {
     text-align: center;
     padding: 2rem;
-    background: var(--color-accent-light);
     border-radius: var(--radius-md);
     color: var(--color-ink);
   }
-  .mform__success h3 {
+  .mform__success { background: var(--color-accent-light); }
+  .mform__error { background: #fde7e7; border: 1px solid #f5b5b5; }
+  .mform__success h3,
+  .mform__error h3 {
     font-family: var(--font-display);
     font-size: 1.5rem;
     font-weight: 400;
     color: var(--color-ink);
     margin: 0 0 0.5rem;
   }
+  .mform__hp {
+    position: absolute;
+    left: -10000px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
 </style>
 
 <script>
-  // Submission-Fallback bis Professional-Work-API live ist (Meeting 15.04.2026):
-  // 1. Form-Daten als strukturierte mailto-Body an info@phoenix-maklerverbund.de.
-  // 2. User klickt Send im eigenen Mail-Client — Datenfluss bleibt im Browser,
-  //    keine Drittanbieter, kein Backend-Call. DSGVO-sicher.
-  // Wenn das CRM-Token vorliegt: hier den fetch() ergaenzen, mailto als Fallback
-  // bei Netzwerk-Fehler stehen lassen.
   const form = document.querySelector<HTMLFormElement>('[data-registrierung]');
   const success = document.querySelector<HTMLElement>('[data-form-success]');
+  const error = document.querySelector<HTMLElement>('[data-form-error]');
+  const errorMsg = document.querySelector<HTMLElement>('[data-form-error-msg]');
+  const submitLabel = document.querySelector<HTMLElement>('[data-submit-label]');
 
-  const labels: Record<string, string> = {
-    anrede: 'Anrede', vorname: 'Vorname', nachname: 'Nachname',
-    strasse: 'Strasse & Hausnummer', plz: 'PLZ', ort: 'Ort',
-    telefon: 'Telefon', email: 'E-Mail',
-    geburtsdatum: 'Geburtsdatum', nationalitaet: 'Nationalitaet',
-    ihk: 'IHK-Vermittlerregisternummer',
-    datenschutz: 'Datenschutz akzeptiert', kontakt_ok: 'Kontaktaufnahme erlaubt',
+  const showError = (msg?: string) => {
+    if (success) success.hidden = true;
+    if (errorMsg && msg) errorMsg.textContent = msg;
+    if (error) {
+      error.hidden = false;
+      error.setAttribute('tabindex', '-1');
+      error.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      error.focus();
+    }
   };
 
-  form?.addEventListener('submit', (e) => {
-    e.preventDefault();
-    if (!form.reportValidity()) return;
-
-    const fd = new FormData(form);
-    const lines: string[] = ['Neue Partner-Anfrage ueber phoenix-maklerverbund.de', ''];
-    for (const key of Object.keys(labels)) {
-      const value = fd.get(key);
-      if (value === null) continue;
-      const display = typeof value === 'string' && value.length ? value :
-        (key === 'datenschutz' || key === 'kontakt_ok' ? 'Ja' : '');
-      lines.push(`${labels[key]}: ${display}`);
-    }
-    lines.push('', '— Gesendet ueber das Registrierungsformular');
-
-    const subject = `Partner-Anfrage: ${fd.get('vorname') ?? ''} ${fd.get('nachname') ?? ''}`.trim();
-    const body = lines.join('\n');
-    const mailto = `mailto:info@phoenix-maklerverbund.de?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-
-    // Mail-Client oeffnen; Fokus bleibt auf Tab. Falls Browser blockiert, faellt
-    // der User zumindest auf den manuellen Mail-Pfad zurueck.
-    window.location.href = mailto;
-
-    form.style.display = 'none';
+  const showSuccess = () => {
+    form!.style.display = 'none';
     if (success) {
       success.hidden = false;
       success.setAttribute('tabindex', '-1');
       success.scrollIntoView({ behavior: 'smooth', block: 'center' });
       success.focus();
+    }
+  };
+
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (!form.reportValidity()) return;
+    if (error) error.hidden = true;
+
+    const fd = new FormData(form);
+    const payload: Record<string, unknown> = {};
+    for (const [k, v] of fd.entries()) {
+      payload[k] = v instanceof File ? '' : v;
+    }
+    payload.datenschutz = fd.get('datenschutz') === 'on';
+    payload.kontakt_ok = fd.get('kontakt_ok') === 'on';
+
+    const submitBtn = form.querySelector<HTMLButtonElement>('button[type="submit"]');
+    const orig = submitLabel?.textContent ?? 'Jetzt Partner werden';
+    if (submitBtn) submitBtn.disabled = true;
+    if (submitLabel) submitLabel.textContent = 'Wird gesendet …';
+
+    try {
+      const res = await fetch('/api/partner-werden', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+
+      if (res.ok) {
+        showSuccess();
+        return;
+      }
+
+      let detail: { error?: string } = {};
+      try { detail = await res.json(); } catch {}
+
+      if (res.status === 409) {
+        showError('Mit dieser E-Mail-Adresse besteht bereits ein Eintrag. Bitte ruf uns an.');
+      } else if (res.status === 422) {
+        showError('Bitte prüfe deine Eingaben — eines der Felder wurde abgelehnt.');
+      } else {
+        showError();
+      }
+      console.error('Submit failed', res.status, detail);
+    } catch (err) {
+      console.error('Network error', err);
+      showError();
+    } finally {
+      if (submitBtn) submitBtn.disabled = false;
+      if (submitLabel) submitLabel.textContent = orig;
     }
   });
 </script>
