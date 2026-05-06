@@ -96,34 +96,75 @@ export const POST: APIRoute = async ({ request }) => {
     };
   }
 
-  const url = `${base}/api/v1/${slug}/users`;
-  let res: Response;
+  const headers = {
+    Authorization: `Bearer ${token}`,
+    'Content-Type': 'application/json',
+    Accept: 'application/json',
+  };
+
+  // 1) Vermittler (PW-User) anlegen — status_id 3 = storniert
+  const userUrl = `${base}/api/v1/${slug}/users`;
+  let userRes: Response;
   try {
-    res = await fetch(url, {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json',
-        Accept: 'application/json',
-      },
-      body: JSON.stringify(body),
-    });
+    userRes = await fetch(userUrl, { method: 'POST', headers, body: JSON.stringify(body) });
   } catch (e) {
-    console.error('PW fetch failed', e);
+    console.error('PW users fetch failed', e);
     return json({ error: 'crm_unreachable' }, 502);
   }
 
-  if (!res.ok) {
-    const detail = await res.text();
-    console.error('PW API error', res.status, detail.slice(0, 800));
-    if (res.status === 422) {
-      return json({ error: 'validation_failed', upstream: detail.slice(0, 400) }, 422);
-    }
-    if (res.status === 409) {
-      return json({ error: 'duplicate' }, 409);
-    }
-    return json({ error: 'crm_error', status: res.status }, 502);
+  if (!userRes.ok) {
+    const detail = await userRes.text();
+    console.error('PW users error', userRes.status, detail.slice(0, 800));
+    if (userRes.status === 422) return json({ error: 'validation_failed', upstream: detail.slice(0, 400) }, 422);
+    if (userRes.status === 409) return json({ error: 'duplicate' }, 409);
+    return json({ error: 'crm_error', status: userRes.status }, 502);
   }
 
-  return json({ ok: true }, 200);
+  const userJson = (await userRes.json()) as { data?: { id?: number } };
+  const newUserId = userJson?.data?.id;
+
+  // 2) Parallel: Kunden-Eintrag (status_id 6 = "Kunde storniert") mit Bezug auf den Vermittler
+  let clientStatus: 'ok' | 'failed' | 'skipped' = 'skipped';
+  if (newUserId) {
+    const clientBody: Record<string, unknown> = {
+      user_id: newUserId,
+      status_id: 6,
+      salutation_id: SALUTATION[str(data.anrede).toLowerCase()] ?? 4,
+      first_name: str(data.vorname),
+      last_name: str(data.nachname),
+      birth_date: str(data.geburtsdatum),
+      metadata: { create_type_id: 0 },
+      address: {
+        street,
+        street_nr,
+        postal_code: str(data.plz),
+        city: str(data.ort),
+        country_id: 65,
+      },
+      communication: {
+        email,
+        phone: str(data.telefon),
+      },
+    };
+
+    try {
+      const clientRes = await fetch(`${base}/api/v1/${slug}/clients`, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify(clientBody),
+      });
+      if (clientRes.ok) {
+        clientStatus = 'ok';
+      } else {
+        clientStatus = 'failed';
+        const cd = await clientRes.text();
+        console.error('PW clients error', clientRes.status, cd.slice(0, 800));
+      }
+    } catch (e) {
+      clientStatus = 'failed';
+      console.error('PW clients fetch failed', e);
+    }
+  }
+
+  return json({ ok: true, user_id: newUserId, client: clientStatus }, 200);
 };
