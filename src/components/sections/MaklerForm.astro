@@ -129,10 +129,22 @@
       </div>
 
       <div class="mform__success" data-form-success role="status" aria-live="polite" hidden>
-        <h3>Bewerbung eingegangen!</h3>
+        <div class="mform__success-icon" aria-hidden="true">
+          <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
+            <circle cx="18" cy="18" r="17" stroke="currentColor" stroke-width="1.5"/>
+            <path d="M11 18.5l5 5 9-11" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <span class="mform__success-kicker">Übermittlung erfolgreich</span>
+        <h3>Deine Bewerbung ist bei uns angekommen.</h3>
         <p>
-          Danke — Torsten oder Lothar prüfen deine Daten und melden sich persönlich
-          bei dir, in der Regel innerhalb von zwei Werktagen.
+          Wir haben deine Daten verschlüsselt empfangen und im System hinterlegt.
+          Torsten oder Lothar prüfen sie persönlich und melden sich
+          in der Regel innerhalb von zwei Werktagen bei dir.
+        </p>
+        <p class="mform__success-meta">
+          Eine Eingangsbestätigung an <strong data-success-email></strong> ist nicht nötig —
+          du erhältst nach der Freischaltung eine separate Mail.
         </p>
       </div>
 
@@ -324,19 +336,52 @@
   .mform__success,
   .mform__error {
     text-align: center;
-    padding: 2rem;
+    padding: 2.25rem 2rem;
     border-radius: var(--radius-md);
     color: var(--color-ink);
   }
-  .mform__success { background: var(--color-accent-light); }
+  .mform__success {
+    background: var(--color-accent-light);
+    border: 1px solid color-mix(in srgb, var(--color-accent) 35%, transparent);
+    animation: mform-pop 360ms cubic-bezier(.2,.7,.3,1) both;
+  }
   .mform__error { background: #fde7e7; border: 1px solid #f5b5b5; }
+  .mform__success-icon {
+    color: var(--color-accent-dark);
+    margin: 0 auto 0.75rem;
+    line-height: 0;
+    animation: mform-check 480ms cubic-bezier(.2,.7,.3,1) 80ms both;
+  }
+  .mform__success-icon svg path { stroke-dasharray: 22; stroke-dashoffset: 22; animation: mform-stroke 420ms ease-out 360ms forwards; }
+  .mform__success-kicker {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--color-accent-dark);
+    margin-bottom: 0.4rem;
+  }
   .mform__success h3,
   .mform__error h3 {
     font-family: var(--font-display);
-    font-size: 1.5rem;
+    font-size: 1.55rem;
     font-weight: 400;
     color: var(--color-ink);
-    margin: 0 0 0.5rem;
+    margin: 0 0 0.65rem;
+    line-height: 1.2;
+  }
+  .mform__success p { font-size: 1rem; line-height: 1.6; color: var(--color-ink); margin: 0 auto; max-width: 50ch; }
+  .mform__success-meta {
+    margin-top: 0.85rem !important;
+    font-size: 0.85rem;
+    color: var(--color-text-muted);
+  }
+  @keyframes mform-pop { from { opacity: 0; transform: translateY(8px) scale(.985); } to { opacity: 1; transform: none; } }
+  @keyframes mform-check { from { transform: scale(.6); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+  @keyframes mform-stroke { to { stroke-dashoffset: 0; } }
+  @media (prefers-reduced-motion: reduce) {
+    .mform__success, .mform__success-icon, .mform__success-icon svg path { animation: none !important; }
   }
   .mform__hp {
     position: absolute;
@@ -411,9 +456,11 @@
     }
   };
 
-  const showSuccess = () => {
+  const showSuccess = (email?: string) => {
     form!.style.display = 'none';
     if (success) {
+      const emailEl = success.querySelector<HTMLElement>('[data-success-email]');
+      if (emailEl) emailEl.textContent = email ?? '';
       success.hidden = false;
       success.setAttribute('tabindex', '-1');
       success.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -455,7 +502,7 @@
       });
 
       if (res.ok) {
-        showSuccess();
+        showSuccess(String(payload.email ?? ''));
         return;
       }
 
