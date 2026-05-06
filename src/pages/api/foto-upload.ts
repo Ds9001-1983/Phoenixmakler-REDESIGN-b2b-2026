@@ -1,5 +1,7 @@
 import type { APIRoute } from 'astro';
+import { put, list, del } from '@vercel/blob';
 import { verifyToken } from '../../lib/token';
+import { invalidatePhotoCache } from '../../lib/vermittler';
 
 export const prerender = false;
 
@@ -9,13 +11,19 @@ const ALLOWED_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp', 'image/h
 const j = (data: unknown, status = 200) =>
   new Response(JSON.stringify(data), { status, headers: { 'Content-Type': 'application/json' } });
 
+const extOf = (mime: string): string => {
+  const m = mime.toLowerCase();
+  if (m === 'image/jpeg') return 'jpg';
+  if (m === 'image/png') return 'png';
+  if (m === 'image/webp') return 'webp';
+  if (m === 'image/heic') return 'heic';
+  if (m === 'image/heif') return 'heif';
+  return 'bin';
+};
+
 export const POST: APIRoute = async ({ request }) => {
   const secret = import.meta.env.TRIGGER_SECRET;
-  const base = import.meta.env.PW_API_BASE;
-  const slug = import.meta.env.PW_USER_SLUG ?? 'me';
-  const pwToken = import.meta.env.PW_BEARER_TOKEN;
-
-  if (!secret || !base || !pwToken) return j({ error: 'server_misconfigured' }, 500);
+  if (!secret) return j({ error: 'server_misconfigured' }, 500);
 
   let form: FormData;
   try {
@@ -35,38 +43,37 @@ export const POST: APIRoute = async ({ request }) => {
   if (file.size > MAX_BYTES) return j({ error: 'file_too_large', max_mb: 8 }, 413);
   if (!ALLOWED_TYPES.has(file.type)) return j({ error: 'unsupported_type', allowed: [...ALLOWED_TYPES] }, 415);
 
-  // multipart/form-data zu PW forwarden
-  const out = new FormData();
-  // PW erwartet einen Filename — falls leer, fallback bauen
-  const ext = file.type.split('/')[1] || 'jpg';
-  const safeName = (payload.name ?? 'profil').replace(/[^a-zA-Z0-9_-]/g, '_').toLowerCase();
-  const filename = file.name && file.name !== 'blob' ? file.name : `profilbild_${safeName}_${payload.uid}.${ext}`;
-  out.append('file', file, filename);
-  out.append('user_id', String(payload.uid));
-  out.append('name', `Profilbild ${payload.name ?? ''}`.trim());
-  out.append('document_type_id', '50'); // Sonstiges
-  out.append('upload_date', new Date().toISOString().slice(0, 10));
+  const prefix = `vermittler/${payload.uid}.`;
 
-  let pwRes: Response;
+  // Re-Upload: vorhandene Bilder unter diesem Prefix löschen
   try {
-    pwRes = await fetch(`${base}/api/v1/${slug}/users/files`, {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${pwToken}`,
-        Accept: 'application/json',
-      },
-      body: out,
-    });
+    const existing = await list({ prefix });
+    for (const blob of existing.blobs) {
+      await del(blob.url);
+    }
   } catch (e) {
-    console.error('PW user-files fetch failed', e);
-    return j({ error: 'crm_unreachable' }, 502);
+    console.error('Vercel Blob list/del failed', (e as Error).message);
+    // weiter — das nicht-Löschen ist akzeptabel, neuer put kommt mit anderer Extension ggf. dazu
   }
 
-  if (!pwRes.ok) {
-    const detail = await pwRes.text();
-    console.error('PW user-files error', pwRes.status, detail.slice(0, 800));
-    return j({ error: 'crm_error', status: pwRes.status }, 502);
+  // Neues Bild speichern, deterministischer Pfad
+  const ext = extOf(file.type);
+  const path = `${prefix}${ext}`;
+  let url: string;
+  try {
+    const result = await put(path, file, {
+      access: 'public',
+      addRandomSuffix: false,
+      contentType: file.type,
+      allowOverwrite: true,
+    });
+    url = result.url;
+  } catch (e) {
+    console.error('Vercel Blob put failed', (e as Error).message);
+    return j({ error: 'storage_error' }, 502);
   }
 
-  return j({ ok: true });
+  invalidatePhotoCache();
+
+  return j({ ok: true, url });
 };

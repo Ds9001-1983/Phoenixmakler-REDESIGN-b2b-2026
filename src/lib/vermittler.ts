@@ -1,5 +1,8 @@
 // Helper: Liste aller aktiven PW-Vermittler mit reduziertem öffentlichem Schema.
 // In-Memory-Cache, TTL 1h. Pro Lambda-Instanz; bei Vercel oft mehrere Minuten warm.
+// Profilbilder liegen in Vercel Blob (vermittler/{pw_user_id}.{ext}), NICHT im PW-CRM.
+
+import { list } from '@vercel/blob';
 
 export interface PublicVermittler {
   id: number;
@@ -16,7 +19,9 @@ interface CacheEntry {
   list: PublicVermittler[];
 }
 let cache: CacheEntry | null = null;
+let photoCache: { ts: number; uids: Set<number> } | null = null;
 const TTL_MS = 60 * 60 * 1000;
+const PHOTO_TTL_MS = 5 * 60 * 1000; // Foto-Lookup darf schneller refreshen, damit neue Uploads sofort sichtbar werden
 
 interface PwUser {
   id: number;
@@ -24,12 +29,6 @@ interface PwUser {
   last_name?: string | null;
   address?: { postal_code?: string; city?: string } | null;
   communication?: { phone_business?: string | null; email?: string | null } | null;
-}
-
-interface PwFile {
-  id: number;
-  name?: string | null;
-  user_ids?: number[] | null;
 }
 
 const fetchActiveUsers = async (base: string, slug: string, token: string): Promise<PwUser[]> => {
@@ -41,22 +40,26 @@ const fetchActiveUsers = async (base: string, slug: string, token: string): Prom
   return j.data ?? [];
 };
 
-const fetchProfilePhotoMap = async (base: string, slug: string, token: string): Promise<Set<number>> => {
-  // Nur User-IDs, für die ein "Profilbild"-File existiert. Ohne user-file:viewAny gibt es 403.
+const fetchPhotoUids = async (): Promise<Set<number>> => {
+  if (photoCache && Date.now() - photoCache.ts < PHOTO_TTL_MS) return photoCache.uids;
+  const set = new Set<number>();
   try {
-    const r = await fetch(`${base}/api/v1/${slug}/users/files?name=Profilbild&per_page=200`, {
-      headers: { Authorization: `Bearer ${token}`, Accept: 'application/json' },
-    });
-    if (!r.ok) return new Set();
-    const j = (await r.json()) as { data?: PwFile[] };
-    const set = new Set<number>();
-    for (const f of j.data ?? []) {
-      for (const uid of f.user_ids ?? []) set.add(uid);
+    const result = await list({ prefix: 'vermittler/' });
+    for (const b of result.blobs) {
+      // Pfad-Format: vermittler/<uid>.<ext> — uid extrahieren
+      const m = b.pathname.match(/^vermittler\/(\d+)\./);
+      if (m) set.add(Number(m[1]));
     }
-    return set;
-  } catch {
-    return new Set();
+  } catch (e) {
+    console.error('Vercel Blob list (photos) failed', (e as Error).message);
   }
+  photoCache = { ts: Date.now(), uids: set };
+  return set;
+};
+
+export const invalidatePhotoCache = (): void => {
+  photoCache = null;
+  cache = null;
 };
 
 export async function loadVermittler(): Promise<PublicVermittler[]> {
@@ -75,9 +78,9 @@ export async function loadVermittler(): Promise<PublicVermittler[]> {
     return cache?.list ?? [];
   }
 
-  const photoUids = await fetchProfilePhotoMap(base, slug, token);
+  const photoUids = await fetchPhotoUids();
 
-  const list: PublicVermittler[] = users
+  const result: PublicVermittler[] = users
     .map((u) => {
       const name = [u.first_name, u.last_name].filter(Boolean).join(' ').trim();
       return {
@@ -93,6 +96,6 @@ export async function loadVermittler(): Promise<PublicVermittler[]> {
     .filter((v) => v.name.length > 0)
     .sort((a, b) => a.name.localeCompare(b.name, 'de'));
 
-  cache = { ts: Date.now(), list };
-  return list;
+  cache = { ts: Date.now(), list: result };
+  return result;
 }
