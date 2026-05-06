@@ -62,7 +62,7 @@ export const POST: APIRoute = async ({ request }) => {
   let url: string;
   try {
     const result = await put(path, file, {
-      access: 'public',
+      access: 'private',
       addRandomSuffix: false,
       contentType: file.type,
       allowOverwrite: true,
