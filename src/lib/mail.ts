@@ -43,6 +43,8 @@ export interface ApplicantData {
   geburtsdatum: string;
   ihk: string;
   iban: string;
+  quelle?: string;
+  empfehlung?: string;
 }
 
 const esc = (s: string) =>
@@ -65,6 +67,8 @@ const phoenixNotificationHtml = (a: ApplicantData, userId: number, triggerLink: 
       <tr><td style="padding:6px 0;color:#777">Adresse</td><td style="padding:6px 0">${esc(a.strasse)}<br>${esc(a.plz)} ${esc(a.ort)}</td></tr>
       <tr><td style="padding:6px 0;color:#777">IHK §34d</td><td style="padding:6px 0">${esc(a.ihk)}</td></tr>
       <tr><td style="padding:6px 0;color:#777">IBAN</td><td style="padding:6px 0;font-family:monospace">${esc(a.iban)}</td></tr>
+      ${a.quelle ? `<tr><td style="padding:6px 0;color:#777">Quelle</td><td style="padding:6px 0">${esc(a.quelle)}</td></tr>` : ''}
+      ${a.empfehlung ? `<tr><td style="padding:6px 0;color:#777">Empfohlen von</td><td style="padding:6px 0">${esc(a.empfehlung)}</td></tr>` : ''}
     </table>
 
     <div style="background:#faf6ee;border-left:3px solid #b8865b;padding:16px;border-radius:4px;margin-bottom:20px;font-size:13px;line-height:1.55">

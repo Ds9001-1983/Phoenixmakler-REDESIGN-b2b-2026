@@ -1,6 +1,7 @@
 import type { APIRoute } from 'astro';
 import { buildTriggerToken } from '../../lib/token';
 import { sendPhoenixNotification, type ApplicantData } from '../../lib/mail';
+import { labelOf } from '../../lib/lead-source';
 
 export const prerender = false;
 
@@ -64,6 +65,10 @@ export const POST: APIRoute = async ({ request }) => {
   const telefon = str(data.telefon);
   const ihk = str(data.ihk);
   const iban = normIban(str(data.iban));
+  const quelleKey = str(data.quelle);
+  const quelleLabel = labelOf(quelleKey);
+  const empfehlungName = str(data.empfehlung);
+  const empfehlungId = Number(data.empfehlung_id) || null;
   const { street, street_nr } = splitStreet(str(data.strasse));
   const plz = str(data.plz);
   const ort = str(data.ort);
@@ -189,7 +194,39 @@ export const POST: APIRoute = async ({ request }) => {
     }
   }
 
-  // 4) Notification-Mail an Phoenix mit Trigger-Link — nicht-blockierend
+  // 4) Lead-Herkunfts-Notiz beim Kunden — nicht-blockierend, nur wenn was angegeben wurde
+  let leadNoteStatus: 'ok' | 'failed' | 'skipped' = 'skipped';
+  if (clientId && (quelleLabel || empfehlungName)) {
+    const lines: string[] = [];
+    if (quelleLabel) lines.push(`Quelle: ${quelleLabel}`);
+    if (empfehlungName) {
+      lines.push(empfehlungId
+        ? `Empfohlen von: ${empfehlungName} (PW-ID ${empfehlungId})`
+        : `Empfohlen von: ${empfehlungName}`);
+    }
+    try {
+      const r = await fetch(`${base}/api/v1/${slug}/clients/notes`, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({
+          client_id: clientId,
+          title: 'Lead-Herkunft',
+          content: lines.join('\n'),
+        }),
+      });
+      if (r.ok) {
+        leadNoteStatus = 'ok';
+      } else {
+        leadNoteStatus = 'failed';
+        console.error('PW lead-note error', r.status, (await r.text()).slice(0, 400));
+      }
+    } catch (e) {
+      leadNoteStatus = 'failed';
+      console.error('PW lead-note fetch failed', e);
+    }
+  }
+
+  // 5) Notification-Mail an Phoenix mit Trigger-Link — nicht-blockierend
   let mailStatus: 'ok' | 'failed' | 'skipped' = 'skipped';
   if (newUserId && triggerSecret && appBaseUrl && phoenixTo) {
     try {
@@ -207,6 +244,8 @@ export const POST: APIRoute = async ({ request }) => {
         geburtsdatum,
         ihk,
         iban,
+        quelle: quelleLabel || undefined,
+        empfehlung: empfehlungName || undefined,
       };
       await sendPhoenixNotification(phoenixTo, applicant, newUserId, triggerLink);
       mailStatus = 'ok';
@@ -216,5 +255,5 @@ export const POST: APIRoute = async ({ request }) => {
     }
   }
 
-  return json({ ok: true, user_id: newUserId, client: clientStatus, bank: bankStatus, mail: mailStatus }, 200);
+  return json({ ok: true, user_id: newUserId, client: clientStatus, bank: bankStatus, lead_note: leadNoteStatus, mail: mailStatus }, 200);
 };

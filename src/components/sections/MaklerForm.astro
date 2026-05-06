@@ -1,6 +1,7 @@
 ---
 // Registrierungs-Formular "Partner werden"
 // Submit geht an /api/partner-werden → Professional.Works CRM (status_id=3 storniert).
+import { LEAD_SOURCES } from '../../lib/lead-source';
 ---
 
 <section class="mform" id="partner-werden">
@@ -85,6 +86,24 @@
             <option value="CH">Schweiz</option>
             <option value="other">Andere</option>
           </select>
+        </div>
+      </div>
+
+      <div class="mform__row mform__row--2">
+        <div class="mform__field">
+          <label for="quelle">Wie hast du uns gefunden? <span class="mform__optional">(optional)</span></label>
+          <select id="quelle" name="quelle">
+            <option value="">Bitte wählen</option>
+            {LEAD_SOURCES.map((s) => (
+              <option value={s.key}>{s.label}</option>
+            ))}
+          </select>
+        </div>
+        <div class="mform__field">
+          <label for="empfehlung">Empfohlen von <span class="mform__optional">(optional)</span></label>
+          <input type="text" id="empfehlung" name="empfehlung" list="vermittler-suggestions" autocomplete="off" placeholder="Name eines Phönix-Vermittlers" data-empfehlung />
+          <input type="hidden" name="empfehlung_id" data-empfehlung-id />
+          <datalist id="vermittler-suggestions"></datalist>
         </div>
       </div>
 
@@ -398,6 +417,58 @@
   const error = document.querySelector<HTMLElement>('[data-form-error]');
   const errorMsg = document.querySelector<HTMLElement>('[data-form-error-msg]');
   const submitLabel = document.querySelector<HTMLElement>('[data-submit-label]');
+
+  // Empfehlung-Datalist: Vermittler-Liste lazy laden + clientseitig filtern
+  const empfehlung = document.querySelector<HTMLInputElement>('[data-empfehlung]');
+  const empfehlungId = document.querySelector<HTMLInputElement>('[data-empfehlung-id]');
+  const datalist = document.querySelector<HTMLDataListElement>('#vermittler-suggestions');
+  let vermittlerCache: { id: number; name: string }[] | null = null;
+  let loadInflight: Promise<void> | null = null;
+
+  const loadVermittler = (): Promise<void> => {
+    if (vermittlerCache) return Promise.resolve();
+    if (loadInflight) return loadInflight;
+    loadInflight = fetch('/api/vermittler-search')
+      .then((r) => (r.ok ? r.json() : { vermittler: [] }))
+      .then((j: { vermittler?: { id: number; name: string }[] }) => {
+        vermittlerCache = j.vermittler ?? [];
+      })
+      .catch(() => { vermittlerCache = []; });
+    return loadInflight;
+  };
+
+  const populateDatalist = (q: string) => {
+    if (!datalist || !vermittlerCache) return;
+    const needle = q.trim().toLowerCase();
+    const matches = needle.length === 0
+      ? vermittlerCache.slice(0, 8)
+      : vermittlerCache.filter((v) => v.name.toLowerCase().includes(needle)).slice(0, 8);
+    datalist.replaceChildren(
+      ...matches.map((v) => {
+        const o = document.createElement('option');
+        o.value = v.name;
+        o.dataset.id = String(v.id);
+        return o;
+      }),
+    );
+  };
+
+  const syncEmpfehlungId = () => {
+    if (!empfehlung || !empfehlungId || !vermittlerCache) return;
+    const v = empfehlung.value.trim();
+    const match = vermittlerCache.find((x) => x.name === v);
+    empfehlungId.value = match ? String(match.id) : '';
+  };
+
+  empfehlung?.addEventListener('focus', () => {
+    loadVermittler().then(() => populateDatalist(empfehlung.value));
+  });
+  empfehlung?.addEventListener('input', () => {
+    populateDatalist(empfehlung.value);
+    syncEmpfehlungId();
+  });
+  empfehlung?.addEventListener('change', syncEmpfehlungId);
+  empfehlung?.addEventListener('blur', syncEmpfehlungId);
 
   // IBAN-Live-Formatierung: Uppercase + 4er-Blöcke mit Space, Cursor folgt sinnvoll mit
   const iban = document.querySelector<HTMLInputElement>('[data-iban]');
