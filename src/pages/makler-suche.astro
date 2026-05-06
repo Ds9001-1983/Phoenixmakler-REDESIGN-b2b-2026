@@ -1,9 +1,34 @@
 ---
+export const prerender = false;
+
 import BaseLayout from '../layouts/BaseLayout.astro';
 import FooterCinematic from '../components/sections/FooterCinematic.astro';
-import makler from '../data/makler.json';
+import staticMakler from '../data/makler.json';
+import { loadVermittler, type PublicVermittler } from '../lib/vermittler';
 
 const q = Astro.url.searchParams.get('q') ?? '';
+
+// Live aus PW (1h server-cached). Bei Fehler fallback auf statische Liste.
+let makler: PublicVermittler[] = [];
+try {
+  makler = await loadVermittler();
+} catch (e) {
+  console.error('makler-suche: vermittler load failed', (e as Error).message);
+}
+if (makler.length === 0) {
+  makler = staticMakler.map((m) => ({
+    id: 0,
+    name: m.name,
+    plz: m.plz,
+    ort: m.ort === '—' ? '' : m.ort,
+    telefon: m.telefon,
+    email: m.email,
+    hasPhoto: false,
+  }));
+}
+
+// Antwort-Cache-Header für CDN — die Page selbst darf 1h gecached werden
+Astro.response.headers.set('Cache-Control', 'public, s-maxage=3600, stale-while-revalidate=3600');
 ---
 
 <BaseLayout
@@ -51,14 +76,15 @@ const q = Astro.url.searchParams.get('q') ?? '';
           <h2 class="ms-results__title">Phönix-Partner in Ihrer Nähe</h2>
         </div>
         <p class="ms-results__hint">
-          Aktuell zeigen wir {makler.length} von über 120 Partnern. Die vollständige Liste wird
-          nach Anbindung des CRM-Systems dynamisch geladen.
+          Live aus dem Maklerverwaltungs-System &mdash; PLZ, Ort oder Namen tippen, um die Liste zu filtern.
         </p>
       </div>
 
       <ul class="ms-grid" data-makler-list>
         {makler.map((m, i) => {
           const initials = m.name.split(' ').map((n) => n[0]).slice(0, 2).join('').toUpperCase();
+          const hasOrt = m.ort.length > 0 || m.plz.length > 0;
+          const tel = m.telefon.replace(/[\s\-/()]/g, '');
           return (
             <li
               class="ms-card"
@@ -68,23 +94,32 @@ const q = Astro.url.searchParams.get('q') ?? '';
               data-reveal
               data-reveal-delay={(i % 4) + 1}
             >
-              <div class="ms-card__avatar" aria-hidden="true">{initials}</div>
+              <div class="ms-card__avatar" aria-hidden="true">
+                {m.hasPhoto ? (
+                  <img src={`/api/vermittler-foto?uid=${m.id}`} alt="" loading="lazy" decoding="async" data-foto />
+                ) : null}
+                <span class="ms-card__initials">{initials}</span>
+              </div>
               <div class="ms-card__body">
                 <h3 class="ms-card__name">{m.name}</h3>
-                {m.ort !== '—' ? (
-                  <p class="ms-card__ort">{m.plz} {m.ort}</p>
+                {hasOrt ? (
+                  <p class="ms-card__ort">{[m.plz, m.ort].filter(Boolean).join(' ')}</p>
                 ) : (
                   <p class="ms-card__ort ms-card__ort--muted">Ort folgt</p>
                 )}
                 <div class="ms-card__actions">
-                  <a href={`tel:${m.telefon.replace(/[\s-]/g, '')}`} class="ms-card__link" data-cursor-label="Anrufen">
-                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M11.4 9.9c-.2 0-.4.1-.6.2l-1.5 1c-.3.2-.7.1-1-.1-.8-.7-1.5-1.4-2.2-2.2-.2-.3-.3-.7-.1-1l1-1.5c.2-.3.2-.7 0-1L5.4 2.7c-.2-.3-.6-.4-1-.3-.9.4-1.8.9-2.2 1.8-.8 1.6.3 4.1 2.7 6.5 2.4 2.4 4.9 3.5 6.5 2.7.9-.5 1.4-1.3 1.8-2.2.1-.4 0-.8-.3-1l-1.5-.3z" fill="currentColor"/></svg>
-                    Anrufen
-                  </a>
-                  <a href={`mailto:${m.email}`} class="ms-card__link" data-cursor-label="E-Mail">
-                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M12 3H2c-.6 0-1 .4-1 1v6c0 .6.4 1 1 1h10c.6 0 1-.4 1-1V4c0-.6-.4-1-1-1zm0 2L7 8 2 5V4l5 3 5-3v1z" fill="currentColor"/></svg>
-                    E-Mail
-                  </a>
+                  {tel && (
+                    <a href={`tel:${tel}`} class="ms-card__link" data-cursor-label="Anrufen">
+                      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M11.4 9.9c-.2 0-.4.1-.6.2l-1.5 1c-.3.2-.7.1-1-.1-.8-.7-1.5-1.4-2.2-2.2-.2-.3-.3-.7-.1-1l1-1.5c.2-.3.2-.7 0-1L5.4 2.7c-.2-.3-.6-.4-1-.3-.9.4-1.8.9-2.2 1.8-.8 1.6.3 4.1 2.7 6.5 2.4 2.4 4.9 3.5 6.5 2.7.9-.5 1.4-1.3 1.8-2.2.1-.4 0-.8-.3-1l-1.5-.3z" fill="currentColor"/></svg>
+                      Anrufen
+                    </a>
+                  )}
+                  {m.email && (
+                    <a href={`mailto:${m.email}`} class="ms-card__link" data-cursor-label="E-Mail">
+                      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M12 3H2c-.6 0-1 .4-1 1v6c0 .6.4 1 1 1h10c.6 0 1-.4 1-1V4c0-.6-.4-1-1-1zm0 2L7 8 2 5V4l5 3 5-3v1z" fill="currentColor"/></svg>
+                      E-Mail
+                    </a>
+                  )}
                 </div>
               </div>
             </li>
@@ -266,9 +301,22 @@ const q = Astro.url.searchParams.get('q') ?? '';
     border-radius: 999px;
     background: var(--color-primary-dark);
     color: #fff;
+    overflow: hidden;
+    position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
+  }
+  .ms-card__avatar img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    background: var(--color-primary-dark);
+  }
+  .ms-card__avatar img[data-broken] { display: none; }
+  .ms-card__initials {
     font-family: var(--font-display);
     font-size: 1.1rem;
     font-weight: 500;
@@ -352,4 +400,9 @@ const q = Astro.url.searchParams.get('q') ?? '';
       applyFilter((e.target as HTMLInputElement).value);
     });
   }
+
+  // Bei Foto-404 (z.B. fehlende Token-Berechtigung) graceful auf Initialen zurückfallen
+  document.querySelectorAll<HTMLImageElement>('[data-foto]').forEach((img) => {
+    img.addEventListener('error', () => img.setAttribute('data-broken', ''));
+  });
 </script>
