@@ -254,6 +254,30 @@
     border-color: var(--color-accent);
     box-shadow: 0 0 0 3px rgba(184,134,91,0.18);
   }
+  /* Validation: nach Submit-Versuch via JS (.mform__field--error) ODER nach User-Interaktion (:user-invalid) */
+  .mform__field--error input,
+  .mform__field--error select,
+  .mform__field input:user-invalid,
+  .mform__field select:user-invalid {
+    border-color: #c93c3c;
+    background: #fff7f7;
+  }
+  .mform__field--error input:focus,
+  .mform__field--error select:focus,
+  .mform__field input:user-invalid:focus,
+  .mform__field select:user-invalid:focus {
+    border-color: #c93c3c;
+    box-shadow: 0 0 0 3px rgba(201,60,60,0.18);
+  }
+  .mform__field--error label {
+    color: #c93c3c;
+  }
+  .mform__field-msg {
+    font-size: 0.78rem;
+    color: #c93c3c;
+    margin-top: 0.25rem;
+    min-height: 1em;
+  }
 
   .mform__checks {
     display: flex;
@@ -349,6 +373,33 @@
     });
   }
 
+  const fieldOf = (name: string) =>
+    form?.querySelector<HTMLElement>(`[name="${name}"]`)?.closest<HTMLElement>('.mform__field') ?? null;
+
+  const clearFieldErrors = () => {
+    form?.querySelectorAll<HTMLElement>('.mform__field--error').forEach((el) => el.classList.remove('mform__field--error'));
+  };
+
+  const markField = (name: string, scroll = true) => {
+    const f = fieldOf(name);
+    if (!f) return;
+    f.classList.add('mform__field--error');
+    const input = f.querySelector<HTMLInputElement | HTMLSelectElement>('input, select');
+    if (input) {
+      const off = () => {
+        f.classList.remove('mform__field--error');
+        input.removeEventListener('input', off);
+        input.removeEventListener('change', off);
+      };
+      input.addEventListener('input', off);
+      input.addEventListener('change', off);
+      if (scroll) {
+        input.focus({ preventScroll: false });
+        input.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }
+  };
+
   const showError = (msg?: string) => {
     if (success) success.hidden = true;
     if (errorMsg && msg) errorMsg.textContent = msg;
@@ -372,7 +423,15 @@
 
   form?.addEventListener('submit', async (e) => {
     e.preventDefault();
-    if (!form.reportValidity()) return;
+    clearFieldErrors();
+
+    // Browser-native Pflichtfeld-Check: erste invalide Stelle markieren
+    if (!form.checkValidity()) {
+      const firstInvalid = form.querySelector<HTMLInputElement | HTMLSelectElement>(':invalid');
+      if (firstInvalid?.name) markField(firstInvalid.name);
+      form.reportValidity();
+      return;
+    }
     if (error) error.hidden = true;
 
     const fd = new FormData(form);
@@ -400,10 +459,14 @@
         return;
       }
 
-      let detail: { error?: string } = {};
+      let detail: { error?: string; field?: string } = {};
       try { detail = await res.json(); } catch {}
 
-      if (res.status === 409) {
+      if (res.status === 422 && detail.error === 'missing_field' && detail.field) {
+        markField(detail.field);
+        showError(`Bitte fülle das markierte Feld aus.`);
+      } else if (res.status === 409) {
+        markField('email');
         showError('Mit dieser E-Mail-Adresse besteht bereits ein Eintrag. Bitte ruf uns an.');
       } else if (res.status === 422) {
         showError('Bitte prüfe deine Eingaben — eines der Felder wurde abgelehnt.');
