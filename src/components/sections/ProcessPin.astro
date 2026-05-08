@@ -37,6 +37,13 @@ const steps = [
       <div class="process__progress">
         <div class="process__progress-bar" data-pin-progress></div>
       </div>
+      <div class="process__scroll-hint" aria-hidden="true">
+        <span>Scrollen</span>
+        <svg width="14" height="20" viewBox="0 0 14 20" fill="none">
+          <rect x="0.5" y="0.5" width="13" height="19" rx="6.5" stroke="currentColor" stroke-width="1"/>
+          <circle cx="7" cy="6" r="1.4" fill="currentColor" class="process__scroll-dot"/>
+        </svg>
+      </div>
     </div>
 
     <div class="process__right">
@@ -136,6 +143,35 @@ const steps = [
     transform-origin: left center;
   }
 
+  .process__scroll-hint {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+    opacity: 0.85;
+    transition: opacity 500ms ease;
+  }
+  .process__scroll-hint svg { display: block; }
+  .process__scroll-dot {
+    transform-origin: 7px 6px;
+    animation: process-scroll-dot 1.6s cubic-bezier(0.7, 0, 0.3, 1) infinite;
+  }
+  .process[data-pin-active="1"] .process__scroll-hint {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  @keyframes process-scroll-dot {
+    0%   { transform: translateY(0); opacity: 1; }
+    60%  { transform: translateY(6px); opacity: 0; }
+    61%  { transform: translateY(0); opacity: 0; }
+    100% { transform: translateY(0); opacity: 1; }
+  }
+
   .process__right {
     position: relative;
     min-height: 22rem;
@@ -183,6 +219,7 @@ const steps = [
     .process__left { gap: 1.5rem; }
     .process__indicator { display: none; }
     .process__progress { display: none; }
+    .process__scroll-hint { display: none; }
     .process__right { min-height: auto; position: relative; display: grid; gap: 2.5rem; }
     .pin-step {
       position: relative;

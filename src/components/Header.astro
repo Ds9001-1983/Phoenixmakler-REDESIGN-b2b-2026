@@ -23,6 +23,12 @@ const isActive = (href: string) => pathname === href || (href !== '/' && pathnam
     </button>
 
     <nav id="primary-nav" class="nav" aria-label="Hauptnavigation" data-nav>
+      <a
+        href={navigation.cta.href}
+        class:list={['btn', 'btn-primary', 'nav-cta-button', { active: isActive(navigation.cta.href) }]}
+      >
+        {navigation.cta.label}
+      </a>
       <ul class="nav-list">
         {navigation.primary.map((item) => (
           <li>
@@ -32,10 +38,6 @@ const isActive = (href: string) => pathname === href || (href !== '/' && pathnam
           </li>
         ))}
       </ul>
-      <div class="nav-cta">
-        <a href="/kunde" class="nav-cta-link">Ich bin Kunde</a>
-        <a href="/makler-werden" class="btn btn-primary">Partner werden</a>
-      </div>
     </nav>
   </div>
 </header>
@@ -72,14 +74,22 @@ const isActive = (href: string) => pathname === href || (href !== '/' && pathnam
 
   .nav {
     display: flex;
+    flex: 1;
     align-items: center;
+    justify-content: space-between;
     gap: 2.5rem;
+    margin-left: 2rem;
+  }
+
+  .nav-cta-button {
+    flex-shrink: 0;
   }
 
   .nav-list {
     display: flex;
     gap: 2rem;
     list-style: none;
+    margin-left: auto;
   }
 
   .nav-link {
@@ -109,20 +119,6 @@ const isActive = (href: string) => pathname === href || (href !== '/' && pathnam
     transform: scaleX(1);
     transform-origin: left;
   }
-
-  .nav-cta {
-    display: flex;
-    align-items: center;
-    gap: 1.5rem;
-  }
-
-  .nav-cta-link {
-    font-size: 0.9rem;
-    font-weight: 500;
-    color: var(--color-text);
-    transition: color 180ms ease;
-  }
-  .nav-cta-link:hover { color: var(--color-primary); }
 
   .btn {
     padding: 0.55rem 1.15rem;
@@ -163,12 +159,14 @@ const isActive = (href: string) => pathname === href || (href !== '/' && pathnam
     .nav {
       position: fixed;
       inset: 64px 0 0 0;
+      flex: initial;
       flex-direction: column;
       align-items: stretch;
       justify-content: flex-start;
       background: #fff;
       padding: 3rem var(--padding-x) 8rem;
       gap: 2rem;
+      margin-left: 0;
       overflow-y: auto;
       transform: translateX(100%);
       transition: transform 360ms var(--ease-out);
@@ -176,9 +174,17 @@ const isActive = (href: string) => pathname === href || (href !== '/' && pathnam
 
     .nav[data-open="true"] { transform: translateX(0); }
 
+    .nav-cta-button {
+      order: 2;
+      width: 100%;
+      text-align: center;
+    }
+
     .nav-list {
+      order: 1;
       flex-direction: column;
       gap: 0;
+      margin-left: 0;
     }
 
     .nav-list li {
@@ -191,15 +197,6 @@ const isActive = (href: string) => pathname === href || (href !== '/' && pathnam
       font-size: 1.25rem;
       font-weight: 600;
     }
-
-    .nav-cta {
-      flex-direction: column;
-      gap: 1rem;
-      margin-top: 1rem;
-      align-items: stretch;
-    }
-
-    .nav-cta .btn { width: 100%; }
 
     .mobile-sticky-cta {
       display: flex;

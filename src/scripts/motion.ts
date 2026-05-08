@@ -262,6 +262,7 @@ document.querySelectorAll<HTMLElement>('[data-pin]').forEach((section) => {
       if (progressNum) {
         progressNum.textContent = String(idx + 1).padStart(2, '0');
       }
+      section.dataset.pinActive = progress > 0.02 ? '1' : '0';
     },
   });
 });

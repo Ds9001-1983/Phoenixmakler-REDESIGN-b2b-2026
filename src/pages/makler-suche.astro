@@ -5,6 +5,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import FooterCinematic from '../components/sections/FooterCinematic.astro';
 import staticMakler from '../data/makler.json';
 import { loadVermittler, type PublicVermittler } from '../lib/vermittler';
+import { getPlzCoords } from '../lib/plz';
 
 const q = Astro.url.searchParams.get('q') ?? '';
 
@@ -26,6 +27,12 @@ if (makler.length === 0) {
     hasPhoto: false,
   }));
 }
+
+// PLZ → Geokoordinaten auflösen, damit Client per Haversine in 30-km-Umkreis filtern kann
+const maklerWithCoords = makler.map((m) => {
+  const coords = m.plz ? getPlzCoords(m.plz) : null;
+  return { ...m, lat: coords?.[0] ?? null, lng: coords?.[1] ?? null };
+});
 
 // Antwort-Cache-Header für CDN — die Page selbst darf 1h gecached werden
 Astro.response.headers.set('Cache-Control', 'public, s-maxage=3600, stale-while-revalidate=3600');
@@ -76,12 +83,13 @@ Astro.response.headers.set('Cache-Control', 'public, s-maxage=3600, stale-while-
           <h2 class="ms-results__title">Phönix-Partner in Ihrer Nähe</h2>
         </div>
         <p class="ms-results__hint">
-          Live aus dem Maklerverwaltungs-System &mdash; PLZ, Ort oder Namen tippen, um die Liste zu filtern.
+          Live aus dem Maklerverwaltungs-System &mdash; Ort oder Name tippen, um die Liste zu filtern.
+          Bei einer fünfstelligen PLZ werden alle Makler im Umkreis von 30 km angezeigt.
         </p>
       </div>
 
       <ul class="ms-grid" data-makler-list>
-        {makler.map((m, i) => {
+        {maklerWithCoords.map((m, i) => {
           const initials = m.name.split(' ').map((n) => n[0]).slice(0, 2).join('').toUpperCase();
           const hasOrt = m.ort.length > 0 || m.plz.length > 0;
           const tel = m.telefon.replace(/[\s\-/()]/g, '');
@@ -91,6 +99,8 @@ Astro.response.headers.set('Cache-Control', 'public, s-maxage=3600, stale-while-
               data-name={m.name.toLowerCase()}
               data-ort={m.ort.toLowerCase()}
               data-plz={m.plz}
+              data-lat={m.lat ?? ''}
+              data-lng={m.lng ?? ''}
               data-reveal
               data-reveal-delay={(i % 4) + 1}
             >
@@ -374,13 +384,42 @@ Astro.response.headers.set('Cache-Control', 'public, s-maxage=3600, stale-while-
 </style>
 
 <script>
-  // Live-Filter: Input tippen → Cards filtern
+  // Live-Filter: Input tippen → Cards filtern.
+  // Bei 5-stelliger PLZ → Umkreis-Suche (≤30 km Haversine) statt Präfix-Match.
   const input = document.querySelector<HTMLInputElement>('[data-search-input]');
   const cards = document.querySelectorAll<HTMLLIElement>('[data-makler-list] li');
   const empty = document.querySelector<HTMLElement>('[data-ms-empty]');
 
-  const applyFilter = (value: string) => {
-    const q = value.trim().toLowerCase();
+  const RADIUS_KM = 30;
+  const PLZ_RE = /^\d{5}$/;
+
+  const haversineKm = (a: [number, number], b: [number, number]) => {
+    const R = 6371;
+    const toRad = (deg: number) => (deg * Math.PI) / 180;
+    const dLat = toRad(b[0] - a[0]);
+    const dLng = toRad(b[1] - a[1]);
+    const sa = Math.sin(dLat / 2) ** 2 +
+      Math.cos(toRad(a[0])) * Math.cos(toRad(b[0])) * Math.sin(dLng / 2) ** 2;
+    return 2 * R * Math.asin(Math.min(1, Math.sqrt(sa)));
+  };
+
+  const plzCache = new Map<string, [number, number] | null>();
+  const lookupPlz = async (plz: string): Promise<[number, number] | null> => {
+    if (plzCache.has(plz)) return plzCache.get(plz)!;
+    try {
+      const res = await fetch(`/api/plz/${plz}.json`, { headers: { Accept: 'application/json' } });
+      if (!res.ok) { plzCache.set(plz, null); return null; }
+      const data = await res.json() as { lat: number; lng: number };
+      const coord: [number, number] = [data.lat, data.lng];
+      plzCache.set(plz, coord);
+      return coord;
+    } catch {
+      plzCache.set(plz, null);
+      return null;
+    }
+  };
+
+  const applyTextFilter = (q: string) => {
     let visible = 0;
     cards.forEach((card) => {
       const name = card.dataset.name ?? '';
@@ -393,8 +432,39 @@ Astro.response.headers.set('Cache-Control', 'public, s-maxage=3600, stale-while-
     if (empty) empty.hidden = visible > 0;
   };
 
+  const applyRadiusFilter = (origin: [number, number]) => {
+    let visible = 0;
+    cards.forEach((card) => {
+      const lat = parseFloat(card.dataset.lat ?? '');
+      const lng = parseFloat(card.dataset.lng ?? '');
+      let match = false;
+      if (Number.isFinite(lat) && Number.isFinite(lng)) {
+        match = haversineKm(origin, [lat, lng]) <= RADIUS_KM;
+      }
+      card.style.display = match ? '' : 'none';
+      if (match) visible++;
+    });
+    if (empty) empty.hidden = visible > 0;
+  };
+
+  let filterToken = 0;
+  const applyFilter = async (value: string) => {
+    const trimmed = value.trim();
+    const lower = trimmed.toLowerCase();
+    const token = ++filterToken;
+
+    if (PLZ_RE.test(trimmed)) {
+      const origin = await lookupPlz(trimmed);
+      if (token !== filterToken) return; // veraltete Antwort verwerfen
+      if (origin) {
+        applyRadiusFilter(origin);
+        return;
+      }
+    }
+    applyTextFilter(lower);
+  };
+
   if (input) {
-    // Initial filter based on URL param
     applyFilter(input.value);
     input.addEventListener('input', (e) => {
       applyFilter((e.target as HTMLInputElement).value);

@@ -1,13 +1,10 @@
 {
   "primary": [
-    { "label": "Partner werden", "href": "/makler-werden" },
+    { "label": "Ich bin Kunde", "href": "/kunde" },
     { "label": "Über uns", "href": "/ueber-uns" },
     { "label": "Kontakt", "href": "/kontakt" }
   ],
-  "cta": [
-    { "label": "Ich bin Kunde", "href": "/kunde", "variant": "link" },
-    { "label": "Partner werden", "href": "/makler-werden", "variant": "primary" }
-  ],
+  "cta": { "label": "Partner werden", "href": "/makler-werden" },
   "footer": {
     "phoenix": [
       { "label": "Partner werden", "href": "/makler-werden" },
@@ -50,6 +47,8 @@
     "telefon_href": "tel:+4926346598580",
     "fax": "02634 659858-9",
     "email": "info@phoenix-maklerverbund.de",
-    "maps": "https://maps.app.goo.gl/LuPCMLrRu2hMo2LPA"
+    "maps": "https://maps.app.goo.gl/LuPCMLrRu2hMo2LPA",
+    "whatsapp": "02634 659858-1",
+    "whatsapp_href": "https://wa.me/4926346598581"
   }
 }

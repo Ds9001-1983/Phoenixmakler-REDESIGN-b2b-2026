@@ -1,26 +1,24 @@
 ---
-// Vier Gründe, warum Makler bei Phönix bleiben.
-// Aus V3 übernommen, Typografie auf Editorial-Niveau gehoben.
 const props = [
   {
     num: '01',
-    title: 'Ungebunden & inhabergeführt',
-    body: 'Keine Beteiligungen von Versicherern oder Kapitalgebern. Du empfiehlst, was für deine Kunden passt — nicht was eine Zentrale vorgibt.',
+    title: 'Ungebunden & inhabergeführt – ohne fremde Kapitalinteressen',
+    body: 'Keine Beteiligungen von Versicherern oder anonymen Finanzinvestoren. Du arbeitest mit einem Verbund, der ausschließlich seinen Maklern verpflichtet ist – nicht den Renditeerwartungen externer Geldgeber. Während sich Teile des Marktes zunehmend von Investorenkapital steuern lassen und immer neue Ertragsquellen suchen, halten wir unsere Strukturen bewusst schlank und unabhängig. So bleibt der Fokus dort, wo er hingehört: auf einer fairen Zusammenarbeit zwischen Makler, Kunde und Versicherern.',
   },
   {
     num: '02',
-    title: 'Exklusive Courtagen',
-    body: 'Besondere Vereinbarungen mit den führenden Versicherern im Markt. Du profitierst von Konditionen, die sonst nur Verbünden mit fünfstelliger Partnerzahl offen stehen.',
+    title: 'Courtagevorteile, die spürbar sind.',
+    body: 'Durch starke Sondervereinbarungen erhältst du Zugang zu attraktiven Konditionen und echten wirtschaftlichen Vorteilen.',
   },
   {
     num: '03',
-    title: 'MVP kostenfrei',
-    body: 'Professional Works — vollständiges Maklerverwaltungsprogramm, volldigital, mit offener API. Für Verbundpartner ohne Lizenzkosten.',
+    title: 'Sicher aufgestellt von Anfang an.',
+    body: 'Mit rechtssicheren Rahmenbedingungen und klaren Prozessen begleiten wir dich verlässlich in die Ungebundenheit.',
   },
   {
     num: '04',
-    title: 'Starkes Netzwerk',
-    body: 'Regelmäßige Online-Meetings, Marktaktualisierungen, eigene Deckungskonzepte. Über 120 Kolleginnen und Kollegen teilen Wissen — und Bestandsumdeckungen, wenn du aus der Ausschließlichkeit wechselst.',
+    title: 'Ein Verbund, der mitdenkt.',
+    body: 'Persönlicher Austausch, kollegiales Wissen und operative Unterstützung machen den Unterschied im Alltag.',
   },
 ];
 ---
@@ -29,12 +27,16 @@ const props = [
   <div class="vprops__container">
     <div class="vprops__head">
       <span class="vprops__caption">Vier Gründe</span>
-      <h2 class="vprops__title">Warum Makler bei <em>Phönix</em> bleiben.</h2>
+      <h2 class="vprops__title">Warum Makler bei <em>Phönix</em> werden.</h2>
     </div>
 
     <div class="vprops__grid">
       {props.map((p, i) => (
-        <article class="vprop" data-reveal data-reveal-delay={i + 1}>
+        <article
+          class:list={['vprop', { 'vprop--lead': i === 0 }]}
+          data-reveal
+          data-reveal-delay={i + 1}
+        >
           <span class="vprop__num">{p.num}</span>
           <h3 class="vprop__title">{p.title}</h3>
           <p class="vprop__body">{p.body}</p>
@@ -86,7 +88,7 @@ const props = [
 
   .vprops__grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     gap: clamp(2rem, 4vw, 4rem);
   }
 
@@ -96,6 +98,16 @@ const props = [
     gap: 1rem;
     padding-top: 2rem;
     border-top: 1px solid rgba(10,25,64,0.12);
+  }
+  .vprop--lead {
+    grid-column: 1 / -1;
+  }
+  .vprop--lead .vprop__title {
+    font-size: clamp(1.85rem, 3vw, 2.4rem);
+    max-width: 28ch;
+  }
+  .vprop--lead .vprop__body {
+    max-width: 78ch;
   }
   .vprop__num {
     font-family: var(--font-mono);
@@ -122,5 +134,6 @@ const props = [
 
   @media (max-width: 820px) {
     .vprops__grid { grid-template-columns: 1fr; }
+    .vprop--lead { grid-column: auto; }
   }
 </style>
