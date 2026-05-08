@@ -38,11 +38,15 @@ const steps = [
         <div class="process__progress-bar" data-pin-progress></div>
       </div>
       <div class="process__scroll-hint" aria-hidden="true">
-        <span>Scrollen</span>
-        <svg width="14" height="20" viewBox="0 0 14 20" fill="none">
-          <rect x="0.5" y="0.5" width="13" height="19" rx="6.5" stroke="currentColor" stroke-width="1"/>
-          <circle cx="7" cy="6" r="1.4" fill="currentColor" class="process__scroll-dot"/>
-        </svg>
+        <span class="process__scroll-text">
+          <span class="process__scroll-eyebrow">Weiterscrollen</span>
+          <span class="process__scroll-sub">um die nächsten Schritte zu sehen</span>
+        </span>
+        <span class="process__scroll-arrow">
+          <svg width="22" height="32" viewBox="0 0 22 32" fill="none">
+            <path d="M11 2 V28 M2 19 L11 28 L20 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </span>
       </div>
     </div>
 
@@ -144,32 +148,59 @@ const steps = [
   }
 
   .process__scroll-hint {
-    display: flex;
+    display: inline-flex;
     align-items: center;
-    gap: 0.7rem;
-    font-family: var(--font-mono);
-    font-size: 0.72rem;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--color-text-muted);
-    opacity: 0.85;
-    transition: opacity 500ms ease;
+    gap: 1.1rem;
+    margin-top: 0.5rem;
+    padding: 0.85rem 1.25rem;
+    background: rgba(184, 134, 91, 0.1);
+    border: 1px solid rgba(184, 134, 91, 0.35);
+    border-radius: 999px;
+    color: var(--color-accent-dark);
+    transition: opacity 500ms ease, transform 500ms ease;
+    align-self: flex-start;
   }
-  .process__scroll-hint svg { display: block; }
-  .process__scroll-dot {
-    transform-origin: 7px 6px;
-    animation: process-scroll-dot 1.6s cubic-bezier(0.7, 0, 0.3, 1) infinite;
+  .process__scroll-text {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.15;
+  }
+  .process__scroll-eyebrow {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-accent-dark);
+  }
+  .process__scroll-sub {
+    font-family: var(--font-body);
+    font-size: 0.82rem;
+    color: var(--color-text-muted);
+    margin-top: 0.2rem;
+    text-transform: none;
+    letter-spacing: 0;
+  }
+  .process__scroll-arrow {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-accent);
+    animation: process-scroll-arrow 1.6s cubic-bezier(0.45, 0, 0.55, 1) infinite;
   }
   .process[data-pin-active="1"] .process__scroll-hint {
     opacity: 0;
+    transform: translateY(8px);
     pointer-events: none;
   }
 
-  @keyframes process-scroll-dot {
-    0%   { transform: translateY(0); opacity: 1; }
-    60%  { transform: translateY(6px); opacity: 0; }
-    61%  { transform: translateY(0); opacity: 0; }
-    100% { transform: translateY(0); opacity: 1; }
+  @keyframes process-scroll-arrow {
+    0%, 100% { transform: translateY(0); }
+    50%      { transform: translateY(8px); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .process__scroll-arrow { animation: none; }
   }
 
   .process__right {
