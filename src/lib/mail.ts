@@ -100,10 +100,10 @@ const applicantPhotoHtml = (firstName: string, uploadLink: string): string => `
     </p>
     <a href="${uploadLink}" style="display:inline-block;background:#b8865b;color:#fff;text-decoration:none;padding:14px 32px;border-radius:6px;font-weight:500;font-size:15px">Foto hochladen →</a>
     <p style="font-size:13px;line-height:1.6;color:#777;margin-top:28px">
-      Bei Fragen meldest du dich gerne unter <a href="mailto:info@phoenix-maklerverbund.de" style="color:#b8865b">info@phoenix-maklerverbund.de</a> oder telefonisch unter 02634 659858-0.
+      Bei Fragen meldest du dich gerne unter <a href="mailto:info@phoenix-maklerverbund.de" style="color:#b8865b">info@phoenix-maklerverbund.de</a> oder telefonisch unter 02634/659858-0.
     </p>
     <div style="margin-top:24px;padding-top:20px;border-top:1px solid #eee;font-size:11px;color:#999">
-      Phönix Maklerverbund GmbH · Zum Weißen Stein 17 · 56587 Oberhonnefeld-Gierend
+      Phönix Maklerverbund GmbH · Zum weißen Stein 17 · 56587 Oberhonnefeld-Gierend
     </div>
   </div>
 </div>

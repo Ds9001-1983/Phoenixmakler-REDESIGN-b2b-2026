@@ -1,9 +1,8 @@
 ---
-// Sektion 9: Footer Cinematic mit CSS-Aurora (SM-09)
-// Ersetzt den Standard-Footer auf der Startseite. Aurora-Effekt rein per
-// Radial-Gradient + CSS-Animation — kein WebGL-Bundle (~640 kB gespart).
+import navigation from '../../data/navigation.json';
 
 const year = new Date().getFullYear();
+const k = navigation.kontakt;
 ---
 
 <footer class="cinematic-footer">
@@ -21,11 +20,13 @@ const year = new Date().getFullYear();
     <div class="cinematic-footer__grid">
       <div class="cinematic-footer__col">
         <span class="cinematic-footer__col-title">Kontakt</span>
-        <a href="mailto:info@phoenix-maklerverbund.de">info@phoenix-maklerverbund.de</a>
-        <a href="tel:+4951211234567">+49 5121 123 45 67</a>
+        <a href={`mailto:${k.email}`}>{k.email}</a>
+        <a href={k.telefon_href}>{k.telefon}</a>
+        <a href={k.whatsapp_href} target="_blank" rel="noopener">WhatsApp: {k.whatsapp}</a>
         <address>
-          Phönix Maklerverbund GmbH<br/>
-          Hildesheim, Niedersachsen
+          {k.firma}<br/>
+          {k.strasse}<br/>
+          {k.plz_ort}
         </address>
       </div>
 
