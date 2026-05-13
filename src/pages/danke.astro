@@ -1,0 +1,362 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import navigation from '../data/navigation.json';
+
+const { telefon, telefon_href, email, whatsapp, whatsapp_href } = navigation.kontakt;
+---
+
+<BaseLayout
+  title="Vielen Dank"
+  description="Deine Bewerbung ist bei Phönix Maklerverbund angekommen. Wir melden uns persönlich innerhalb von zwei Werktagen."
+  noindex
+>
+  <section class="danke">
+    <div class="danke__container">
+
+      <div class="danke__hero" data-reveal>
+        <div class="danke__check" aria-hidden="true">
+          <svg width="56" height="56" viewBox="0 0 36 36" fill="none">
+            <circle cx="18" cy="18" r="17" stroke="currentColor" stroke-width="1.5"/>
+            <path d="M11 18.5l5 5 9-11" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <span class="danke__kicker">Übermittlung erfolgreich</span>
+        <h1 class="danke__title">
+          Vielen Dank<br/><em>für deine Bewerbung.</em>
+        </h1>
+        <p class="danke__lead">
+          Deine Daten sind bei uns angekommen. Wir melden uns persönlich —
+          Torsten oder Lothar am Telefon, in der Regel innerhalb von zwei Werktagen.
+        </p>
+        <p class="danke__meta" data-email-hint hidden>
+          Eine Eingangsbestätigung an <strong data-email-target></strong> ist nicht nötig —
+          du erhältst nach der Freischaltung eine separate Mail.
+        </p>
+      </div>
+
+      <div class="danke__timeline" data-reveal>
+        <h2 class="danke__section-title">So geht es weiter</h2>
+        <ol class="danke__steps">
+          <li class="danke__step">
+            <span class="danke__step-num">01</span>
+            <h3 class="danke__step-title">Wir prüfen.</h3>
+            <p class="danke__step-text">
+              Unser Backoffice sichtet deine Unterlagen, gleicht IHK-Registrierung
+              und Erreichbarkeit ab.
+            </p>
+          </li>
+          <li class="danke__step">
+            <span class="danke__step-num">02</span>
+            <h3 class="danke__step-title">Wir rufen an.</h3>
+            <p class="danke__step-text">
+              Persönlicher Kennenlern-Call mit Torsten oder Lothar — kein Callcenter,
+              kein Sales-Pitch.
+            </p>
+          </li>
+          <li class="danke__step">
+            <span class="danke__step-num">03</span>
+            <h3 class="danke__step-title">Onboarding.</h3>
+            <p class="danke__step-text">
+              Verträge, Zugänge, erste Kunden-Cases. Du bist startklar.
+            </p>
+          </li>
+        </ol>
+      </div>
+
+      <div class="danke__contact" data-reveal>
+        <span class="danke__kicker">Direkter Draht</span>
+        <h2 class="danke__contact-title">Schon eine Rückfrage?</h2>
+        <p class="danke__contact-lead">
+          Du musst nicht zwei Werktage warten. Ruf einfach an oder schreib uns —
+          wir sind erreichbar.
+        </p>
+        <ul class="danke__contact-list">
+          <li>
+            <span class="danke__contact-label">Telefon</span>
+            <a class="danke__contact-link" href={telefon_href}>{telefon}</a>
+          </li>
+          <li>
+            <span class="danke__contact-label">E-Mail</span>
+            <a class="danke__contact-link" href={`mailto:${email}`}>{email}</a>
+          </li>
+          {whatsapp_href && (
+            <li>
+              <span class="danke__contact-label">WhatsApp</span>
+              <a class="danke__contact-link" href={whatsapp_href} rel="noopener noreferrer">{whatsapp}</a>
+            </li>
+          )}
+        </ul>
+      </div>
+
+      <p class="danke__back">
+        <a href="/">← Zurück zur Startseite</a>
+      </p>
+
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .danke {
+    padding-block: clamp(5rem, 12vh, 9rem);
+    background: var(--color-bg-warm);
+    color: var(--color-ink);
+  }
+  .danke__container {
+    max-width: 880px;
+    margin-inline: auto;
+    padding-inline: var(--padding-x);
+  }
+
+  /* ─── Hero ─── */
+  .danke__hero {
+    text-align: center;
+    margin-bottom: clamp(4rem, 9vh, 6rem);
+  }
+  .danke__check {
+    display: inline-flex;
+    color: var(--color-accent-dark);
+    margin-bottom: 1.25rem;
+    line-height: 0;
+    animation: danke-check 480ms cubic-bezier(.2,.7,.3,1) 80ms both;
+  }
+  .danke__check svg path {
+    stroke-dasharray: 22;
+    stroke-dashoffset: 22;
+    animation: danke-stroke 420ms ease-out 360ms forwards;
+  }
+  .danke__kicker {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--color-accent-dark);
+    margin-bottom: 1rem;
+  }
+  .danke__title {
+    font-family: var(--font-display);
+    font-size: clamp(2.5rem, 6vw, 4.75rem);
+    font-weight: 400;
+    line-height: 1.0;
+    letter-spacing: -0.03em;
+    margin: 0 auto 1.5rem;
+    max-width: 18ch;
+    font-variation-settings: 'opsz' 144, 'SOFT' 100;
+  }
+  .danke__title em {
+    font-style: italic;
+    font-weight: 300;
+    color: var(--color-accent);
+  }
+  .danke__lead {
+    font-size: 1.15rem;
+    line-height: 1.55;
+    color: var(--color-text-muted);
+    max-width: 56ch;
+    margin: 0 auto;
+  }
+  .danke__meta {
+    margin-top: 1rem;
+    font-size: 0.9rem;
+    color: var(--color-text-muted);
+    max-width: 56ch;
+    margin-inline: auto;
+  }
+  .danke__meta strong {
+    color: var(--color-ink);
+    font-weight: 500;
+  }
+
+  /* ─── Timeline ─── */
+  .danke__timeline {
+    margin-bottom: clamp(4rem, 8vh, 5.5rem);
+  }
+  .danke__section-title {
+    font-family: var(--font-display);
+    font-size: clamp(1.5rem, 2.6vw, 2rem);
+    font-weight: 400;
+    text-align: center;
+    margin: 0 auto 2.5rem;
+    color: var(--color-ink);
+  }
+  .danke__steps {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+    position: relative;
+  }
+  /* dünne Kupfer-Linie verbindet die Steps auf Desktop */
+  .danke__steps::before {
+    content: '';
+    position: absolute;
+    top: 16px;
+    left: 10%;
+    right: 10%;
+    height: 1px;
+    background: linear-gradient(to right,
+      transparent,
+      var(--color-accent-light) 20%,
+      var(--color-accent-light) 80%,
+      transparent);
+    z-index: 0;
+  }
+  .danke__step {
+    position: relative;
+    z-index: 1;
+    padding: 0 0.5rem;
+  }
+  .danke__step-num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: #fff;
+    border: 1.5px solid var(--color-accent);
+    color: var(--color-accent-dark);
+    font-family: var(--font-mono);
+    font-size: 0.82rem;
+    font-weight: 500;
+    margin-bottom: 1.25rem;
+    letter-spacing: 0.04em;
+  }
+  .danke__step-title {
+    font-family: var(--font-display);
+    font-size: 1.35rem;
+    font-weight: 400;
+    margin: 0 0 0.55rem;
+    color: var(--color-ink);
+    line-height: 1.25;
+  }
+  .danke__step-text {
+    font-size: 0.98rem;
+    line-height: 1.55;
+    color: var(--color-text-muted);
+    margin: 0;
+    max-width: 32ch;
+  }
+  @media (max-width: 760px) {
+    .danke__steps {
+      grid-template-columns: 1fr;
+      gap: 1.75rem;
+    }
+    .danke__steps::before { display: none; }
+    .danke__step { padding: 0; }
+    .danke__step-num { margin-bottom: 0.85rem; }
+  }
+
+  /* ─── Kontakt-Block ─── */
+  .danke__contact {
+    background: #fff;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: clamp(2rem, 4vw, 3rem);
+    text-align: center;
+    box-shadow: var(--shadow-sm);
+    margin-bottom: clamp(2.5rem, 5vh, 3.5rem);
+  }
+  .danke__contact-title {
+    font-family: var(--font-display);
+    font-size: clamp(1.5rem, 2.6vw, 2rem);
+    font-weight: 400;
+    margin: 0 0 0.75rem;
+    color: var(--color-ink);
+  }
+  .danke__contact-lead {
+    font-size: 1rem;
+    line-height: 1.55;
+    color: var(--color-text-muted);
+    max-width: 48ch;
+    margin: 0 auto 2rem;
+  }
+  .danke__contact-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1.5rem;
+    text-align: center;
+  }
+  .danke__contact-list li {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+  .danke__contact-label {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+  }
+  .danke__contact-link {
+    font-family: var(--font-display);
+    font-size: 1.25rem;
+    color: var(--color-ink);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: color 180ms ease, border-color 180ms ease;
+    word-break: break-word;
+  }
+  .danke__contact-link:hover,
+  .danke__contact-link:focus-visible {
+    color: var(--color-accent-dark);
+    border-bottom-color: var(--color-accent);
+  }
+
+  /* ─── Back-Link ─── */
+  .danke__back {
+    text-align: center;
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    letter-spacing: 0.04em;
+  }
+  .danke__back a {
+    color: var(--color-text-muted);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    padding-bottom: 2px;
+    transition: color 180ms ease, border-color 180ms ease;
+  }
+  .danke__back a:hover,
+  .danke__back a:focus-visible {
+    color: var(--color-accent-dark);
+    border-bottom-color: var(--color-accent);
+  }
+
+  /* ─── Animationen ─── */
+  @keyframes danke-check {
+    from { transform: scale(.6); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+  @keyframes danke-stroke { to { stroke-dashoffset: 0; } }
+
+  @media (prefers-reduced-motion: reduce) {
+    .danke__check,
+    .danke__check svg path {
+      animation: none !important;
+    }
+    .danke__check svg path { stroke-dashoffset: 0; }
+  }
+</style>
+
+<script>
+  // Email-Param aus URL lesen und dezent in den Hero einsetzen.
+  const params = new URLSearchParams(window.location.search);
+  const email = params.get('email')?.trim();
+  if (email) {
+    const wrap = document.querySelector<HTMLElement>('[data-email-hint]');
+    const target = document.querySelector<HTMLElement>('[data-email-target]');
+    if (wrap && target) {
+      target.textContent = email;
+      wrap.hidden = false;
+    }
+  }
+</script>
