@@ -18,8 +18,7 @@ const heroImage: Record<string, string> = {
 type ProduktSlug = keyof typeof produkteData;
 
 export async function getStaticPaths() {
-  const { default: data } = await import('../../data/produkte.json');
-  return Object.keys(data).map((slug) => ({ params: { slug } }));
+  return Object.keys(produkteData).map((slug) => ({ params: { slug } }));
 }
 
 const { slug } = Astro.params as { slug: ProduktSlug };
