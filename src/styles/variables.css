@@ -7,8 +7,9 @@
   --color-primary-softer: #c3cae6;
 
   /* Kupfer-Akzent (Cinematic Editorial Navy) */
-  --color-accent: #b8865b;
+  --color-accent: #b8865b;        /* Hero/Headline/large text (>=18pt) auf hell, OK auf navy */
   --color-accent-dark: #8f6a47;
+  --color-accent-text: #8f6a47;   /* Akzent als Lesetext (<18pt) auf hellem Grund — 5.0:1, WCAG AA */
   --color-accent-light: #e8d4bc;
   --color-accent-bright: #cc9b6f;
 

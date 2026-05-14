@@ -17,6 +17,9 @@
       </p>
     </div>
     <div class="cc__actions">
+      <button type="button" class="cc__btn cc__btn--secondary" id="cookie-consent-reject" aria-describedby="cc-text">
+        Ablehnen
+      </button>
       <button type="button" class="cc__btn" id="cookie-consent-accept" aria-describedby="cc-text">
         Verstanden
       </button>
@@ -55,6 +58,11 @@
     align-items: center;
     gap: 1.25rem;
   }
+  .cc__actions {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+  }
   .cc__text p {
     font-size: 0.88rem;
     line-height: 1.55;
@@ -91,30 +99,58 @@
     outline-offset: 3px;
   }
 
+  .cc__btn--secondary {
+    background: transparent;
+    color: rgba(255,255,255,0.85);
+    border: 1px solid rgba(255,255,255,0.3);
+  }
+  .cc__btn--secondary:hover {
+    background: rgba(255,255,255,0.08);
+    color: #fff;
+    transform: translateY(-1px);
+  }
+
   @media (max-width: 640px) {
     .cc__inner {
       grid-template-columns: 1fr;
       gap: 1rem;
+    }
+    .cc__actions {
+      flex-direction: column-reverse;
+      width: 100%;
     }
     .cc__btn { width: 100%; }
   }
 </style>
 
 <script>
+  // Decision wird gespeichert als JSON { decision: 'accepted'|'rejected', at: ISO }.
+  // Aktuell laeuft die Site cookie-frei (Plausible). Sobald consent-pflichtige
+  // Tracker dazu kommen, im BaseLayout vor dem Skript-Tag pruefen:
+  //   const c = JSON.parse(localStorage.getItem('phoenix_cookie_consent_v1') ?? '{}');
+  //   if (c.decision !== 'rejected') { /* Tracker laden */ }
   const STORAGE_KEY = 'phoenix_cookie_consent_v1';
   const el = document.getElementById('cookie-consent');
-  const btn = document.getElementById('cookie-consent-accept');
+  const acceptBtn = document.getElementById('cookie-consent-accept');
+  const rejectBtn = document.getElementById('cookie-consent-reject');
 
-  if (el && btn && !localStorage.getItem(STORAGE_KEY)) {
+  const hide = () => {
+    if (!el) return;
+    el.classList.remove('is-visible');
+    setTimeout(() => { el.hidden = true; }, 400);
+  };
+
+  const persist = (decision: 'accepted' | 'rejected') => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ decision, at: new Date().toISOString() }));
+  };
+
+  if (el && acceptBtn && rejectBtn && !localStorage.getItem(STORAGE_KEY)) {
     el.hidden = false;
     requestAnimationFrame(() => {
       setTimeout(() => el.classList.add('is-visible'), 600);
     });
 
-    btn.addEventListener('click', () => {
-      localStorage.setItem(STORAGE_KEY, new Date().toISOString());
-      el.classList.remove('is-visible');
-      setTimeout(() => { el.hidden = true; }, 400);
-    });
+    acceptBtn.addEventListener('click', () => { persist('accepted'); hide(); });
+    rejectBtn.addEventListener('click', () => { persist('rejected'); hide(); });
   }
 </script>

@@ -2,13 +2,17 @@
 // Sektion Makler-Hero (Premium-10K, /makler-werden)
 // Editorial-Portrait im Split-Layout mit Grain-Overlay.
 // Video optional später (hero-makler.mp4) — aktuell Poster only.
-const posterPath = '/images/hero/hero-makler-cinematic.png';
+const posterWebp = '/images/hero/hero-makler-cinematic.webp';
+const posterJpg = '/images/hero/hero-makler-cinematic.jpg';
 ---
 
 <section class="mhero" id="hero">
   <div class="mhero__grid">
     <div class="mhero__media">
-      <img src={posterPath} alt="" loading="eager" fetchpriority="high" />
+      <picture>
+        <source srcset={posterWebp} type="image/webp" />
+        <img src={posterJpg} alt="" loading="eager" fetchpriority="high" />
+      </picture>
       <div class="mhero__grain" aria-hidden="true"></div>
       <div class="mhero__tint" aria-hidden="true"></div>
     </div>

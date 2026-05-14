@@ -164,6 +164,10 @@ html[data-a11y-motion="reduced"] .hero-cinematic__media::before {
   position: absolute;
   inset: 0;
   background-image: url('/images/hero/hero-home-cinematic.jpg');
+  background-image: image-set(
+    url('/images/hero/hero-home-cinematic.webp') type('image/webp'),
+    url('/images/hero/hero-home-cinematic.jpg') type('image/jpeg')
+  );
   background-size: cover;
   background-position: center;
 }

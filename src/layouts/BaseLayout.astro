@@ -14,14 +14,16 @@ interface Props {
   ogImage?: string;
   hideFooter?: boolean;
   noindex?: boolean;
+  showPreloader?: boolean;
 }
 
 const {
   title,
   description = 'Phönix Maklerverbund – Ihr ungebundener Partner für Finanz- und Versicherungslösungen. Inhabergeführt seit 2012.',
-  ogImage = '/images/hero/hero-home.png',
+  ogImage = '/images/hero/hero-home-og.jpg',
   hideFooter = false,
   noindex = false,
+  showPreloader = true,
 } = Astro.props;
 
 const siteTitle = title.includes('Phönix') ? title : `${title} | Phönix Maklerverbund`;
@@ -37,7 +39,7 @@ const jsonLd = isHome ? {
   name: navigation.kontakt.firma,
   url: siteOrigin,
   logo: `${siteOrigin}/images/logo.png`,
-  image: `${siteOrigin}/images/hero/hero-home.png`,
+  image: `${siteOrigin}/images/hero/hero-home-og.jpg`,
   telephone: navigation.kontakt.telefon,
   email: navigation.kontakt.email,
   description: 'Inhabergefuehrter Maklerverbund fuer ungebundene Versicherungsmaklerinnen und -makler. Seit 2012 in Oberhonnefeld-Gierend.',
@@ -137,7 +139,7 @@ const umamiId = import.meta.env.PUBLIC_UMAMI_ID;
   </head>
   <body>
     <a href="#main" class="skip-link">Zum Inhalt springen</a>
-    <Preloader />
+    {showPreloader && <Preloader />}
     <CustomCursor />
     <div class="scroll-progress" data-scroll-progress aria-hidden="true"></div>
     <Header />

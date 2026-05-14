@@ -8,7 +8,7 @@ interface Props {
 const { title, eyebrow } = Astro.props;
 ---
 
-<BaseLayout title={`${title} – Phönix Maklerverbund`}>
+<BaseLayout title={`${title} – Phönix Maklerverbund`} showPreloader={false}>
   <section class="hero-legal">
     <div class="container" data-reveal>
       <span class="eyebrow">{eyebrow}</span>

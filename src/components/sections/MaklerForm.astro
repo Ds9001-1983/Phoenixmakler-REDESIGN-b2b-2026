@@ -439,6 +439,7 @@ import { LEAD_SOURCES } from '../../lib/lead-source';
 
   const clearFieldErrors = () => {
     form?.querySelectorAll<HTMLElement>('.mform__field--error').forEach((el) => el.classList.remove('mform__field--error'));
+    form?.querySelectorAll<HTMLInputElement | HTMLSelectElement>('[aria-invalid="true"]').forEach((el) => el.removeAttribute('aria-invalid'));
   };
 
   const markField = (name: string, scroll = true) => {
@@ -447,8 +448,10 @@ import { LEAD_SOURCES } from '../../lib/lead-source';
     f.classList.add('mform__field--error');
     const input = f.querySelector<HTMLInputElement | HTMLSelectElement>('input, select');
     if (input) {
+      input.setAttribute('aria-invalid', 'true');
       const off = () => {
         f.classList.remove('mform__field--error');
+        input.removeAttribute('aria-invalid');
         input.removeEventListener('input', off);
         input.removeEventListener('change', off);
       };
@@ -475,10 +478,13 @@ import { LEAD_SOURCES } from '../../lib/lead-source';
     e.preventDefault();
     clearFieldErrors();
 
-    // Browser-native Pflichtfeld-Check: erste invalide Stelle markieren
+    // Browser-native Pflichtfeld-Check: alle invaliden Felder fuer Screenreader markieren,
+    // erste Stelle bekommt Fokus + Scroll.
     if (!form.checkValidity()) {
-      const firstInvalid = form.querySelector<HTMLInputElement | HTMLSelectElement>(':invalid');
-      if (firstInvalid?.name) markField(firstInvalid.name);
+      const allInvalid = form.querySelectorAll<HTMLInputElement | HTMLSelectElement>(':invalid');
+      allInvalid.forEach((el, i) => {
+        if (el.name) markField(el.name, i === 0);
+      });
       form.reportValidity();
       return;
     }
