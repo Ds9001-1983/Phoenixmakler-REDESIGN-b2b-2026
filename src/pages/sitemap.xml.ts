@@ -7,7 +7,6 @@ const pages = [
   { url: '/kunde/altersvorsorge', changefreq: 'monthly', priority: 0.8 },
   { url: '/kunde/einkommenssicherung', changefreq: 'monthly', priority: 0.8 },
   { url: '/kunde/zahnzusatzversicherung', changefreq: 'monthly', priority: 0.8 },
-  { url: '/kunde/krankenhauszusatzversicherung', changefreq: 'monthly', priority: 0.8 },
   { url: '/kunde/haustier', changefreq: 'monthly', priority: 0.8 },
   { url: '/kunde/haus-wohnen', changefreq: 'monthly', priority: 0.8 },
   { url: '/kunde/vermoegensaufbau', changefreq: 'monthly', priority: 0.8 },

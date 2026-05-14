@@ -17,7 +17,6 @@
       { "label": "Altersvorsorge", "href": "/kunde/altersvorsorge" },
       { "label": "Einkommenssicherung", "href": "/kunde/einkommenssicherung" },
       { "label": "Zahnzusatzversicherung", "href": "/kunde/zahnzusatzversicherung" },
-      { "label": "Krankenhauszusatz", "href": "/kunde/krankenhauszusatzversicherung" },
       { "label": "Haustier", "href": "/kunde/haustier" },
       { "label": "Haus & Wohnen", "href": "/kunde/haus-wohnen" },
       { "label": "Vermögensaufbau", "href": "/kunde/vermoegensaufbau" }
@@ -28,15 +27,6 @@
       { "label": "Erstinformation", "href": "/erstinformation" },
       { "label": "Beschwerdemanagement", "href": "/beschwerdemanagement" },
       { "label": "Barrierefreiheit", "href": "/barrierefreiheit" }
-    ],
-    "leistungen": [
-      { "label": "Altersvorsorge", "href": "/kunde/altersvorsorge" },
-      { "label": "Einkommenssicherung", "href": "/kunde/einkommenssicherung" },
-      { "label": "Zahnzusatzversicherung", "href": "/kunde/zahnzusatzversicherung" },
-      { "label": "Krankenhauszusatz", "href": "/kunde/krankenhauszusatzversicherung" },
-      { "label": "Haustier", "href": "/kunde/haustier" },
-      { "label": "Haus & Wohnen", "href": "/kunde/haus-wohnen" },
-      { "label": "Vermögensaufbau", "href": "/kunde/vermoegensaufbau" }
     ]
   },
   "kontakt": {

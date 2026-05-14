@@ -70,36 +70,6 @@
       }
     ]
   },
-  "krankenhauszusatzversicherung": {
-    "title": "Eine Auswahl für die Krankenhauszusatzversicherung",
-    "eyebrow": "Krankenhauszusatz",
-    "intro": "Chefarztbehandlung, Einzelzimmer und die Wahl der Klinik – mehr Komfort, wenn es darauf ankommt.",
-    "pots": [
-      { "headline": "Mehr Komfort für schnelle Genesung", "url": "https://deterding.phoenix-makler.info/kundenmagazin_anmeldung.html" },
-      { "headline": "Mein Kind muss ins Krankenhaus – was nun?", "url": "https://deterding.phoenix-makler.info/kundenmagazin_anmeldung.html" },
-      { "headline": "Weil mir Ihre Gesundheit am Herzen liegt!", "url": "https://deterding.phoenix-makler.info/kundenmagazin_anmeldung.html" }
-    ],
-    "produkte": [
-      {
-        "name": "Krankenhauszusatzversicherung (Barmenia)",
-        "text": "Arzthonorare ohne Begrenzung, einfache Gesundheitsprüfung und ein attraktives Preis-Leistungs-Verhältnis. Jetzt hier informieren und berechnen.",
-        "logo": "/images/logos/barmenia.png",
-        "url": "https://ssl.barmenia.de/"
-      },
-      {
-        "name": "Krankenhauszusatzversicherung (ARAG)",
-        "text": "Einer der am schnellsten wachsenden privaten Krankenversicherer der letzten Jahre. Keine Begrenzung auf die Höchstsätze der Gebührenordnung, Unterstützung bei der Klinikwahl und vieles mehr.",
-        "logo": "/images/logos/arag.png",
-        "url": "https://ssl.barmenia.de/"
-      },
-      {
-        "name": "Krankenhauszusatzversicherung (SDK)",
-        "text": "Die besten Ärzte und beste Unterbringung im Krankenhaus – auch ohne Gesundheitsfragen in der Variante ‚Klinik bei Unfall'. Persönliches Angebot mit wenigen Klicks.",
-        "logo": "/images/logos/sdk.png",
-        "url": "https://ssl.barmenia.de/"
-      }
-    ]
-  },
   "haustier": {
     "title": "Eine Auswahl für Ihre Tierversicherungen",
     "eyebrow": "Haustier",
