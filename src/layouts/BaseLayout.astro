@@ -6,6 +6,7 @@ import Footer from '../components/Footer.astro';
 import Preloader from '../components/Preloader.astro';
 import CustomCursor from '../components/CustomCursor.astro';
 import AccessibilityWidget from '../components/AccessibilityWidget.astro';
+import SpeedInsights from '@vercel/speed-insights/astro';
 import navigation from '../data/navigation.json';
 
 interface Props {
@@ -148,6 +149,7 @@ const umamiId = import.meta.env.PUBLIC_UMAMI_ID;
     </main>
     {!hideFooter && <Footer />}
     <AccessibilityWidget />
+    <SpeedInsights />
     <script>
       import '../scripts/motion.ts';
     </script>
