@@ -109,14 +109,6 @@ export const POST: APIRoute = async ({ request }) => {
       taxnumber: steuernummer,
       exclude_from_newsletter: data.kontakt_ok ? false : true,
     },
-    // bank_account direkt am User — der separate /bank-accounts/user-POST
-    // hat trotz 2xx geliefert ohne tatsaechlich anzulegen (Dennis Sasse uid 62498 hatte
-    // bank_account=null). PW leitet account_number/bank_code/bank_name/swift aus iban_code ab.
-    bank_account: {
-      iban_code: iban,
-      depositor: `${vorname} ${nachname}`,
-      account_country: { id: 65 },
-    },
   };
   if (nationality) userBody.nationality = nationality;
 
@@ -144,7 +136,36 @@ export const POST: APIRoute = async ({ request }) => {
   const userJson = (await userRes.json()) as { data?: { id?: number } };
   const newUserId = userJson?.data?.id ?? null;
 
-  // 2) Kunden-Eintrag (status_id 1 = "Kunde") mit Bezug auf den Vermittler
+  // 2) IBAN als Bankverbindung am Vermittler hinterlegen. bank_account am User selbst
+  //    ist read-only (PW schluckt es still beim POST /users) — geschrieben wird ueber
+  //    diese separate Resource. Pflichtfelder via PW-422-Probe ermittelt:
+  //    user_id, iban_code, depositor, account_country.id. Kein validate_iban-Flag.
+  let bankStatus: 'ok' | 'failed' | 'skipped' = 'skipped';
+  if (newUserId && iban) {
+    try {
+      const bankRes = await fetch(`${base}/api/v1/${slug}/bank-accounts/user`, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({
+          user_id: newUserId,
+          iban_code: iban,
+          depositor: `${vorname} ${nachname}`,
+          account_country: { id: 65 },
+        }),
+      });
+      if (bankRes.ok) {
+        bankStatus = 'ok';
+      } else {
+        bankStatus = 'failed';
+        console.error('PW bank-account error', bankRes.status, (await bankRes.text()).slice(0, 400));
+      }
+    } catch (e) {
+      bankStatus = 'failed';
+      console.error('PW bank-account fetch failed', (e as Error).message);
+    }
+  }
+
+  // 3) Kunden-Eintrag (status_id 1 = "Kunde") mit Bezug auf den Vermittler
   let clientStatus: 'ok' | 'failed' | 'skipped' = 'skipped';
   let clientId: number | null = null;
   if (newUserId) {
@@ -178,7 +199,7 @@ export const POST: APIRoute = async ({ request }) => {
     }
   }
 
-  // 3) Lead-Herkunfts-Notiz beim Kunden — nicht-blockierend, nur wenn was angegeben wurde
+  // 4) Lead-Herkunfts-Notiz beim Kunden — nicht-blockierend, nur wenn was angegeben wurde
   let leadNoteStatus: 'ok' | 'failed' | 'skipped' = 'skipped';
   if (clientId && (quelleLabel || empfehlungName)) {
     const lines: string[] = [];
@@ -210,7 +231,7 @@ export const POST: APIRoute = async ({ request }) => {
     }
   }
 
-  // 4) Notification-Mail an Phoenix mit Trigger-Link — nicht-blockierend
+  // 5) Notification-Mail an Phoenix mit Trigger-Link — nicht-blockierend
   let mailStatus: 'ok' | 'failed' | 'skipped' = 'skipped';
   if (newUserId && triggerSecret && appBaseUrl && phoenixTo) {
     try {
@@ -240,5 +261,5 @@ export const POST: APIRoute = async ({ request }) => {
     }
   }
 
-  return json({ ok: true, user_id: newUserId, client: clientStatus, lead_note: leadNoteStatus, mail: mailStatus }, 200);
+  return json({ ok: true, user_id: newUserId, client: clientStatus, bank: bankStatus, lead_note: leadNoteStatus, mail: mailStatus }, 200);
 };
