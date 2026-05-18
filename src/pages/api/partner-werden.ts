@@ -51,7 +51,7 @@ export const POST: APIRoute = async ({ request }) => {
     return json({ ok: true }, 200);
   }
 
-  const required = ['anrede', 'vorname', 'nachname', 'strasse', 'plz', 'ort', 'telefon', 'email', 'geburtsdatum', 'ihk', 'iban'];
+  const required = ['anrede', 'vorname', 'nachname', 'strasse', 'plz', 'ort', 'telefon', 'email', 'geburtsdatum', 'ihk', 'steuernummer', 'steuer_id', 'iban'];
   for (const f of required) {
     if (!str(data[f])) return json({ error: 'missing_field', field: f }, 422);
   }
@@ -66,10 +66,12 @@ export const POST: APIRoute = async ({ request }) => {
   const ihk = str(data.ihk);
   const steuernummer = str(data.steuernummer);
   // Steuer-ID: User darf "12 345 678 901" eingeben, an PW gehen reine Ziffern.
-  // Falls die Eingabe ungueltig ist (zu wenig/viele Ziffern oder Buchstaben),
-  // pushen wir nichts ans CRM — clientseitig wird das schon abgefangen.
+  // Da Pflichtfeld: bei ungueltigem Format 422 mit field-Hint statt stillem Drop.
   const steuerIdRaw = str(data.steuer_id).replace(/\s+/g, '');
-  const steuerId = /^\d{11}$/.test(steuerIdRaw) ? steuerIdRaw : '';
+  if (!/^\d{11}$/.test(steuerIdRaw)) {
+    return json({ error: 'invalid_field', field: 'steuer_id' }, 422);
+  }
+  const steuerId = steuerIdRaw;
   const iban = normIban(str(data.iban));
   const quelleKey = str(data.quelle);
   const quelleLabel = labelOf(quelleKey);
