@@ -117,11 +117,11 @@ import { LEAD_SOURCES } from '../../lib/lead-source';
       <div class="mform__row">
         <div class="mform__field">
           <label for="steuernummer">Steuernummer <span class="mform__optional">(optional)</span></label>
-          <input type="text" id="steuernummer" name="steuernummer" autocomplete="off" inputmode="numeric" maxlength="20" placeholder="z. B. 12/345/67890" pattern="[\d\s/\-]{10,20}" />
+          <input type="text" id="steuernummer" name="steuernummer" autocomplete="off" inputmode="numeric" maxlength="20" placeholder="z. B. 12/345/67890" pattern="[\d\s/\-]{10,20}" title="Steuernummer mit Ziffern, Schrägstrichen oder Bindestrichen, z. B. 12/345/67890" />
         </div>
         <div class="mform__field">
           <label for="steuer_id">Steuer-Identifikationsnummer <span class="mform__optional">(optional)</span></label>
-          <input type="text" id="steuer_id" name="steuer_id" autocomplete="off" inputmode="numeric" maxlength="11" placeholder="11-stellig" pattern="\d{11}" />
+          <input type="text" id="steuer_id" name="steuer_id" autocomplete="off" inputmode="numeric" maxlength="15" placeholder="11-stellig, z. B. 12 345 678 901" pattern="[\d\s]*\d[\d\s]*" title="11 Ziffern, Leerzeichen sind erlaubt — z. B. 12 345 678 901" data-steuer-id />
         </div>
       </div>
 
@@ -443,6 +443,31 @@ import { LEAD_SOURCES } from '../../lib/lead-source';
       const t = (e.clipboardData?.getData('text') ?? '').trim();
       iban.value = format(t);
     });
+  }
+
+  // Steuer-ID: optional, aber wenn ausgefuellt muessen es nach Whitespace-Trim
+  // exakt 11 Ziffern sein. HTML-Pattern allein kann das nicht ausdruecken,
+  // weil wir Leerzeichen tolerieren (User kopiert oft "12 345 678 901" vom Bescheid).
+  const steuerId = document.querySelector<HTMLInputElement>('[data-steuer-id]');
+  if (steuerId) {
+    const validateSteuerId = () => {
+      const digits = steuerId.value.replace(/\s+/g, '');
+      if (digits.length === 0) {
+        steuerId.setCustomValidity('');
+        return;
+      }
+      if (!/^\d+$/.test(digits)) {
+        steuerId.setCustomValidity('Bitte nur Ziffern (und optional Leerzeichen) eingeben.');
+        return;
+      }
+      if (digits.length !== 11) {
+        steuerId.setCustomValidity(`Die Steuer-ID muss genau 11 Ziffern haben (aktuell ${digits.length}).`);
+        return;
+      }
+      steuerId.setCustomValidity('');
+    };
+    steuerId.addEventListener('input', validateSteuerId);
+    steuerId.addEventListener('blur', validateSteuerId);
   }
 
   const fieldOf = (name: string) =>

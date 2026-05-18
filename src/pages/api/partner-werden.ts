@@ -65,7 +65,11 @@ export const POST: APIRoute = async ({ request }) => {
   const telefon = str(data.telefon);
   const ihk = str(data.ihk);
   const steuernummer = str(data.steuernummer);
-  const steuerId = str(data.steuer_id);
+  // Steuer-ID: User darf "12 345 678 901" eingeben, an PW gehen reine Ziffern.
+  // Falls die Eingabe ungueltig ist (zu wenig/viele Ziffern oder Buchstaben),
+  // pushen wir nichts ans CRM — clientseitig wird das schon abgefangen.
+  const steuerIdRaw = str(data.steuer_id).replace(/\s+/g, '');
+  const steuerId = /^\d{11}$/.test(steuerIdRaw) ? steuerIdRaw : '';
   const iban = normIban(str(data.iban));
   const quelleKey = str(data.quelle);
   const quelleLabel = labelOf(quelleKey);
