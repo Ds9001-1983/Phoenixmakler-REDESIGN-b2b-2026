@@ -43,6 +43,8 @@ export interface ApplicantData {
   geburtsdatum: string;
   ihk: string;
   iban: string;
+  steuernummer?: string;
+  steuerId?: string;
   quelle?: string;
   empfehlung?: string;
 }
@@ -66,6 +68,8 @@ const phoenixNotificationHtml = (a: ApplicantData, userId: number, triggerLink: 
       <tr><td style="padding:6px 0;color:#777">Telefon</td><td style="padding:6px 0"><a href="tel:${esc(a.telefon)}" style="color:#b8865b">${esc(a.telefon)}</a></td></tr>
       <tr><td style="padding:6px 0;color:#777">Adresse</td><td style="padding:6px 0">${esc(a.strasse)}<br>${esc(a.plz)} ${esc(a.ort)}</td></tr>
       <tr><td style="padding:6px 0;color:#777">IHK §34d</td><td style="padding:6px 0">${esc(a.ihk)}</td></tr>
+      ${a.steuernummer ? `<tr><td style="padding:6px 0;color:#777">Steuernummer</td><td style="padding:6px 0;font-family:monospace">${esc(a.steuernummer)}</td></tr>` : ''}
+      ${a.steuerId ? `<tr><td style="padding:6px 0;color:#777">Steuer-ID</td><td style="padding:6px 0;font-family:monospace">${esc(a.steuerId)}</td></tr>` : ''}
       <tr><td style="padding:6px 0;color:#777">IBAN</td><td style="padding:6px 0;font-family:monospace">${esc(a.iban)}</td></tr>
       ${a.quelle ? `<tr><td style="padding:6px 0;color:#777">Quelle</td><td style="padding:6px 0">${esc(a.quelle)}</td></tr>` : ''}
       ${a.empfehlung ? `<tr><td style="padding:6px 0;color:#777">Empfohlen von</td><td style="padding:6px 0">${esc(a.empfehlung)}</td></tr>` : ''}

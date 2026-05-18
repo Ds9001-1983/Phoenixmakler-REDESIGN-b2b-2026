@@ -64,6 +64,8 @@ export const POST: APIRoute = async ({ request }) => {
   const nachname = str(data.nachname);
   const telefon = str(data.telefon);
   const ihk = str(data.ihk);
+  const steuernummer = str(data.steuernummer);
+  const steuerId = str(data.steuer_id);
   const iban = normIban(str(data.iban));
   const quelleKey = str(data.quelle);
   const quelleLabel = labelOf(quelleKey);
@@ -109,6 +111,8 @@ export const POST: APIRoute = async ({ request }) => {
     },
   };
   if (nationality) userBody.nationality = nationality;
+  if (steuernummer) userBody.tax_number = steuernummer;
+  if (steuerId) userBody.tax_id = steuerId;
 
   const headers = {
     Authorization: `Bearer ${token}`,
@@ -255,6 +259,8 @@ export const POST: APIRoute = async ({ request }) => {
         geburtsdatum,
         ihk,
         iban,
+        steuernummer: steuernummer || undefined,
+        steuerId: steuerId || undefined,
         quelle: quelleLabel || undefined,
         empfehlung: empfehlungName || undefined,
       };

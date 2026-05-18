@@ -116,6 +116,17 @@ import { LEAD_SOURCES } from '../../lib/lead-source';
 
       <div class="mform__row">
         <div class="mform__field">
+          <label for="steuernummer">Steuernummer <span class="mform__optional">(optional)</span></label>
+          <input type="text" id="steuernummer" name="steuernummer" autocomplete="off" inputmode="numeric" maxlength="20" placeholder="z. B. 12/345/67890" pattern="[\d\s/\-]{10,20}" />
+        </div>
+        <div class="mform__field">
+          <label for="steuer_id">Steuer-Identifikationsnummer <span class="mform__optional">(optional)</span></label>
+          <input type="text" id="steuer_id" name="steuer_id" autocomplete="off" inputmode="numeric" maxlength="11" placeholder="11-stellig" pattern="\d{11}" />
+        </div>
+      </div>
+
+      <div class="mform__row">
+        <div class="mform__field">
           <label for="iban">IBAN *</label>
           <input type="text" id="iban" name="iban" autocomplete="off" inputmode="text" placeholder="DE00 0000 0000 0000 0000 00" maxlength="42" required data-iban />
         </div>
