@@ -3,6 +3,8 @@
 // Visuelle Metapher: „Ungebunden. Verbunden." — Einzelne im Schwarm.
 // Leicht gegradeter 10s-Loop, 1280x720, <3MB. Kein Fade (saubere Loop-Naht).
 // Grain ist reines CSS-SVG (data-URL) — kein WebGL-Bundle (~250 kB gespart).
+// Source-Reihenfolge: MP4 zuerst — universell dekodierbar.
+// WebM danach: VP9 Profile 0 / yuv420p (alles andere blockiert Decoder still).
 
 const posterPath = '/images/hero/hero-home-cinematic.jpg';
 const videoMp4 = '/videos/hero-home.mp4';
@@ -17,12 +19,12 @@ const videoWebm = '/videos/hero-home.webm';
       muted
       loop
       playsinline
-      preload="metadata"
+      preload="auto"
       poster={posterPath}
       aria-hidden="true"
     >
-      <source src={videoWebm} type="video/webm" />
       <source src={videoMp4} type="video/mp4" />
+      <source src={videoWebm} type='video/webm; codecs="vp9"' />
     </video>
     <div class="hero-cinematic__tint" aria-hidden="true"></div>
     <div class="hero-cinematic__grain" aria-hidden="true"></div>
