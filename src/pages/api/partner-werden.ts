@@ -109,6 +109,14 @@ export const POST: APIRoute = async ({ request }) => {
       taxnumber: steuernummer,
       exclude_from_newsletter: data.kontakt_ok ? false : true,
     },
+    // bank_account direkt am User — der separate /bank-accounts/user-POST
+    // hat trotz 2xx geliefert ohne tatsaechlich anzulegen (Dennis Sasse uid 62498 hatte
+    // bank_account=null). PW leitet account_number/bank_code/bank_name/swift aus iban_code ab.
+    bank_account: {
+      iban_code: iban,
+      depositor: `${vorname} ${nachname}`,
+      account_country: { id: 65 },
+    },
   };
   if (nationality) userBody.nationality = nationality;
 
@@ -136,44 +144,7 @@ export const POST: APIRoute = async ({ request }) => {
   const userJson = (await userRes.json()) as { data?: { id?: number } };
   const newUserId = userJson?.data?.id ?? null;
 
-  // 2) IBAN als Bankverbindung beim Vermittler hinterlegen — mit 1× Retry,
-  //    weil dieser Call gelegentlich an PW-Latenz-Spitzen scheitert.
-  let bankStatus: 'ok' | 'failed' | 'skipped' = 'skipped';
-  if (newUserId && iban) {
-    const bankBody = JSON.stringify({
-      user_id: newUserId,
-      iban_code: iban,
-      depositor: `${vorname} ${nachname}`,
-      validate_iban: false,
-    });
-    for (let attempt = 1; attempt <= 2; attempt++) {
-      try {
-        const bankRes = await fetch(`${base}/api/v1/${slug}/bank-accounts/user`, {
-          method: 'POST',
-          headers,
-          body: bankBody,
-        });
-        if (bankRes.ok) {
-          bankStatus = 'ok';
-          break;
-        }
-        const errBody = (await bankRes.text()).slice(0, 400);
-        console.error(`PW bank-account error (attempt ${attempt})`, bankRes.status, errBody);
-        // 4xx (außer 429) ist kein Retry-Grund — Body ist falsch / Berechtigung
-        if (bankRes.status < 500 && bankRes.status !== 429) {
-          bankStatus = 'failed';
-          break;
-        }
-        bankStatus = 'failed';
-      } catch (e) {
-        console.error(`PW bank-account fetch failed (attempt ${attempt})`, (e as Error).message);
-        bankStatus = 'failed';
-      }
-      if (attempt === 1) await new Promise((r) => setTimeout(r, 600));
-    }
-  }
-
-  // 3) Kunden-Eintrag (status_id 1 = "Kunde") mit Bezug auf den Vermittler
+  // 2) Kunden-Eintrag (status_id 1 = "Kunde") mit Bezug auf den Vermittler
   let clientStatus: 'ok' | 'failed' | 'skipped' = 'skipped';
   let clientId: number | null = null;
   if (newUserId) {
@@ -207,7 +178,7 @@ export const POST: APIRoute = async ({ request }) => {
     }
   }
 
-  // 4) Lead-Herkunfts-Notiz beim Kunden — nicht-blockierend, nur wenn was angegeben wurde
+  // 3) Lead-Herkunfts-Notiz beim Kunden — nicht-blockierend, nur wenn was angegeben wurde
   let leadNoteStatus: 'ok' | 'failed' | 'skipped' = 'skipped';
   if (clientId && (quelleLabel || empfehlungName)) {
     const lines: string[] = [];
@@ -239,7 +210,7 @@ export const POST: APIRoute = async ({ request }) => {
     }
   }
 
-  // 5) Notification-Mail an Phoenix mit Trigger-Link — nicht-blockierend
+  // 4) Notification-Mail an Phoenix mit Trigger-Link — nicht-blockierend
   let mailStatus: 'ok' | 'failed' | 'skipped' = 'skipped';
   if (newUserId && triggerSecret && appBaseUrl && phoenixTo) {
     try {
@@ -269,5 +240,5 @@ export const POST: APIRoute = async ({ request }) => {
     }
   }
 
-  return json({ ok: true, user_id: newUserId, client: clientStatus, bank: bankStatus, lead_note: leadNoteStatus, mail: mailStatus }, 200);
+  return json({ ok: true, user_id: newUserId, client: clientStatus, lead_note: leadNoteStatus, mail: mailStatus }, 200);
 };
