@@ -8,8 +8,8 @@
     { "source": "/einkommenssicherung/", "destination": "/kunde/einkommenssicherung", "permanent": true },
     { "source": "/zahnzusatzversicherung", "destination": "/kunde/zahnzusatzversicherung", "permanent": true },
     { "source": "/zahnzusatzversicherung/", "destination": "/kunde/zahnzusatzversicherung", "permanent": true },
-    { "source": "/krankenhauszusatzversicherung", "destination": "/kunde/krankenhauszusatzversicherung", "permanent": true },
-    { "source": "/krankenhauszusatzversicherung/", "destination": "/kunde/krankenhauszusatzversicherung", "permanent": true },
+    { "source": "/krankenhauszusatzversicherung", "destination": "/kunde", "permanent": true },
+    { "source": "/krankenhauszusatzversicherung/", "destination": "/kunde", "permanent": true },
     { "source": "/dein-haustier", "destination": "/kunde/haustier", "permanent": true },
     { "source": "/dein-haustier/", "destination": "/kunde/haustier", "permanent": true },
     { "source": "/haus-wohnen", "destination": "/kunde/haus-wohnen", "permanent": true },
@@ -24,5 +24,17 @@
     { "source": "/privatkunden/vermoegensaufbau/", "destination": "/kunde/vermoegensaufbau", "permanent": true },
     { "source": "/privatkunden__trashed/zahnzusatzversicherung", "destination": "/kunde/zahnzusatzversicherung", "permanent": true },
     { "source": "/privatkunden__trashed/zahnzusatzversicherung/", "destination": "/kunde/zahnzusatzversicherung", "permanent": true }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "X-Content-Type-Options", "value": "nosniff" },
+        { "key": "X-Frame-Options", "value": "SAMEORIGIN" },
+        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
+        { "key": "Permissions-Policy", "value": "camera=(), microphone=(), geolocation=(), interest-cohort=()" },
+        { "key": "Strict-Transport-Security", "value": "max-age=63072000; includeSubDomains; preload" }
+      ]
+    }
   ]
 }
