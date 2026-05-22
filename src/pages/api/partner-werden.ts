@@ -51,7 +51,7 @@ export const POST: APIRoute = async ({ request }) => {
     return json({ ok: true }, 200);
   }
 
-  const required = ['anrede', 'vorname', 'nachname', 'strasse', 'plz', 'ort', 'telefon', 'email', 'geburtsdatum', 'ihk', 'steuernummer', 'iban'];
+  const required = ['anrede', 'vorname', 'nachname', 'strasse', 'plz', 'ort', 'telefon', 'email', 'geburtsdatum', 'steuernummer', 'iban'];
   for (const f of required) {
     if (!str(data[f])) return json({ error: 'missing_field', field: f }, 422);
   }
