@@ -1,15 +1,10 @@
 ---
 // Pflichtblock auf jeder Makler-Profilseite (Haftung/Transparenz).
-// Fester Disclaimer + optionaler Makler-Text + Pflicht-Links zu den bestehenden Rechtsseiten.
+// Fester Disclaimer + Pflicht-Links zu den bestehenden Rechtsseiten.
 interface Props {
   name: string;
-  rechtliches?: string;
 }
-const { name, rechtliches = '' } = Astro.props;
-const zusatz = rechtliches
-  .split(/\n{1,}/)
-  .map((p) => p.trim())
-  .filter(Boolean);
+const { name } = Astro.props;
 ---
 
 <section class="prechts section-sm bg-soft">
@@ -20,12 +15,6 @@ const zusatz = rechtliches
       Maklerverbunds wieder. Maßgeblich für rechtliche und aufsichtsrechtliche Informationen
       sind die Angaben in Impressum und Erstinformation des Phönix Maklerverbunds.
     </p>
-
-    {zusatz.length > 0 && (
-      <div class="prechts__zusatz">
-        {zusatz.map((p) => <p>{p}</p>)}
-      </div>
-    )}
 
     <ul class="prechts__links">
       <li><a href="/impressum">Impressum</a></li>
@@ -44,8 +33,6 @@ const zusatz = rechtliches
     color: var(--color-text-muted);
     max-width: 70ch;
   }
-  .prechts__zusatz { margin-top: 1rem; display: flex; flex-direction: column; gap: 0.75rem; }
-  .prechts__zusatz p { font-size: 0.92rem; line-height: 1.65; color: var(--color-text-muted); max-width: 70ch; }
   .prechts__links {
     list-style: none;
     margin-top: 1.5rem;

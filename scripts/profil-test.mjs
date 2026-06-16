@@ -7,7 +7,7 @@
  * Aufruf (via tsx):
  *   npx tsx scripts/profil-test.mjs list                 → aktive Makler (uid, Name, Foto?)
  *   npx tsx scripts/profil-test.mjs link <uid> [email] [name]
- *        → erzeugt Editor-Link (Makler) + Freigabe-/Offline-Link (Phoenix)
+ *        → erzeugt Editor-Link (Makler) + Vorschau-/Freigabe-Link (Phoenix)
  *   npx tsx scripts/profil-test.mjs cleanup <uid>        → löscht Test-Profil aus dem Blob
  *
  * Basis-URL der Links steuerbar über TEST_BASE_URL (Default: http://localhost:4321).
@@ -62,11 +62,10 @@ function makeLinks() {
   const at = buildProfilAdminToken(Number(uid), null, e, n, SECRET);
   console.log('\n① EDITOR (das, was der Makler nach Klick auf den Mail-Link sieht):');
   console.log(`   ${BASE}/makler-profil?token=${encodeURIComponent(pt)}`);
-  console.log('\n② ERSTFREIGABE (das, was Phoenix in der Review-Mail klickt):');
-  console.log(`   ${BASE}/api/profil-publish?token=${encodeURIComponent(at)}`);
-  console.log('\n③ OFFLINE NEHMEN (Phoenix, optional):');
-  console.log(`   ${BASE}/api/profil-unpublish?token=${encodeURIComponent(at)}`);
-  console.log('\nAblauf: ① ausfüllen & speichern → ② Freigabe-Link öffnen → dann /makler/<slug> aufrufen.');
+  console.log('\n② VORSCHAU & FREIGABE (das, was Phoenix in der Review-Mail klickt):');
+  console.log(`   ${BASE}/makler-freigabe?token=${encodeURIComponent(at)}`);
+  console.log('   → zeigt die Profil-Vorschau; rechts „Freigeben" / „Zurückwerfen" (bzw. „Offline nehmen", wenn bereits live).');
+  console.log('\nAblauf: ① ausfüllen & speichern → ② Vorschau öffnen & freigeben → dann /makler/<slug> aufrufen.');
 }
 
 async function cleanup() {

@@ -9,7 +9,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
 
 {qualifikationen.length > 0 && (
   <section class="pqual section">
-    <div class="container">
+    <div class="container-narrow">
       <span class="eyebrow" data-reveal>Qualifikationen</span>
       <ol class="pqual__list">
         {qualifikationen.map((q, i) => (
@@ -25,7 +25,8 @@ const pad = (n: number) => String(n).padStart(2, '0');
 
 <style>
   .pqual { background: var(--color-bg); }
-  .pqual__list { list-style: none; margin-top: 2rem; display: grid; gap: 0; max-width: 820px; }
+  /* margin-top an die übrigen Sektionen angeglichen (1.5rem); Breite folgt dem Container. */
+  .pqual__list { list-style: none; margin-top: 1.5rem; display: grid; gap: 0; }
   .pqual__item {
     display: flex;
     align-items: baseline;

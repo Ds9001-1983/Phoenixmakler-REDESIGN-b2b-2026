@@ -168,13 +168,7 @@ const profilInviteHtml = (firstName: string, profilLink: string): string => `
 </div>
 </body></html>`;
 
-const profilReviewHtml = (
-  fullName: string,
-  live: boolean,
-  publicLink: string,
-  publishLink: string,
-  unpublishLink: string,
-): string => `
+const profilReviewHtml = (fullName: string, live: boolean, reviewLink: string): string => `
 <!doctype html>
 <html lang="de"><body style="margin:0;background:#f4f1eb;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;color:#1a1a1a">
 <div style="max-width:620px;margin:0 auto;padding:24px">
@@ -185,18 +179,50 @@ const profilReviewHtml = (
       live
         ? `<div style="background:#eef6ee;border-left:3px solid #4a9d5b;padding:16px;border-radius:4px;margin-bottom:20px;font-size:13px;line-height:1.55">
             Diese Maklerin/dieser Makler ist bereits freigegeben — die Änderung ist <strong>sofort online</strong>.
-            Bitte kurz prüfen; falls etwas nicht passt, kannst du die Seite offline nehmen.
-          </div>
-          <a href="${publicLink}" style="display:inline-block;background:#b8865b;color:#fff;text-decoration:none;padding:13px 26px;border-radius:6px;font-weight:500;font-size:15px;margin-right:8px">Profil ansehen →</a>
-          <a href="${unpublishLink}" style="display:inline-block;background:#fff;color:#a33;text-decoration:none;padding:13px 26px;border-radius:6px;font-weight:500;font-size:15px;border:1px solid #e3c2c2">Offline nehmen</a>`
+            Bitte kurz in der Vorschau prüfen; falls etwas nicht passt, kannst du die Seite dort offline nehmen.
+          </div>`
         : `<div style="background:#faf6ee;border-left:3px solid #b8865b;padding:16px;border-radius:4px;margin-bottom:20px;font-size:13px;line-height:1.55">
             Ein neues Makler-Profil wurde eingereicht und ist <strong>noch nicht öffentlich</strong>.
-            Bitte prüfen und freigeben — danach gehen spätere Änderungen automatisch live.
-          </div>
-          <a href="${publishLink}" style="display:inline-block;background:#b8865b;color:#fff;text-decoration:none;padding:14px 28px;border-radius:6px;font-weight:500;font-size:15px">Profil freigeben & veröffentlichen →</a>`
+            Sieh dir die Vorschau an und gib sie frei — oder wirf sie mit einem Hinweis an den Makler zurück.
+            Nach der Freigabe gehen spätere Änderungen automatisch live.
+          </div>`
     }
+    <a href="${reviewLink}" style="display:inline-block;background:#b8865b;color:#fff;text-decoration:none;padding:14px 28px;border-radius:6px;font-weight:500;font-size:15px">${live ? 'Vorschau ansehen & verwalten →' : 'Profil prüfen & freigeben →'}</a>
     <div style="margin-top:24px;font-size:11px;color:#999;line-height:1.5">
       Phönix Maklerverbund · Profil-Bot · neuerpartner@phoenix-maklerverbund.de
+    </div>
+  </div>
+</div>
+</body></html>`;
+
+const profilRejectHtml = (firstName: string, editLink: string, reason: string): string => `
+<!doctype html>
+<html lang="de"><body style="margin:0;background:#f4f1eb;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;color:#1a1a1a">
+<div style="max-width:560px;margin:0 auto;padding:24px">
+  <div style="background:#fff;border-radius:12px;padding:32px;box-shadow:0 2px 12px rgba(0,0,0,.06)">
+    <div style="font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#b8865b;margin-bottom:12px">Kurze Überarbeitung nötig</div>
+    <h1 style="font-family:Georgia,serif;font-size:26px;font-weight:400;margin:0 0 16px">Hallo ${esc(firstName)},</h1>
+    <p style="font-size:15px;line-height:1.6;color:#333">
+      danke, dass du dein Profil im Phönix-Maklerverbund erstellt hast. Bevor wir es öffentlich schalten,
+      möchten wir dich um eine kleine Überarbeitung bitten.
+    </p>
+    ${
+      reason
+        ? `<div style="background:#faf6ee;border-left:3px solid #b8865b;padding:16px;border-radius:4px;margin:20px 0;font-size:14px;line-height:1.6;color:#333">
+            <strong>Anmerkung von Phönix:</strong><br>${esc(reason).replace(/\n/g, '<br>')}
+          </div>`
+        : ''
+    }
+    <p style="font-size:15px;line-height:1.6;color:#333;margin-bottom:24px">
+      Klick einfach auf den Button, um dein Profil anzupassen:
+    </p>
+    <a href="${editLink}" style="display:inline-block;background:#b8865b;color:#fff;text-decoration:none;padding:14px 32px;border-radius:6px;font-weight:500;font-size:15px">Profil überarbeiten →</a>
+    <p style="font-size:13px;line-height:1.6;color:#777;margin-top:28px">
+      Sobald du gespeichert hast, prüfen wir es erneut und schalten es frei. Bei Fragen melde dich gerne unter
+      <a href="mailto:info@phoenix-maklerverbund.de" style="color:#b8865b">info@phoenix-maklerverbund.de</a>.
+    </p>
+    <div style="margin-top:24px;padding-top:20px;border-top:1px solid #eee;font-size:11px;color:#999">
+      Phönix Maklerverbund GmbH · Zum weißen Stein 17 · 56587 Oberhonnefeld-Gierend
     </div>
   </div>
 </div>
@@ -216,7 +242,7 @@ export const sendProfilEinladung = async (to: string, firstName: string, profilL
 export const sendProfilReviewNotice = async (
   to: string,
   fullName: string,
-  opts: { live: boolean; publicLink: string; publishLink: string; unpublishLink: string },
+  opts: { live: boolean; reviewLink: string },
 ): Promise<void> => {
   const cfg = readSmtp();
   if (!cfg) throw new Error('smtp_not_configured');
@@ -224,6 +250,21 @@ export const sendProfilReviewNotice = async (
     from: cfg.from,
     to,
     subject: opts.live ? `Makler-Profil aktualisiert: ${fullName}` : `Neues Makler-Profil zur Freigabe: ${fullName}`,
-    html: profilReviewHtml(fullName, opts.live, opts.publicLink, opts.publishLink, opts.unpublishLink),
+    html: profilReviewHtml(fullName, opts.live, opts.reviewLink),
+  });
+};
+
+export const sendProfilRevision = async (
+  to: string,
+  firstName: string,
+  opts: { editLink: string; reason: string },
+): Promise<void> => {
+  const cfg = readSmtp();
+  if (!cfg) throw new Error('smtp_not_configured');
+  await transport(cfg).sendMail({
+    from: cfg.from,
+    to,
+    subject: 'Dein Profil im Phönix-Maklerverbund braucht noch eine kleine Überarbeitung',
+    html: profilRejectHtml(firstName, opts.editLink, opts.reason),
   });
 };
