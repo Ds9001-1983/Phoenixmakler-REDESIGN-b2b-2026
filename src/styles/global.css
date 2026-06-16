@@ -160,9 +160,17 @@ p { max-width: 68ch; line-height: 1.6; }
   letter-spacing: -0.005em;
   cursor: pointer;
   border: 1.5px solid transparent;
-  transition: transform 220ms var(--ease-out), background-color 180ms ease, border-color 180ms ease, color 180ms ease, box-shadow 220ms ease;
+  /* Kein transform in der Transition: bei magnetischen Buttons setzt die Magnet-Loop
+     (motion.ts) transform per requestAnimationFrame — eine CSS-Transition würde das
+     doppelt easen und führt zum Ruckeln/Nachziehen. */
+  transition: background-color 180ms ease, border-color 180ms ease, color 180ms ease, box-shadow 220ms ease;
   text-align: center;
   white-space: nowrap;
+}
+
+/* Weicher Hover-Lift nur für nicht-magnetische Buttons (magnetische bewegt der Magnet selbst). */
+.btn:not([data-magnetic]) {
+  transition: background-color 180ms ease, border-color 180ms ease, color 180ms ease, box-shadow 220ms ease, transform 220ms var(--ease-out);
 }
 
 .btn:focus-visible {
