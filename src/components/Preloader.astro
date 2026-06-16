@@ -80,74 +80,32 @@
   }
 </style>
 
-<script>
-  const el = document.getElementById('preloader');
-  const fill = document.getElementById('preloader-fill');
-  const countEl = document.getElementById('preloader-count');
-
-  // A11y: bei "Bewegungen reduzieren" (per Widget oder System-Setting) den
-  // Preloader sofort entfernen — kein Decor, das den Inhalt verzoegert.
-  const motionReduced = document.documentElement.getAttribute('data-a11y-motion') === 'reduced';
-  if (el && motionReduced) {
-    el.classList.add('is-done');
-    document.documentElement.classList.add('preloader-done');
-    setTimeout(() => { try { el.remove(); } catch {} }, 100);
-  }
-
-  if (el && fill && countEl && !motionReduced) {
-    let progress = 0;
-    const render = () => {
-      fill.style.transform = `scaleX(${progress / 100})`;
-      countEl.textContent = String(Math.floor(progress));
+<script is:inline>
+  // INLINE (nicht gebündelt!) — läuft sofort beim Parsen, unabhängig vom großen
+  // JS-Bundle. Frühere Versionen hingen an DOMContentLoaded/window.load; da deferred
+  // Module DOMContentLoaded blockieren, verzögerte das den Preloader-Ausblend und
+  // damit das LCP massiv. Jetzt: reiner Timer (~800 ms), dann ausblenden.
+  (function () {
+    var el = document.getElementById('preloader');
+    if (!el) return;
+    var fill = document.getElementById('preloader-fill');
+    var countEl = document.getElementById('preloader-count');
+    var done = function () {
+      el.classList.add('is-done');
+      document.documentElement.classList.add('preloader-done');
+      setTimeout(function () { try { el.remove(); } catch (e) {} }, 650);
     };
+    var reduced = document.documentElement.getAttribute('data-a11y-motion') === 'reduced';
+    if (reduced) { done(); return; }
 
-    // Drive progress from image loading + a minimum time
-    const images = Array.from(document.images);
-    const total = Math.max(images.length, 1);
-    let loaded = 0;
-
-    const tickImage = () => {
-      loaded = Math.min(loaded + 1, total);
-      const imgProgress = (loaded / total) * 70; // images = 70%
-      progress = Math.max(progress, imgProgress);
-      render();
-    };
-
-    images.forEach((img) => {
-      if (img.complete) tickImage();
-      else {
-        img.addEventListener('load', tickImage, { once: true });
-        img.addEventListener('error', tickImage, { once: true });
-      }
-    });
-
-    // Min-duration fill from 0 → 85% over ~900ms, synced with load event
-    const start = performance.now();
-    const minDuration = 900;
-    const timeTick = () => {
-      const elapsed = performance.now() - start;
-      const timeProgress = Math.min(elapsed / minDuration, 1) * 85;
-      progress = Math.max(progress, timeProgress);
-      render();
-      if (elapsed < minDuration + 100) requestAnimationFrame(timeTick);
-    };
-    requestAnimationFrame(timeTick);
-
-    const finish = () => {
-      progress = 100;
-      render();
-      setTimeout(() => {
-        el.classList.add('is-done');
-        document.documentElement.classList.add('preloader-done');
-      }, 280);
-    };
-
-    if (document.readyState === 'complete') {
-      setTimeout(finish, Math.max(0, minDuration - (performance.now() - start)));
-    } else {
-      window.addEventListener('load', () => {
-        setTimeout(finish, Math.max(0, minDuration - (performance.now() - start)));
-      });
-    }
-  }
+    var start = performance.now();
+    var minDuration = 800;
+    (function tick() {
+      var p = Math.min((performance.now() - start) / minDuration, 1);
+      if (fill) fill.style.transform = 'scaleX(' + p + ')';
+      if (countEl) countEl.textContent = String(Math.floor(p * 100));
+      if (p < 1) requestAnimationFrame(tick);
+      else done();
+    })();
+  })();
 </script>
