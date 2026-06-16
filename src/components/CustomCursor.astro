@@ -6,7 +6,6 @@
 
 <div class="cursor" id="cursor" aria-hidden="true">
   <div class="cursor__dot" id="cursor-dot"></div>
-  <div class="cursor__label" id="cursor-label"></div>
 </div>
 
 <style>
@@ -36,30 +35,6 @@
     width: 44px;
     height: 44px;
   }
-  .cursor.is-label .cursor__dot {
-    width: auto;
-    height: auto;
-    padding: 0.55rem 0.9rem;
-    border-radius: 999px;
-    background: #b8865b;
-    mix-blend-mode: normal;
-  }
-  .cursor__label {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-family: var(--font-mono, monospace);
-    font-size: 0.72rem;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: #0a1940;
-    white-space: nowrap;
-    opacity: 0;
-    transition: opacity 180ms ease;
-  }
-  .cursor.is-label .cursor__label { opacity: 1; }
-  .cursor.is-label { mix-blend-mode: normal; }
 
   /* Hide native cursor on interactive elements when custom is active */
   @media (hover: hover) and (pointer: fine) {
@@ -76,7 +51,6 @@
 <script>
   const cursor = document.getElementById('cursor');
   const dot = document.getElementById('cursor-dot');
-  const label = document.getElementById('cursor-label');
   const supportsHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
   // A11y: Wenn "Standard-Mauszeiger" oder "Bewegungen reduzieren" aktiv,
   // Custom-Cursor-Logik gar nicht erst initialisieren (CSS blendet das Element schon aus).
@@ -84,7 +58,7 @@
   const cursorDisabled = html.getAttribute('data-a11y-cursor') === 'system'
     || html.getAttribute('data-a11y-motion') === 'reduced';
 
-  if (cursor && dot && label && supportsHover && !cursorDisabled) {
+  if (cursor && dot && supportsHover && !cursorDisabled) {
     document.documentElement.classList.add('cursor-active');
     let tx = window.innerWidth / 2;
     let ty = window.innerHeight / 2;
@@ -116,17 +90,11 @@
       const target = (e.target as HTMLElement).closest(interactiveSel);
       if (!target) return;
       cursor.classList.add('is-hover');
-      const lbl = (target as HTMLElement).dataset.cursorLabel;
-      if (lbl) {
-        cursor.classList.add('is-label');
-        label.textContent = lbl;
-      }
     });
     document.addEventListener('mouseout', (e) => {
       const target = (e.target as HTMLElement).closest(interactiveSel);
       if (!target) return;
-      cursor.classList.remove('is-hover', 'is-label');
-      label.textContent = '';
+      cursor.classList.remove('is-hover');
     });
   }
 </script>
