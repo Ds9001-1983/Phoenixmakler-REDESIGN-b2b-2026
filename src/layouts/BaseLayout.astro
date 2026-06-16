@@ -15,6 +15,7 @@ interface Props {
   hideFooter?: boolean;
   noindex?: boolean;
   showPreloader?: boolean;
+  preloadImage?: string;
 }
 
 const {
@@ -24,6 +25,7 @@ const {
   hideFooter = false,
   noindex = false,
   showPreloader = true,
+  preloadImage,
 } = Astro.props;
 
 const siteTitle = title.includes('Phönix') ? title : `${title} | Phönix Maklerverbund`;
@@ -82,8 +84,12 @@ const umamiId = import.meta.env.PUBLIC_UMAMI_ID;
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="alternate icon" type="image/png" href="/images/logo.png" />
     <link rel="apple-touch-icon" href="/images/logo.png" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    {/* Kritische, selbst gehostete Fonts vorladen (Hero-Headline roman+italic + Body) */}
+    <link rel="preload" as="font" type="font/woff2" href="/fonts/self/fraunces-normal-3.woff2" crossorigin />
+    <link rel="preload" as="font" type="font/woff2" href="/fonts/self/fraunces-italic-3.woff2" crossorigin />
+    <link rel="preload" as="font" type="font/woff2" href="/fonts/self/geist-normal-5.woff2" crossorigin />
+    {/* LCP-Bild (z. B. Hero-Poster) priorisiert laden — nur wo gesetzt */}
+    {preloadImage && <link rel="preload" as="image" href={preloadImage} fetchpriority="high" />}
     <meta property="og:title" content={siteTitle} />
     <meta property="og:description" content={description} />
     <meta property="og:image" content={ogImage} />

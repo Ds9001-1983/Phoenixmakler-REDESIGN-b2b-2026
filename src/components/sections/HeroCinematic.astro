@@ -6,7 +6,8 @@
 // Source-Reihenfolge: MP4 zuerst — universell dekodierbar.
 // WebM danach: VP9 Profile 0 / yuv420p (alles andere blockiert Decoder still).
 
-const posterPath = '/images/hero/hero-home-cinematic.jpg';
+// Poster als WebP (~116 KB statt 244 KB JPG) — beschleunigt das LCP des Heros.
+const posterPath = '/images/hero/hero-home-cinematic.webp';
 const videoMp4 = '/videos/hero-home.mp4';
 const videoWebm = '/videos/hero-home.webm';
 ---
@@ -15,16 +16,15 @@ const videoWebm = '/videos/hero-home.webm';
   <div class="hero-cinematic__media">
     <video
       class="hero-cinematic__video"
-      autoplay
       muted
       loop
       playsinline
-      preload="auto"
+      preload="none"
       poster={posterPath}
       aria-hidden="true"
     >
-      <source src={videoMp4} type="video/mp4" />
-      <source src={videoWebm} type='video/webm; codecs="vp9"' />
+      <source data-src={videoMp4} type="video/mp4" />
+      <source data-src={videoWebm} type='video/webm; codecs="vp9"' />
     </video>
     <div class="hero-cinematic__tint" aria-hidden="true"></div>
     <div class="hero-cinematic__grain" aria-hidden="true"></div>
@@ -32,8 +32,10 @@ const videoWebm = '/videos/hero-home.webm';
 
   <div class="hero-cinematic__content">
     <span class="hero-cinematic__eyebrow">Phönix Maklerverbund · inhabergeführt seit 2012</span>
-    <h1 class="hero-cinematic__headline" data-split="words" data-split-trigger="load" data-split-stagger="0.08" data-split-delay="0.3">
-      Ungebunden.<br/><em>Verbunden.</em>
+    {/* LCP-kritisch: Wort-Reveal als reines CSS (sofort beim Paint, NICHT an das große
+        GSAP-Bundle gekoppelt). Vorgesplittete Spans statt data-split → LCP ≈ FCP. */}
+    <h1 class="hero-cinematic__headline">
+      <span class="hcw" style="--hc-d:0.12s"><span>Ungebunden.</span></span><br/><span class="hcw" style="--hc-d:0.30s"><span><em>Verbunden.</em></span></span>
     </h1>
     <p class="hero-cinematic__sub" data-reveal data-reveal-delay="4">
       Der Verbund für ungebundene Versicherungsmaklerinnen und -makler. Echte Partnerschaft, starke Sondervereinbarungen, kostengünstiges Maklerverwaltungsprogramm.
@@ -131,6 +133,22 @@ const videoWebm = '/videos/hero-home.webm';
     color: var(--color-accent);
     font-variation-settings: 'opsz' 144, 'SOFT' 100;
   }
+  /* CSS-Wort-Reveal (ersetzt den GSAP-Split nur im Hero, LCP-freundlich) */
+  .hero-cinematic__headline .hcw {
+    display: inline-block;
+    overflow: hidden;
+    vertical-align: top;
+  }
+  .hero-cinematic__headline .hcw > span {
+    display: inline-block;
+    transform: translateY(110%);
+    opacity: 0;
+    animation: hc-rise 1s cubic-bezier(0.16, 1, 0.3, 1) var(--hc-d, 0.12s) forwards;
+    will-change: transform, opacity;
+  }
+  @keyframes hc-rise {
+    to { transform: translateY(0); opacity: 1; }
+  }
 
   .hero-cinematic__sub {
     margin-top: 1.75rem;
@@ -218,31 +236,36 @@ const videoWebm = '/videos/hero-home.webm';
   @media (prefers-reduced-motion: reduce) {
     .hero-cinematic__video { display: none; }
     .hero-cinematic__scroll-line::after { animation: none; }
+    .hero-cinematic__headline .hcw > span { animation: none; transform: none; opacity: 1; }
   }
 </style>
 
 <script>
-  // Autoplay-Fallback: manche Browser verzögern autoplay trotz muted+playsinline.
-  // Nach DOMContentLoaded einmalig play() erzwingen (Promise kann ignoriert werden).
-  // A11y: bei reduced-motion das Video gar nicht erst starten — der Poster
-  // bzw. das CSS-Background-Image dient als Standbild.
+  // Hero-Video bewusst ERST nach dem ersten Paint laden/starten:
+  // - LCP-Schutz: Chrome zählt Video-Frames als LCP-Kandidat. Würde das Video sofort
+  //   autoplayen, wäre sein (spät geladener) erster Frame das LCP. Stattdessen bleibt
+  //   das vorgeladene Poster das LCP; das Video startet nach window.load (+ idle).
+  // - A11y: bei reduced-motion bleibt es beim Poster (Sources werden nie gesetzt).
   const v = document.querySelector<HTMLVideoElement>('.hero-cinematic__video');
   const motionReduced = document.documentElement.getAttribute('data-a11y-motion') === 'reduced';
 
-  if (v && motionReduced) {
-    try {
-      v.pause();
-      v.removeAttribute('autoplay');
-      // Source-Loading verhindern, sodass kein Bandbreitenverbrauch entsteht
-      v.querySelectorAll('source').forEach((s) => s.removeAttribute('src'));
+  if (v && !motionReduced) {
+    const startVideo = () => {
+      v.querySelectorAll('source').forEach((s) => {
+        const src = (s as HTMLSourceElement).dataset.src;
+        if (src && !s.getAttribute('src')) s.setAttribute('src', src);
+      });
       v.load();
-    } catch {}
-  } else if (v) {
-    const kick = () => v.play().catch(() => {});
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', kick, { once: true });
+      v.play().catch(() => {});
+    };
+    const idle = (cb: () => void) =>
+      ('requestIdleCallback' in window
+        ? (window as any).requestIdleCallback(cb, { timeout: 1200 })
+        : setTimeout(cb, 200));
+    if (document.readyState === 'complete') {
+      idle(startVideo);
     } else {
-      kick();
+      window.addEventListener('load', () => idle(startVideo), { once: true });
     }
   }
 </script>
