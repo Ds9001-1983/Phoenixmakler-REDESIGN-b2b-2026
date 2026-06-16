@@ -5,6 +5,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import FooterCinematic from '../components/sections/FooterCinematic.astro';
 import staticMakler from '../data/makler.json';
 import { loadVermittler, type PublicVermittler } from '../lib/vermittler';
+import { loadPublishedSlugMap } from '../lib/profil';
 import { getPlzCoords } from '../lib/plz';
 
 const q = Astro.url.searchParams.get('q') ?? '';
@@ -33,6 +34,15 @@ const maklerWithCoords = makler.map((m) => {
   const coords = m.plz ? getPlzCoords(m.plz) : null;
   return { ...m, lat: coords?.[0] ?? null, lng: coords?.[1] ?? null };
 });
+
+// Veröffentlichte Self-Service-Profile (uid → slug). Rein additiv: Makler ohne Profil
+// (und der statische Fallback mit id=0) bleiben unverlinkt wie bisher.
+let profilSlugMap = new Map<number, string>();
+try {
+  profilSlugMap = await loadPublishedSlugMap();
+} catch (e) {
+  console.error('makler-suche: profil slug map failed', (e as Error).message);
+}
 
 // Antwort-Cache-Header für CDN — die Page selbst darf 1h gecached werden
 Astro.response.headers.set('Cache-Control', 'public, s-maxage=3600, stale-while-revalidate=3600');
@@ -93,6 +103,7 @@ Astro.response.headers.set('Cache-Control', 'public, s-maxage=3600, stale-while-
           const initials = m.name.split(' ').map((n) => n[0]).slice(0, 2).join('').toUpperCase();
           const hasOrt = m.ort.length > 0 || m.plz.length > 0;
           const tel = m.telefon.replace(/[\s\-/()]/g, '');
+          const profilSlug = profilSlugMap.get(m.id);
           return (
             <li
               class="ms-card"
@@ -111,7 +122,9 @@ Astro.response.headers.set('Cache-Control', 'public, s-maxage=3600, stale-while-
                 <span class="ms-card__initials">{initials}</span>
               </div>
               <div class="ms-card__body">
-                <h3 class="ms-card__name">{m.name}</h3>
+                <h3 class="ms-card__name">
+                  {profilSlug ? <a href={`/makler/${profilSlug}`} class="ms-card__name-link" data-cursor-label="Profil ansehen">{m.name}</a> : m.name}
+                </h3>
                 {hasOrt ? (
                   <p class="ms-card__ort">{[m.plz, m.ort].filter(Boolean).join(' ')}</p>
                 ) : (
@@ -128,6 +141,12 @@ Astro.response.headers.set('Cache-Control', 'public, s-maxage=3600, stale-while-
                     <a href={`mailto:${m.email}`} class="ms-card__link" data-cursor-label="E-Mail">
                       <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M12 3H2c-.6 0-1 .4-1 1v6c0 .6.4 1 1 1h10c.6 0 1-.4 1-1V4c0-.6-.4-1-1-1zm0 2L7 8 2 5V4l5 3 5-3v1z" fill="currentColor"/></svg>
                       E-Mail
+                    </a>
+                  )}
+                  {profilSlug && (
+                    <a href={`/makler/${profilSlug}`} class="ms-card__link ms-card__link--profil" data-cursor-label="Profil ansehen">
+                      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M1 7h11M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                      Profil
                     </a>
                   )}
                 </div>
@@ -374,6 +393,23 @@ Astro.response.headers.set('Cache-Control', 'public, s-maxage=3600, stale-while-
   .ms-card__link:hover {
     background: var(--color-accent);
     color: var(--color-ink);
+  }
+  .ms-card__link--profil {
+    background: var(--color-primary-light);
+    color: var(--color-primary);
+  }
+  .ms-card__link--profil:hover {
+    background: var(--color-primary);
+    color: #fff;
+  }
+  .ms-card__name-link {
+    color: inherit;
+    border-bottom: 1px solid transparent;
+    transition: border-color 180ms, color 180ms;
+  }
+  .ms-card__name-link:hover {
+    color: var(--color-accent-dark);
+    border-bottom-color: var(--color-accent);
   }
 
   .ms-empty {

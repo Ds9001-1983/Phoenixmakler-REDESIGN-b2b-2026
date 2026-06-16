@@ -1,0 +1,64 @@
+---
+// Bürozeiten als strukturierte Tabelle. Rendert nichts, wenn leer.
+import { WOCHENTAGE, type Buerozeit, type Wochentag } from '../../lib/profil';
+
+interface Props {
+  buerozeiten: Buerozeit[];
+}
+const { buerozeiten } = Astro.props;
+
+const labels: Record<Wochentag, string> = {
+  Mo: 'Montag', Di: 'Dienstag', Mi: 'Mittwoch', Do: 'Donnerstag', Fr: 'Freitag', Sa: 'Samstag', So: 'Sonntag',
+};
+
+// Pro Tag alle Zeitfenster sammeln, in Wochentags-Reihenfolge.
+const grouped = WOCHENTAGE
+  .map((tag) => ({
+    tag,
+    zeiten: buerozeiten.filter((z) => z.tag === tag).map((z) => `${z.von}–${z.bis}`),
+  }))
+  .filter((g) => g.zeiten.length > 0);
+---
+
+{grouped.length > 0 && (
+  <section class="pzeit section-sm bg-soft">
+    <div class="container-narrow">
+      <span class="eyebrow" data-reveal>Bürozeiten</span>
+      <table class="pzeit__table" data-reveal data-reveal-delay="1">
+        <tbody>
+          {grouped.map((g) => (
+            <tr>
+              <th scope="row">{labels[g.tag]}</th>
+              <td>{g.zeiten.join(' · ')} Uhr</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </section>
+)}
+
+<style>
+  .pzeit__table {
+    margin-top: 1.5rem;
+    width: 100%;
+    max-width: 480px;
+    border-collapse: collapse;
+  }
+  .pzeit__table tr { border-bottom: 1px solid var(--color-border); }
+  .pzeit__table th {
+    text-align: left;
+    font-family: var(--font-body);
+    font-weight: 500;
+    font-size: 1rem;
+    color: var(--color-ink);
+    padding: 0.85rem 0;
+  }
+  .pzeit__table td {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+    font-size: 1rem;
+    color: var(--color-text-muted);
+    padding: 0.85rem 0;
+  }
+</style>

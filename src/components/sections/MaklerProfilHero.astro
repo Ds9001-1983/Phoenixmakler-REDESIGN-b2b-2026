@@ -1,0 +1,84 @@
+---
+// Öffentliche Makler-Profilseite — Hero (Split-Layout, Cinematic Navy).
+// Foto kommt aus dem bestehenden Endpoint /api/vermittler-foto?uid=…
+interface Props {
+  name: string;
+  headline: string;
+  ort?: string;
+  plz?: string;
+  uid: number;
+  hasPhoto: boolean;
+  fokus: { aktiv: boolean; wert: string };
+  telefon?: string;
+}
+const { name, headline, ort = '', plz = '', uid, hasPhoto, fokus, telefon = '' } = Astro.props;
+const initials = name.split(' ').map((n) => n[0]).slice(0, 2).join('').toUpperCase();
+const tel = telefon.replace(/[\s\-/()]/g, '');
+const standort = [plz, ort].filter(Boolean).join(' ');
+---
+
+<section class="phero">
+  <div class="phero__grid">
+    <div class="phero__media">
+      <div class="phero__avatar" aria-hidden={hasPhoto ? 'true' : undefined}>
+        {hasPhoto ? <img src={`/api/vermittler-foto?uid=${uid}`} alt={`Porträt von ${name}`} loading="eager" fetchpriority="high" data-foto /> : null}
+        <span class="phero__initials">{initials}</span>
+      </div>
+      <div class="phero__grain" aria-hidden="true"></div>
+    </div>
+
+    <div class="phero__content">
+      <span class="phero__eyebrow">Phönix Maklerverbund</span>
+      <h1 class="phero__name" data-split="words" data-split-trigger="load" data-split-stagger="0.06" data-split-delay="0.15">{name}</h1>
+      {fokus.aktiv && fokus.wert ? <span class="phero__fokus" data-reveal data-reveal-delay="2">Spezialist für {fokus.wert}</span> : null}
+      <p class="phero__headline" data-reveal data-reveal-delay="3">{headline}</p>
+
+      <div class="phero__meta" data-reveal data-reveal-delay="4">
+        {standort ? <span class="phero__loc">{standort}</span> : null}
+      </div>
+
+      <div class="phero__ctas" data-reveal data-reveal-delay="5">
+        <a href="#kontakt" class="btn btn-accent btn-lg" data-magnetic data-cursor-label="Kontakt">
+          Kontakt aufnehmen
+          <svg width="18" height="14" viewBox="0 0 18 14" fill="none" aria-hidden="true"><path d="M1 7h15M12 1l5 6-5 6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+        {tel ? <a href={`tel:${tel}`} class="phero__ghost-link" data-cursor-label="Anrufen">Direkt anrufen</a> : null}
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .phero { position: relative; background: var(--color-primary-darker); color: #fff; overflow: hidden; }
+  .phero__grid { display: grid; grid-template-columns: 0.85fr 1.15fr; align-items: stretch; min-height: clamp(420px, 70vh, 720px); }
+
+  .phero__media { position: relative; overflow: hidden; background: var(--grad-navy); display: flex; align-items: center; justify-content: center; }
+  .phero__avatar { position: relative; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: var(--color-primary-dark); }
+  .phero__avatar img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; filter: brightness(0.92) contrast(1.03); }
+  .phero__avatar img[data-broken] { display: none; }
+  .phero__initials { font-family: var(--font-display); font-size: clamp(3rem, 8vw, 6rem); font-weight: 300; color: rgba(255,255,255,0.85); letter-spacing: -0.02em; }
+  .phero__grain { position: absolute; inset: 0; pointer-events: none; opacity: 0.18; mix-blend-mode: overlay; background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.4 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>"); }
+
+  .phero__content { position: relative; padding: clamp(3rem, 8vh, 6rem) var(--padding-x); display: flex; flex-direction: column; justify-content: center; gap: 1.1rem; max-width: 720px; }
+  .phero__eyebrow { font-family: var(--font-mono); font-size: 0.78rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--color-accent); }
+  .phero__name { font-family: var(--font-display); font-size: clamp(2.5rem, 6vw, 5rem); font-weight: 400; line-height: 0.98; letter-spacing: -0.035em; color: #fff; margin: 0; font-variation-settings: 'opsz' 144, 'SOFT' 100; }
+  .phero__fokus { display: inline-flex; align-self: flex-start; align-items: center; gap: 0.4rem; padding: 0.4rem 0.9rem; border-radius: 999px; background: var(--color-accent); color: var(--color-ink); font-family: var(--font-mono); font-size: 0.78rem; letter-spacing: 0.03em; font-weight: 600; }
+  .phero__headline { font-size: clamp(1.1rem, 1.6vw, 1.35rem); line-height: 1.5; color: rgba(255,255,255,0.85); max-width: 50ch; margin: 0; }
+  .phero__meta { display: flex; gap: 1.5rem; align-items: center; }
+  .phero__loc { font-family: var(--font-mono); font-size: 0.85rem; letter-spacing: 0.04em; color: rgba(255,255,255,0.6); }
+  .phero__ctas { margin-top: 0.75rem; display: flex; gap: 1.75rem; flex-wrap: wrap; align-items: center; }
+  .phero__ghost-link { display: inline-flex; align-items: center; gap: 0.5rem; font-family: var(--font-mono); font-size: 0.85rem; letter-spacing: 0.04em; color: rgba(255,255,255,0.72); border-bottom: 1px solid rgba(255,255,255,0.25); padding: 0.35rem 0.2rem; transition: color 200ms, border-color 200ms; }
+  .phero__ghost-link:hover { color: var(--color-accent); border-bottom-color: var(--color-accent); }
+
+  @media (max-width: 880px) {
+    .phero__grid { grid-template-columns: 1fr; grid-template-rows: 42vh auto; }
+    .phero__content { max-width: none; }
+  }
+</style>
+
+<script>
+  // Bei Foto-404 graceful auf Initialen zurückfallen (analog Maklerfinder).
+  document.querySelectorAll<HTMLImageElement>('.phero__avatar img[data-foto]').forEach((img) => {
+    img.addEventListener('error', () => img.setAttribute('data-broken', ''));
+  });
+</script>

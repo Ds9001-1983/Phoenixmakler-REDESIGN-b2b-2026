@@ -1,4 +1,8 @@
 import type { APIRoute } from 'astro';
+import { loadPublishedSlugMap } from '../lib/profil';
+
+// SSR, damit veröffentlichte Makler-Profile zur Laufzeit ergänzt werden können.
+export const prerender = false;
 
 const pages = [
   { url: '/', changefreq: 'monthly', priority: 1.0 },
@@ -20,11 +24,24 @@ const pages = [
   { url: '/barrierefreiheit', changefreq: 'yearly', priority: 0.3 },
 ];
 
-export const GET: APIRoute = ({ site }) => {
+export const GET: APIRoute = async ({ site }) => {
   const base = site?.toString().replace(/\/$/, '') ?? 'https://www.phoenix-maklerverbund.de';
   const today = new Date().toISOString().split('T')[0];
 
-  const urls = pages
+  // Veröffentlichte Makler-Profile additiv ergänzen (Fehler dürfen die Sitemap nicht brechen).
+  let maklerPages: { url: string; changefreq: string; priority: number }[] = [];
+  try {
+    const slugMap = await loadPublishedSlugMap();
+    maklerPages = [...slugMap.values()].map((slug) => ({
+      url: `/makler/${slug}`,
+      changefreq: 'weekly',
+      priority: 0.6,
+    }));
+  } catch (e) {
+    console.error('sitemap: makler profiles failed', (e as Error).message);
+  }
+
+  const urls = [...pages, ...maklerPages]
     .map(
       (p) => `  <url>
     <loc>${base}${p.url}</loc>
