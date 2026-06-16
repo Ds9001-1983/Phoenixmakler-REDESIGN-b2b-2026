@@ -36,6 +36,9 @@ export interface ProfilContent {
   qualifikationen: string[];
   buerozeiten: Buerozeit[];
   fokus: { aktiv: boolean; wert: string };
+  // Hinweis: Das frühere Freitext-Feld „rechtliches" wurde entfernt. Das optionale
+  // Property bleibt nur für die abwärtskompatible Deserialisierung von Altdaten
+  // erhalten — es wird nicht mehr geschrieben oder angezeigt.
   rechtliches?: string;
   kontakt?: ProfilKontakt;
 }
@@ -64,7 +67,6 @@ export const LIMITS = {
   qualifikationen: { count: 12, len: 120 },
   buerozeiten: 7,
   fokusWert: 60,
-  rechtliches: 2000,
   telefon: 40,
   email: 120,
   website: 200,
@@ -226,8 +228,6 @@ export function validateProfil(raw: unknown): ValidateResult {
   const fokusWert = str(fokusRaw.wert).slice(0, LIMITS.fokusWert);
   if (fokusAktiv && !fokusWert) errors.push('Wenn die Spezialisierung aktiv ist, bitte einen Schwerpunkt angeben.');
 
-  const rechtliches = str(input.rechtliches).slice(0, LIMITS.rechtliches) || undefined;
-
   const kontaktRaw = (input.kontakt ?? {}) as Record<string, unknown>;
   const kTelefon = str(kontaktRaw.telefon).slice(0, LIMITS.telefon);
   const kEmailRaw = str(kontaktRaw.email).slice(0, LIMITS.email).toLowerCase();
@@ -260,7 +260,6 @@ export function validateProfil(raw: unknown): ValidateResult {
       qualifikationen,
       buerozeiten,
       fokus: { aktiv: fokusAktiv, wert: fokusAktiv ? fokusWert : '' },
-      rechtliches,
       kontakt: Object.keys(kontakt).length ? kontakt : undefined,
     },
   };

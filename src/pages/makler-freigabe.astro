@@ -1,0 +1,339 @@
+---
+export const prerender = false;
+
+import BaseLayout from '../layouts/BaseLayout.astro';
+import MaklerProfilContent from '../components/sections/MaklerProfilContent.astro';
+import { verifyToken } from '../lib/token';
+import { loadProfilByUid, type MaklerProfil } from '../lib/profil';
+import { loadVermittler, type PublicVermittler } from '../lib/vermittler';
+
+// Phönix-interne Vorschau- & Freigabe-Seite. Tokengeschützt (profil-admin), zeigt das
+// vom Makler eingereichte Profil 1:1 — AUCH wenn es noch nicht veröffentlicht ist.
+const secret = import.meta.env.TRIGGER_SECRET;
+const token = Astro.url.searchParams.get('token') ?? '';
+const payload = secret ? verifyToken(token, 'profil-admin', secret) : null;
+
+let profil: MaklerProfil | null = null;
+let me: PublicVermittler | null = null;
+let pwInaktiv = false;
+
+if (payload) {
+  profil = await loadProfilByUid(payload.uid);
+  if (profil) {
+    const vermittler = await loadVermittler();
+    me = vermittler.find((v) => v.id === payload.uid) ?? null;
+    if (!me) {
+      // Tokengeschützt & nur für Phönix → Vorschau trotzdem zeigen, aber warnen.
+      pwInaktiv = true;
+      me = {
+        id: payload.uid,
+        name: payload.name ?? '',
+        plz: '',
+        ort: '',
+        telefon: '',
+        email: payload.email ?? '',
+        hasPhoto: false,
+      };
+    }
+  }
+}
+
+const fehler: 'config' | 'token' | 'kein-profil' | null = !secret
+  ? 'config'
+  : !payload
+    ? 'token'
+    : !profil
+      ? 'kein-profil'
+      : null;
+
+const istLive = !!profil?.published;
+const istErstfreigabe = !!profil && !profil.everApproved;
+
+// Suchmaschinen sicher fernhalten (zusätzlich zu noindex-Meta).
+Astro.response.headers.set('X-Robots-Tag', 'noindex, nofollow');
+if (fehler) {
+  Astro.response.status = fehler === 'config' ? 500 : fehler === 'token' ? 410 : 404;
+}
+
+const fehlerText: Record<'config' | 'token' | 'kein-profil', { kicker: string; title: string; text: string }> = {
+  config: {
+    kicker: 'Setup fehlt',
+    title: 'Server-Konfiguration unvollständig',
+    text: 'Der Freigabe-Dienst ist nicht korrekt konfiguriert. Bitte an die Technik wenden.',
+  },
+  token: {
+    kicker: 'Link ungültig',
+    title: 'Link abgelaufen oder ungültig',
+    text: 'Dieser Freigabe-Link ist nicht mehr gültig. Bitte den Makler erneut speichern lassen — dann kommt eine frische Freigabe-Mail.',
+  },
+  'kein-profil': {
+    kicker: 'Nicht gefunden',
+    title: 'Kein Profil vorhanden',
+    text: 'Für diese Person ist (noch) kein gespeichertes Profil hinterlegt.',
+  },
+};
+---
+
+{fehler ? (
+  <BaseLayout title="Profil-Freigabe — Phönix Maklerverbund" noindex hideFooter>
+    <section class="mf-error section">
+      <div class="container-narrow">
+        <span class="eyebrow">{fehlerText[fehler].kicker}</span>
+        <h1 class="mf-error__title">{fehlerText[fehler].title}</h1>
+        <p class="mf-error__text">{fehlerText[fehler].text}</p>
+      </div>
+    </section>
+  </BaseLayout>
+) : (
+  <BaseLayout title="Profil-Freigabe — Phönix Maklerverbund" noindex hideFooter>
+    <div class="mf-ribbon" role="note">
+      <span class="mf-ribbon__dot" aria-hidden="true"></span>
+      Vorschau · {istLive ? 'aktuell online' : 'noch nicht öffentlich'} — nur für das Phönix-Team sichtbar.
+    </div>
+
+    <MaklerProfilContent profil={profil!} me={me!} />
+
+    <aside class="mf-bar" data-mf-bar aria-label="Freigabe-Aktionen">
+      <p class="mf-bar__status">
+        {istLive
+          ? 'Bereits online — diese Aktualisierung ist schon live.'
+          : istErstfreigabe
+            ? 'Erstfreigabe ausstehend — dieses Profil war noch nie öffentlich.'
+            : 'Aktuell offline — wartet auf erneute Freigabe.'}
+      </p>
+      {pwInaktiv && (
+        <p class="mf-bar__warn">⚠ Makler ist im PW-System aktuell nicht als aktiv geführt. Freigabe trotzdem möglich.</p>
+      )}
+
+      <div class="mf-bar__actions">
+        {istLive ? (
+          <button type="button" class="mf-btn mf-btn--ghost" data-mf-unpublish>Offline nehmen</button>
+        ) : (
+          <>
+            <button type="button" class="mf-btn mf-btn--accent" data-mf-publish>Freigeben &amp; veröffentlichen</button>
+            <button type="button" class="mf-btn mf-btn--ghost" data-mf-reject-open>Zurückwerfen</button>
+          </>
+        )}
+      </div>
+
+      <div class="mf-reject" data-mf-reject hidden>
+        <label class="mf-reject__label" for="mfReason">Was soll der Makler ändern? (optional)</label>
+        <textarea id="mfReason" class="mf-reject__input" rows="4" data-mf-reason placeholder="z. B. Bitte ein freundlicheres Foto hochladen und den Claim konkreter formulieren."></textarea>
+        <div class="mf-reject__actions">
+          <button type="button" class="mf-btn mf-btn--accent" data-mf-reject-send>Zurückwerfen &amp; Mail senden</button>
+          <button type="button" class="mf-btn mf-btn--text" data-mf-reject-cancel>Abbrechen</button>
+        </div>
+      </div>
+
+      <p class="mf-bar__msg" data-mf-msg></p>
+    </aside>
+  </BaseLayout>
+)}
+
+<style>
+  .mf-error { min-height: 60vh; display: grid; align-items: center; }
+  .mf-error__title { font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 400; line-height: 1.05; margin: 1rem 0 0; }
+  .mf-error__text { margin-top: 1rem; font-size: 1.1rem; color: var(--color-text-muted); max-width: 56ch; }
+
+  /* Vorschau-Hinweis ganz oben */
+  .mf-ribbon {
+    position: sticky;
+    top: 0;
+    z-index: 60;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    padding: 0.6rem 1rem;
+    background: var(--color-primary-darker, #0a1940);
+    color: #fff;
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    letter-spacing: 0.06em;
+    text-align: center;
+  }
+  .mf-ribbon__dot { width: 8px; height: 8px; border-radius: 999px; background: var(--color-accent); box-shadow: 0 0 0 4px rgba(184,134,91,0.25); }
+
+  /* Mitschwebende Aktionsleiste */
+  .mf-bar {
+    position: fixed;
+    right: clamp(1rem, 3vw, 2rem);
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 70;
+    width: min(340px, calc(100vw - 2rem));
+    background: #fff;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg, 14px);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.18);
+    padding: 1.25rem;
+  }
+  .mf-bar__status { margin: 0 0 0.85rem; font-size: 0.9rem; line-height: 1.45; color: var(--color-ink); font-weight: 500; }
+  .mf-bar__warn { margin: 0 0 0.85rem; font-size: 0.82rem; line-height: 1.45; color: #a3631c; background: #fdf3e3; border-radius: 8px; padding: 0.6rem 0.7rem; }
+  .mf-bar__actions { display: flex; flex-direction: column; gap: 0.6rem; }
+  .mf-bar__msg { margin: 0.85rem 0 0; font-size: 0.85rem; line-height: 1.45; min-height: 1.1em; }
+  .mf-bar__msg.is-ok { color: #2f6b3c; }
+  .mf-bar__msg.is-error { color: #c93c3c; }
+  .mf-bar__msg.is-info { color: var(--color-text-muted); }
+  .mf-bar__msg a { color: var(--color-accent-dark); }
+
+  .mf-btn {
+    appearance: none;
+    border: 1px solid transparent;
+    border-radius: var(--radius-md, 10px);
+    padding: 0.8rem 1rem;
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 180ms, border-color 180ms, transform 120ms, opacity 180ms;
+  }
+  .mf-btn:hover { transform: translateY(-1px); }
+  .mf-btn:disabled { opacity: 0.55; cursor: not-allowed; transform: none; }
+  .mf-btn--accent { background: var(--color-accent, #b8865b); color: #fff; }
+  .mf-btn--accent:hover { background: var(--color-accent-dark, #9c6f49); }
+  .mf-btn--ghost { background: #fff; color: var(--color-ink); border-color: var(--color-border-strong, #d8d2c6); }
+  .mf-btn--ghost:hover { border-color: var(--color-accent); }
+  .mf-btn--text { background: transparent; color: var(--color-text-muted); padding-inline: 0.4rem; }
+  .mf-btn--text:hover { color: var(--color-ink); }
+
+  .mf-reject { margin-top: 0.85rem; border-top: 1px solid var(--color-border); padding-top: 0.85rem; }
+  .mf-reject__label { display: block; font-size: 0.82rem; color: var(--color-text-muted); margin-bottom: 0.4rem; }
+  .mf-reject__input {
+    width: 100%;
+    padding: 0.7rem 0.8rem;
+    border: 1.5px solid var(--color-border-strong, #d8d2c6);
+    border-radius: var(--radius-md, 10px);
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    line-height: 1.5;
+    resize: vertical;
+  }
+  .mf-reject__input:focus { outline: none; border-color: var(--color-accent); box-shadow: 0 0 0 3px rgba(184,134,91,0.15); }
+  .mf-reject__actions { display: flex; align-items: center; gap: 0.5rem; margin-top: 0.6rem; flex-wrap: wrap; }
+
+  /* Mobile: Leiste unten andocken */
+  @media (max-width: 920px) {
+    .mf-bar {
+      right: 0;
+      left: 0;
+      top: auto;
+      bottom: 0;
+      transform: none;
+      width: 100%;
+      border-radius: var(--radius-lg, 14px) var(--radius-lg, 14px) 0 0;
+      box-shadow: 0 -8px 30px rgba(0,0,0,0.18);
+    }
+    .mf-bar__actions { flex-direction: row; }
+    .mf-bar__actions .mf-btn { flex: 1; }
+  }
+</style>
+
+<script>
+  const $ = <T extends HTMLElement = HTMLElement>(sel: string) => document.querySelector<T>(sel);
+  const token = new URLSearchParams(window.location.search).get('token') ?? '';
+
+  const bar = $('[data-mf-bar]');
+  const msg = $('[data-mf-msg]');
+
+  const setMsg = (text: string, kind: '' | 'ok' | 'error' | 'info' = '', html = false) => {
+    if (!msg) return;
+    if (html) msg.innerHTML = text;
+    else msg.textContent = text;
+    msg.className = 'mf-bar__msg' + (kind ? ` is-${kind}` : '');
+  };
+
+  const setBusy = (busy: boolean) => {
+    bar?.querySelectorAll<HTMLButtonElement>('button').forEach((b) => (b.disabled = busy));
+  };
+
+  // Nach erfolgreicher Endaktion alle Buttons ausblenden (kein Doppelklick).
+  const lockBar = () => {
+    $('.mf-bar__actions')?.setAttribute('hidden', '');
+    $('[data-mf-reject]')?.setAttribute('hidden', '');
+  };
+
+  const post = async (url: string, payload: Record<string, unknown>) => {
+    const r = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ token, ...payload }),
+    });
+    const data = await r.json().catch(() => ({}));
+    return { ok: r.ok, status: r.status, data } as { ok: boolean; status: number; data: any };
+  };
+
+  const handleError = (status: number) => {
+    if (status === 410) setMsg('Dieser Freigabe-Link ist abgelaufen. Bitte den Makler erneut speichern lassen.', 'error');
+    else setMsg('Aktion fehlgeschlagen — bitte erneut versuchen.', 'error');
+  };
+
+  // Freigeben
+  $('[data-mf-publish]')?.addEventListener('click', async () => {
+    setBusy(true);
+    setMsg('Wird freigegeben …', 'info');
+    try {
+      const res = await post('/api/profil-publish', {});
+      if (res.ok && res.data.ok) {
+        lockBar();
+        const url = res.data.url || '';
+        setMsg('Profil ist jetzt online ✓ ' + (url ? `<a href="${url}" target="_blank" rel="noopener">Seite ansehen →</a>` : ''), 'ok', true);
+      } else {
+        handleError(res.status);
+        setBusy(false);
+      }
+    } catch {
+      setMsg('Netzwerkfehler — bitte erneut versuchen.', 'error');
+      setBusy(false);
+    }
+  });
+
+  // Offline nehmen
+  $('[data-mf-unpublish]')?.addEventListener('click', async () => {
+    setBusy(true);
+    setMsg('Wird offline genommen …', 'info');
+    try {
+      const res = await post('/api/profil-unpublish', {});
+      if (res.ok && res.data.ok) {
+        lockBar();
+        setMsg('Profil ist nicht mehr öffentlich. Die Inhalte bleiben gespeichert.', 'ok');
+      } else {
+        handleError(res.status);
+        setBusy(false);
+      }
+    } catch {
+      setMsg('Netzwerkfehler — bitte erneut versuchen.', 'error');
+      setBusy(false);
+    }
+  });
+
+  // Zurückwerfen: Panel öffnen / abbrechen
+  $('[data-mf-reject-open]')?.addEventListener('click', () => {
+    $('[data-mf-reject]')?.removeAttribute('hidden');
+    ($('[data-mf-reason]') as HTMLTextAreaElement | null)?.focus();
+  });
+  $('[data-mf-reject-cancel]')?.addEventListener('click', () => {
+    $('[data-mf-reject]')?.setAttribute('hidden', '');
+    setMsg('');
+  });
+
+  // Zurückwerfen: senden
+  $('[data-mf-reject-send]')?.addEventListener('click', async () => {
+    const reason = ($('[data-mf-reason]') as HTMLTextAreaElement | null)?.value.trim() ?? '';
+    setBusy(true);
+    setMsg('Wird zurückgeschickt …', 'info');
+    try {
+      const res = await post('/api/profil-reject', { reason });
+      if (res.ok && res.data.ok) {
+        lockBar();
+        setMsg('Profil zurückgeschickt ✓ — der Makler hat eine Überarbeitungs-Mail erhalten.', 'ok');
+      } else {
+        handleError(res.status);
+        setBusy(false);
+      }
+    } catch {
+      setMsg('Netzwerkfehler — bitte erneut versuchen.', 'error');
+      setBusy(false);
+    }
+  });
+</script>

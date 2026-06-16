@@ -26,20 +26,12 @@ const absaetze = bio
 <style>
   .pbio { background: var(--color-bg); }
   .pbio__text { margin-top: 1.5rem; display: flex; flex-direction: column; gap: 1.25rem; }
+  /* Einheitliche, linksbündige Absätze — kein Sonderfall für den ersten Absatz. */
   .pbio__text p {
-    font-family: var(--font-display);
-    font-size: clamp(1.25rem, 2.4vw, 1.75rem);
-    font-weight: 300;
-    line-height: 1.5;
-    letter-spacing: -0.01em;
-    color: var(--color-ink);
-    max-width: 40ch;
-  }
-  .pbio__text p:not(:first-child) {
     font-family: var(--font-body);
-    font-size: 1.05rem;
+    font-size: 1.125rem;
     font-weight: 400;
-    line-height: 1.65;
+    line-height: 1.7;
     color: var(--color-text-muted);
     max-width: 68ch;
   }

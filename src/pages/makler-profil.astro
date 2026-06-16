@@ -62,6 +62,7 @@ const wochentage: { key: string; label: string }[] = [
         {/* FOTO */}
         <fieldset class="ep__group">
           <legend>Profilfoto</legend>
+          <p class="ep__caption">Ein freundliches Porträt schafft sofort Nähe. Am besten ein klares Gesichtsbild.</p>
           <div class="ep__foto">
             <div class="ep__foto-preview" data-foto-preview>
               <span data-foto-initials>—</span>
@@ -80,6 +81,7 @@ const wochentage: { key: string; label: string }[] = [
         {/* HEADLINE */}
         <fieldset class="ep__group">
           <legend>Überschrift / Claim <span class="ep__req">Pflicht</span></legend>
+          <p class="ep__caption">Dein Aushängeschild in einem Satz. Sag, wofür du stehst — z. B. „Ihr Ansprechpartner in der Region Rhein-Main" oder „Ihr Spezialist für betriebliche Altersvorsorge".</p>
           <input type="text" data-f="headline" placeholder="z. B. Ihr Partner für Vorsorge & Absicherung" />
           <p class="ep__counter"><span data-count-for="headline">0</span> / <span data-max-for="headline">80</span></p>
         </fieldset>
@@ -87,6 +89,7 @@ const wochentage: { key: string; label: string }[] = [
         {/* BIO */}
         <fieldset class="ep__group">
           <legend>Über mich <span class="ep__req">Pflicht</span></legend>
+          <p class="ep__caption">Beschreibe dich gerne persönlich und ausführlich — deine Qualifikation, dein Werdegang und was dich für deine Kundinnen und Kunden ausmacht. Je konkreter, desto mehr Vertrauen.</p>
           <textarea data-f="bio" rows="6" placeholder="Erzähle in ein paar Sätzen, wer du bist, wofür du stehst und wie du deine Kundinnen und Kunden begleitest."></textarea>
           <p class="ep__counter"><span data-count-for="bio">0</span> / <span data-max-for="bio">1500</span></p>
           <p class="ep__hint">Tipp: Leerzeile = neuer Absatz.</p>
@@ -95,6 +98,7 @@ const wochentage: { key: string; label: string }[] = [
         {/* SKILLS */}
         <fieldset class="ep__group">
           <legend>Schwerpunkte</legend>
+          <p class="ep__caption">Trag ein paar Themen ein, bei denen du stark bist — z. B. Altersvorsorge, Berufsunfähigkeit oder Sachversicherung. Schon drei bis fünf Schwerpunkte wirken überzeugend.</p>
           <textarea data-f="skills" rows="5" placeholder="Ein Schwerpunkt pro Zeile, z. B.:&#10;Altersvorsorge&#10;Berufsunfähigkeit&#10;Sachversicherung"></textarea>
           <p class="ep__hint">Ein Eintrag pro Zeile · max. 12.</p>
         </fieldset>
@@ -102,6 +106,7 @@ const wochentage: { key: string; label: string }[] = [
         {/* QUALIFIKATIONEN */}
         <fieldset class="ep__group">
           <legend>Ausbildung & Qualifikationen</legend>
+          <p class="ep__caption">Zeig deine Abschlüsse und Weiterbildungen — z. B. „Versicherungsfachmann (IHK)" oder „Fachwirt für Finanzberatung". Das unterstreicht deine Kompetenz.</p>
           <textarea data-f="qualifikationen" rows="5" placeholder="Ein Eintrag pro Zeile, z. B.:&#10;Versicherungsfachmann (IHK)&#10;Diplom-Betriebswirt"></textarea>
           <p class="ep__hint">Ein Eintrag pro Zeile · max. 12.</p>
         </fieldset>
@@ -109,6 +114,7 @@ const wochentage: { key: string; label: string }[] = [
         {/* BÜROZEITEN */}
         <fieldset class="ep__group">
           <legend>Bürozeiten</legend>
+          <p class="ep__caption">Wann bist du erreichbar? Aktiviere die Tage und trag deine Zeiten ein — leer lassen, wenn du flexibel bist.</p>
           <div class="ep__zeiten">
             {wochentage.map((t) => (
               <div class="ep__zeit-row" data-zeit-row={t.key}>
@@ -129,6 +135,7 @@ const wochentage: { key: string; label: string }[] = [
         {/* FOKUS */}
         <fieldset class="ep__group">
           <legend>Spezialisierung</legend>
+          <p class="ep__caption">Du hast ein Lieblingsthema? Heb es als Badge ganz oben auf deiner Seite hervor — so erkennen Interessenten sofort deinen Schwerpunkt.</p>
           <label class="ep__check">
             <input type="checkbox" data-fokus-aktiv />
             <span>Ich möchte einen Schwerpunkt besonders hervorheben</span>
@@ -140,7 +147,7 @@ const wochentage: { key: string; label: string }[] = [
         {/* KONTAKT */}
         <fieldset class="ep__group">
           <legend>Kontakt (optional)</legend>
-          <p class="ep__hint">Leer lassen = die im System hinterlegten Daten werden verwendet.</p>
+          <p class="ep__caption">So erreichen dich deine Kundinnen und Kunden. Lässt du ein Feld leer, nutzen wir automatisch die im Phönix-System hinterlegten Daten.</p>
           <div class="ep__kontakt-grid">
             <div>
               <label class="ep__label" for="kTel">Telefon</label>
@@ -151,16 +158,11 @@ const wochentage: { key: string; label: string }[] = [
               <input id="kMail" type="email" data-kontakt="email" data-ph-default placeholder="" />
             </div>
             <div>
-              <label class="ep__label" for="kWeb">Website</label>
-              <input id="kWeb" type="url" data-kontakt="website" placeholder="https://…" />
+              <label class="ep__label" for="kWeb">Eigene Webseite</label>
+              <input id="kWeb" type="text" inputmode="url" autocomplete="url" spellcheck="false" data-kontakt="website" placeholder="www.meine-seite.de" />
+              <p class="ep__hint">Falls du eine eigene Webseite hast, wird sie hier verlinkt. Einfach z. B. www.meine-seite.de eintippen — das https:// ergänzen wir automatisch.</p>
             </div>
           </div>
-        </fieldset>
-
-        {/* RECHTLICHES */}
-        <fieldset class="ep__group">
-          <legend>Zusätzliche rechtliche Hinweise (optional)</legend>
-          <textarea data-f="rechtliches" rows="4" placeholder="Nur falls du eigene ergänzende Hinweise anzeigen möchtest."></textarea>
         </fieldset>
 
         <div class="ep__save-bar">
@@ -220,6 +222,8 @@ const wochentage: { key: string; label: string }[] = [
   .ep__counter { margin-top: 0.4rem; font-family: var(--font-mono); font-size: 0.75rem; color: var(--color-text-subtle); text-align: right; }
   .ep__counter.is-over { color: #c93c3c; }
   .ep__hint { margin-top: 0.5rem; font-size: 0.82rem; color: var(--color-text-subtle); line-height: 1.5; }
+  /* Einladende Erklärzeile direkt unter der Überschrift (vor dem Eingabefeld). */
+  .ep__caption { margin: 0.5rem 0 0.25rem; font-size: 0.9rem; line-height: 1.5; color: var(--color-text-muted); }
   .ep__msg { margin-top: 0.5rem; font-size: 0.88rem; min-height: 1.1em; }
   .ep__msg.is-error { color: #c93c3c; }
   .ep__msg.is-ok { color: #2f6b3c; }
@@ -267,14 +271,14 @@ const wochentage: { key: string; label: string }[] = [
     headline: number; bio: number;
     skills: { count: number; len: number };
     qualifikationen: { count: number; len: number };
-    buerozeiten: number; fokusWert: number; rechtliches: number;
+    buerozeiten: number; fokusWert: number;
     telefon: number; email: number; website: number;
   };
   type Buerozeit = { tag: string; von: string; bis: string };
   type ProfilData = {
     headline: string; bio: string; skills: string[]; qualifikationen: string[];
     buerozeiten: Buerozeit[]; fokus: { aktiv: boolean; wert: string };
-    rechtliches: string; kontakt: { telefon?: string; email?: string; website?: string };
+    kontakt: { telefon?: string; email?: string; website?: string };
     published: boolean; everApproved: boolean; slug: string;
   };
   type InfoResp = {
@@ -385,7 +389,6 @@ const wochentage: { key: string; label: string }[] = [
       setField('bio', p.bio ?? '');
       setField('skills', (p.skills ?? []).join('\n'));
       setField('qualifikationen', (p.qualifikationen ?? []).join('\n'));
-      setField('rechtliches', p.rechtliches ?? '');
       (['telefon', 'email', 'website'] as const).forEach((k) => {
         const el = $(`[data-kontakt="${k}"]`) as HTMLInputElement | null;
         if (el && p.kontakt && p.kontakt[k]) el.value = p.kontakt[k] as string;
@@ -432,6 +435,7 @@ const wochentage: { key: string; label: string }[] = [
 
     setupZeitToggles();
     setupFokusToggle();
+    setupWebsiteField();
     setupFotoUpload(info.uid ?? 0);
     setupSave();
     setState('editor');
@@ -454,6 +458,19 @@ const wochentage: { key: string; label: string }[] = [
     const aktiv = $('[data-fokus-aktiv]') as HTMLInputElement | null;
     const wert = $('[data-fokus-wert]') as HTMLInputElement | null;
     aktiv?.addEventListener('change', () => { if (wert) wert.disabled = !aktiv.checked; });
+  };
+
+  // Spiegelt die Server-Normalisierung: leer bleibt leer, fehlt das Protokoll → https:// davor.
+  const normalizeWebsite = (v: string): string => {
+    const t = v.trim();
+    if (!t) return '';
+    if (/^https?:\/\//i.test(t)) return t;
+    return `https://${t}`;
+  };
+
+  const setupWebsiteField = () => {
+    const el = $('[data-kontakt="website"]') as HTMLInputElement | null;
+    el?.addEventListener('blur', () => { el.value = normalizeWebsite(el.value); });
   };
 
   const showFotoPreview = (src: string) => {
@@ -499,7 +516,8 @@ const wochentage: { key: string; label: string }[] = [
     const fWert = ($('[data-fokus-wert]') as HTMLInputElement | null)?.value.trim() ?? '';
     const kontakt: ProfilData['kontakt'] = {};
     (['telefon', 'email', 'website'] as const).forEach((k) => {
-      const v = ($(`[data-kontakt="${k}"]`) as HTMLInputElement | null)?.value.trim() ?? '';
+      let v = ($(`[data-kontakt="${k}"]`) as HTMLInputElement | null)?.value.trim() ?? '';
+      if (k === 'website') v = normalizeWebsite(v);
       if (v) kontakt[k] = v;
     });
     return {
@@ -509,7 +527,6 @@ const wochentage: { key: string; label: string }[] = [
       qualifikationen: linesToList('qualifikationen', limits?.qualifikationen.count ?? 12),
       buerozeiten,
       fokus: { aktiv: fAktiv, wert: fWert },
-      rechtliches: fieldVal('rechtliches').trim(),
       kontakt,
       published: false, everApproved: false, slug: '',
     };

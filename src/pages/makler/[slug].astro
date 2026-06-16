@@ -3,13 +3,7 @@ export const prerender = false;
 
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import FooterCinematic from '../../components/sections/FooterCinematic.astro';
-import MaklerProfilHero from '../../components/sections/MaklerProfilHero.astro';
-import ProfilBio from '../../components/sections/ProfilBio.astro';
-import ProfilSkills from '../../components/sections/ProfilSkills.astro';
-import ProfilQualifikationen from '../../components/sections/ProfilQualifikationen.astro';
-import ProfilBuerozeiten from '../../components/sections/ProfilBuerozeiten.astro';
-import ProfilKontakt from '../../components/sections/ProfilKontakt.astro';
-import ProfilRechtlicheHinweise from '../../components/sections/ProfilRechtlicheHinweise.astro';
+import MaklerProfilContent from '../../components/sections/MaklerProfilContent.astro';
 import { loadProfilBySlug } from '../../lib/profil';
 import { loadVermittler, type PublicVermittler } from '../../lib/vermittler';
 
@@ -34,28 +28,7 @@ if (notFound) {
   Astro.response.headers.set('Cache-Control', 'public, s-maxage=3600, stale-while-revalidate=86400');
 }
 
-// ---- nur relevant, wenn gefunden ----
 const name = me?.name ?? '';
-const telefon = profil?.kontakt?.telefon || me?.telefon || '';
-const email = profil?.kontakt?.email || me?.email || '';
-const website = profil?.kontakt?.website || '';
-const siteOrigin = Astro.site?.origin ?? 'https://www.phoenix-maklerverbund.de';
-
-const jsonLd =
-  notFound || !profil || !me
-    ? null
-    : {
-        '@context': 'https://schema.org',
-        '@type': 'InsuranceAgent',
-        name,
-        description: profil.headline,
-        worksFor: { '@type': 'InsuranceAgency', name: 'Phönix Maklerverbund' },
-        ...(me.hasPhoto ? { image: `${siteOrigin}/api/vermittler-foto?uid=${profil.uid}` } : {}),
-        ...(telefon ? { telephone: telefon } : {}),
-        ...(email ? { email } : {}),
-        ...(me.ort ? { areaServed: me.ort } : {}),
-        url: new URL(Astro.url.pathname, siteOrigin).toString(),
-      };
 ---
 
 {notFound ? (
@@ -78,31 +51,7 @@ const jsonLd =
     description={profil!.headline}
     hideFooter
   >
-    {jsonLd && <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />}
-
-    <MaklerProfilHero
-      name={name}
-      headline={profil!.headline}
-      ort={me!.ort}
-      plz={me!.plz}
-      uid={profil!.uid}
-      hasPhoto={me!.hasPhoto}
-      fokus={profil!.fokus}
-      telefon={telefon}
-    />
-    <ProfilBio bio={profil!.bio} />
-    <ProfilSkills skills={profil!.skills} />
-    <ProfilQualifikationen qualifikationen={profil!.qualifikationen} />
-    <ProfilBuerozeiten buerozeiten={profil!.buerozeiten} />
-    <ProfilKontakt
-      name={name}
-      telefon={telefon}
-      email={email}
-      website={website}
-      ort={me!.ort}
-      plz={me!.plz}
-    />
-    <ProfilRechtlicheHinweise name={name} rechtliches={profil!.rechtliches} />
+    <MaklerProfilContent profil={profil!} me={me!} jsonLd />
     <FooterCinematic />
   </BaseLayout>
 )}

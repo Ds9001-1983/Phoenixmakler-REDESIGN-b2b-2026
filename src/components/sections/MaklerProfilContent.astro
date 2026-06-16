@@ -1,0 +1,71 @@
+---
+// Gemeinsamer Inhalts-Block der Makler-Profilseite (Hero + alle Sektionen).
+// Wird sowohl von der öffentlichen Seite (makler/[slug].astro) als auch von der
+// Phönix-Vorschau/Freigabe-Seite (makler-freigabe.astro) genutzt → garantiert
+// pixelgleiche Vorschau. BaseLayout/Footer bleiben Sache der jeweiligen Seite.
+import MaklerProfilHero from './MaklerProfilHero.astro';
+import ProfilBio from './ProfilBio.astro';
+import ProfilSkills from './ProfilSkills.astro';
+import ProfilQualifikationen from './ProfilQualifikationen.astro';
+import ProfilBuerozeiten from './ProfilBuerozeiten.astro';
+import ProfilKontakt from './ProfilKontakt.astro';
+import ProfilRechtlicheHinweise from './ProfilRechtlicheHinweise.astro';
+import type { MaklerProfil } from '../../lib/profil';
+import type { PublicVermittler } from '../../lib/vermittler';
+
+interface Props {
+  profil: MaklerProfil;
+  me: PublicVermittler;
+  // JSON-LD nur auf der öffentlichen Seite ausgeben; die Vorschau soll kein
+  // InsuranceAgent-Markup ausstrahlen.
+  jsonLd?: boolean;
+}
+const { profil, me, jsonLd = false } = Astro.props;
+
+const name = me.name ?? '';
+const telefon = profil.kontakt?.telefon || me.telefon || '';
+const email = profil.kontakt?.email || me.email || '';
+const website = profil.kontakt?.website || '';
+const siteOrigin = Astro.site?.origin ?? 'https://www.phoenix-maklerverbund.de';
+
+const ld = jsonLd
+  ? {
+      '@context': 'https://schema.org',
+      '@type': 'InsuranceAgent',
+      name,
+      description: profil.headline,
+      worksFor: { '@type': 'InsuranceAgency', name: 'Phönix Maklerverbund' },
+      ...(me.hasPhoto ? { image: `${siteOrigin}/api/vermittler-foto?uid=${profil.uid}` } : {}),
+      ...(telefon ? { telephone: telefon } : {}),
+      ...(email ? { email } : {}),
+      ...(me.ort ? { areaServed: me.ort } : {}),
+      url: new URL(Astro.url.pathname, siteOrigin).toString(),
+    }
+  : null;
+---
+
+{ld && <script type="application/ld+json" set:html={JSON.stringify(ld)} />}
+
+<MaklerProfilHero
+  name={name}
+  headline={profil.headline}
+  ort={me.ort}
+  plz={me.plz}
+  uid={profil.uid}
+  hasPhoto={me.hasPhoto}
+  fokus={profil.fokus}
+  telefon={telefon}
+/>
+<ProfilBio bio={profil.bio} />
+<ProfilSkills skills={profil.skills} />
+<ProfilQualifikationen qualifikationen={profil.qualifikationen} />
+<ProfilBuerozeiten buerozeiten={profil.buerozeiten} />
+<ProfilKontakt
+  name={name}
+  telefon={telefon}
+  email={email}
+  website={website}
+  ort={me.ort}
+  plz={me.plz}
+/>
+<ProfilRechtlicheHinweise name={name} />

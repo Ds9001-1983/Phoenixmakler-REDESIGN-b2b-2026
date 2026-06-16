@@ -73,6 +73,13 @@ const standort = [plz, ort].filter(Boolean).join(' ');
   @media (max-width: 880px) {
     .phero__grid { grid-template-columns: 1fr; grid-template-rows: 42vh auto; }
     .phero__content { max-width: none; }
+    /* Mobile-Reihenfolge: Bild (oben) → Name → Eyebrow → „Spezialist für" → Claim. */
+    .phero__name { order: 1; }
+    .phero__eyebrow { order: 2; }
+    .phero__fokus { order: 3; }
+    .phero__headline { order: 4; }
+    .phero__meta { order: 5; }
+    .phero__ctas { order: 6; }
   }
 </style>
 

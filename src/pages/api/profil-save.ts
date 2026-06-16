@@ -49,9 +49,7 @@ export const POST: APIRoute = async ({ request }) => {
       const adminToken = buildProfilAdminToken(payload.uid, payload.cid, payload.email, me.name, secret);
       await sendProfilReviewNotice(phoenixTo, me.name, {
         live: saved.liveSofort,
-        publicLink: `${base}/makler/${saved.profil.slug}`,
-        publishLink: `${base}/api/profil-publish?token=${encodeURIComponent(adminToken)}`,
-        unpublishLink: `${base}/api/profil-unpublish?token=${encodeURIComponent(adminToken)}`,
+        reviewLink: `${base}/makler-freigabe?token=${encodeURIComponent(adminToken)}`,
       });
     } catch (e) {
       console.error('Profil review notice failed', (e as Error).message);

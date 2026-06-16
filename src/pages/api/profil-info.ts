@@ -49,7 +49,6 @@ export const GET: APIRoute = async ({ url }) => {
           qualifikationen: profil.qualifikationen,
           buerozeiten: profil.buerozeiten,
           fokus: profil.fokus,
-          rechtliches: profil.rechtliches ?? '',
           kontakt: profil.kontakt ?? {},
           published: profil.published,
           everApproved: profil.everApproved,
