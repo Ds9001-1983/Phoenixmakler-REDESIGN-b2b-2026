@@ -2,6 +2,7 @@ import type { APIRoute } from 'astro';
 import { verifyToken, buildProfilToken } from '../../lib/token';
 import { setPublished } from '../../lib/profil';
 import { sendProfilRevision } from '../../lib/mail';
+import { loadVermittler } from '../../lib/vermittler';
 
 export const prerender = false;
 
@@ -32,13 +33,20 @@ export const POST: APIRoute = async ({ request }) => {
   const updated = await setPublished(payload.uid, false);
   if (!updated) return j({ error: 'not_found' }, 404);
 
+  // Empfänger + Name maßgeblich aus dem CRM (per uid), damit die Überarbeitungs-Mail
+  // immer an die aktuelle Makler-Adresse geht — unabhängig davon, was im Token steht.
+  // Fallback auf die Token-Daten, falls der Makler im CRM nicht (mehr) gefunden wird.
+  const me = (await loadVermittler()).find((v) => v.id === payload.uid);
+  const recipient = me?.email || payload.email;
+  const fullName = me?.name || payload.name || '';
+
   // Makler zur Überarbeitung einladen (nicht-blockierend — wie bei profil-save).
   const base = baseUrl();
-  if (base && payload.email) {
+  if (base && recipient) {
     try {
-      const editToken = buildProfilToken(payload.uid, payload.cid, payload.email, payload.name ?? '', secret);
+      const editToken = buildProfilToken(payload.uid, payload.cid, recipient, fullName, secret);
       const editLink = `${base}/makler-profil?token=${encodeURIComponent(editToken)}`;
-      await sendProfilRevision(payload.email, firstNameOf(payload.name), { editLink, reason });
+      await sendProfilRevision(recipient, firstNameOf(fullName), { editLink, reason });
     } catch (e) {
       console.error('Profil revision mail failed', (e as Error).message);
     }
