@@ -1,6 +1,6 @@
 import { createHmac, timingSafeEqual } from 'node:crypto';
 
-export type TokenKind = 'trigger' | 'upload';
+export type TokenKind = 'trigger' | 'upload' | 'profil' | 'profil-admin';
 
 export interface TokenPayload {
   uid: number;
@@ -63,6 +63,24 @@ export function buildTriggerToken(uid: number, cid: number | null, email: string
 export function buildUploadToken(uid: number, cid: number | null, email: string, name: string, secret: string, ttlDays = 30): string {
   return signToken(
     { uid, cid, email, name, kind: 'upload', exp: Math.floor(Date.now() / 1000) + ttlDays * 86400 },
+    secret,
+  );
+}
+
+// Self-Service-Profil: Edit-Link für den Makler (lange Gültigkeit, da selten bearbeitet wird;
+// abgelaufene Links lassen sich über /makler-profil neu anfordern).
+export function buildProfilToken(uid: number, cid: number | null, email: string, name: string, secret: string, ttlDays = 60): string {
+  return signToken(
+    { uid, cid, email, name, kind: 'profil', exp: Math.floor(Date.now() / 1000) + ttlDays * 86400 },
+    secret,
+  );
+}
+
+// Moderations-Link für das Phoenix-Team (Freigabe / Offline-nehmen). Geht nur an die
+// interne Benachrichtigungs-Adresse, signiert mit TRIGGER_SECRET.
+export function buildProfilAdminToken(uid: number, cid: number | null, email: string, name: string, secret: string, ttlDays = 30): string {
+  return signToken(
+    { uid, cid, email, name, kind: 'profil-admin', exp: Math.floor(Date.now() / 1000) + ttlDays * 86400 },
     secret,
   );
 }

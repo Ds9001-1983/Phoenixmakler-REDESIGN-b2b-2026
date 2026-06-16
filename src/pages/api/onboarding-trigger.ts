@@ -1,6 +1,6 @@
 import type { APIRoute } from 'astro';
-import { verifyToken, buildUploadToken } from '../../lib/token';
-import { sendApplicantPhoto } from '../../lib/mail';
+import { verifyToken, buildUploadToken, buildProfilToken } from '../../lib/token';
+import { sendApplicantPhoto, sendProfilEinladung } from '../../lib/mail';
 
 export const prerender = false;
 
@@ -65,6 +65,16 @@ export const GET: APIRoute = async ({ url }) => {
     mailOk = true;
   } catch (e) {
     console.error('Applicant mail failed', (e as Error).message);
+  }
+
+  // 2b) Zusätzlich: Einladung zur Profilgestaltung (Self-Service). Best-Effort, beeinflusst
+  // den Onboarding-Status nicht — Foto-Upload bleibt der maßgebliche Schritt.
+  try {
+    const profilToken = buildProfilToken(payload.uid, payload.cid, payload.email, firstName, secret);
+    const profilLink = `${appBaseUrl.replace(/\/+$/, '')}/makler-profil?token=${encodeURIComponent(profilToken)}`;
+    await sendProfilEinladung(payload.email, prettyFirst, profilLink);
+  } catch (e) {
+    console.error('Profil invite mail failed', (e as Error).message);
   }
 
   const status =

@@ -1,0 +1,77 @@
+---
+// Kontakt-Band (Navy CTA). Telefon/E-Mail/Website — Defaults aus PW, ggf. überschrieben.
+interface Props {
+  name: string;
+  telefon?: string;
+  email?: string;
+  website?: string;
+  ort?: string;
+  plz?: string;
+}
+const { name, telefon = '', email = '', website = '', ort = '', plz = '' } = Astro.props;
+const tel = telefon.replace(/[\s\-/()]/g, '');
+const standort = [plz, ort].filter(Boolean).join(' ');
+const websiteLabel = website.replace(/^https?:\/\//i, '').replace(/\/$/, '');
+const vorname = name.split(' ')[0];
+---
+
+<section class="pkontakt" id="kontakt">
+  <div class="container">
+    <div class="pkontakt__inner">
+      <div class="pkontakt__head">
+        <span class="eyebrow">Kontakt</span>
+        <h2 class="pkontakt__title">Sprechen Sie direkt mit {vorname}.</h2>
+        {standort ? <p class="pkontakt__loc">{standort}</p> : null}
+      </div>
+      <div class="pkontakt__actions">
+        {tel ? (
+          <a href={`tel:${tel}`} class="pkontakt__link" data-cursor-label="Anrufen">
+            <svg width="16" height="16" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M11.4 9.9c-.2 0-.4.1-.6.2l-1.5 1c-.3.2-.7.1-1-.1-.8-.7-1.5-1.4-2.2-2.2-.2-.3-.3-.7-.1-1l1-1.5c.2-.3.2-.7 0-1L5.4 2.7c-.2-.3-.6-.4-1-.3-.9.4-1.8.9-2.2 1.8-.8 1.6.3 4.1 2.7 6.5 2.4 2.4 4.9 3.5 6.5 2.7.9-.5 1.4-1.3 1.8-2.2.1-.4 0-.8-.3-1l-1.5-.3z" fill="currentColor"/></svg>
+            <span>{telefon}</span>
+          </a>
+        ) : null}
+        {email ? (
+          <a href={`mailto:${email}`} class="pkontakt__link" data-cursor-label="E-Mail">
+            <svg width="16" height="16" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M12 3H2c-.6 0-1 .4-1 1v6c0 .6.4 1 1 1h10c.6 0 1-.4 1-1V4c0-.6-.4-1-1-1zm0 2L7 8 2 5V4l5 3 5-3v1z" fill="currentColor"/></svg>
+            <span>{email}</span>
+          </a>
+        ) : null}
+        {website ? (
+          <a href={website} target="_blank" rel="noopener noreferrer" class="pkontakt__link" data-cursor-label="Website">
+            <svg width="16" height="16" viewBox="0 0 14 14" fill="none" aria-hidden="true"><circle cx="7" cy="7" r="5.5" stroke="currentColor" stroke-width="1.1"/><path d="M1.5 7h11M7 1.5c1.6 1.6 1.6 9.4 0 11M7 1.5C5.4 3.1 5.4 10.9 7 12.5" stroke="currentColor" stroke-width="1.1"/></svg>
+            <span>{websiteLabel}</span>
+          </a>
+        ) : null}
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .pkontakt { background: var(--grad-navy); color: #fff; padding-block: var(--section-gap-sm); }
+  .pkontakt__inner { display: grid; grid-template-columns: 1fr 1fr; gap: 2.5rem; align-items: center; }
+  .pkontakt .eyebrow { color: var(--color-accent); }
+  .pkontakt .eyebrow::before { background: rgba(255,255,255,0.4); }
+  .pkontakt__title { color: #fff; font-size: clamp(1.75rem, 3.5vw, 2.75rem); font-weight: 400; line-height: 1.05; margin: 0; }
+  .pkontakt__loc { margin-top: 0.75rem; font-family: var(--font-mono); font-size: 0.85rem; letter-spacing: 0.04em; color: rgba(255,255,255,0.6); }
+  .pkontakt__actions { display: flex; flex-direction: column; gap: 0.75rem; }
+  .pkontakt__link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem 1.25rem;
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.14);
+    border-radius: var(--radius-md);
+    color: #fff;
+    font-size: 1rem;
+    transition: background-color 200ms, border-color 200ms, transform 200ms var(--ease-out);
+    word-break: break-word;
+  }
+  .pkontakt__link svg { flex-shrink: 0; color: var(--color-accent); }
+  .pkontakt__link:hover { background: rgba(255,255,255,0.12); border-color: var(--color-accent); transform: translateY(-2px); }
+
+  @media (max-width: 760px) {
+    .pkontakt__inner { grid-template-columns: 1fr; gap: 2rem; }
+  }
+</style>

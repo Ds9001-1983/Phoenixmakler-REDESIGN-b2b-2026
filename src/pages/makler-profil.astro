@@ -1,0 +1,577 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const wochentage: { key: string; label: string }[] = [
+  { key: 'Mo', label: 'Montag' },
+  { key: 'Di', label: 'Dienstag' },
+  { key: 'Mi', label: 'Mittwoch' },
+  { key: 'Do', label: 'Donnerstag' },
+  { key: 'Fr', label: 'Freitag' },
+  { key: 'Sa', label: 'Samstag' },
+  { key: 'So', label: 'Sonntag' },
+];
+---
+
+<BaseLayout
+  title="Mein Profil — Phönix Maklerverbund"
+  description="Gestalte deine persönliche Profilseite im Phönix-Maklerverbund."
+  noindex
+  hideFooter
+>
+  <section class="ep">
+    <div class="ep__container">
+      {/* LADEZUSTAND */}
+      <div class="ep__state" data-state="loading">
+        <p>Einen Moment, dein Profil wird geladen …</p>
+      </div>
+
+      {/* LINK ANFORDERN (kein/ungültiger Token) */}
+      <div class="ep__state ep__card" data-state="request" hidden>
+        <span class="ep__kicker">Profil-Zugang</span>
+        <h1 class="ep__title">Dein persönlicher Bearbeitungs-Link</h1>
+        <p class="ep__lead">
+          Gib die E-Mail-Adresse ein, die im Phönix-Maklerverbund hinterlegt ist. Falls du als
+          aktiver Makler geführt wirst, schicken wir dir umgehend einen Link, mit dem du dein
+          Profil bearbeiten kannst.
+        </p>
+        <form class="ep__request-form" data-request-form>
+          <label for="reqEmail" class="ep__label">E-Mail-Adresse</label>
+          <input id="reqEmail" type="email" autocomplete="email" required placeholder="name@beispiel.de" data-req-email />
+          <p class="ep__msg" data-req-msg></p>
+          <button type="submit" class="btn btn-accent btn-lg" data-req-submit>
+            <span data-req-label>Link anfordern</span>
+          </button>
+        </form>
+        <div class="ep__request-done" data-request-done hidden>
+          <p>Wenn deine Adresse bei uns aktiv ist, ist der Link unterwegs. Schau gleich in dein Postfach. 📬</p>
+        </div>
+      </div>
+
+      {/* EDITOR */}
+      <form class="ep__editor" data-state="editor" hidden>
+        <header class="ep__head">
+          <span class="ep__kicker">Mein Profil</span>
+          <h1 class="ep__title" data-editor-greeting>Deine Profilseite</h1>
+          <p class="ep__lead">
+            Fülle die Felder aus, wie du auf deiner Seite erscheinen möchtest. Alles in einem festen,
+            barrierefreien Layout. Pflichtfelder sind markiert.
+          </p>
+          <div class="ep__status-banner" data-status-banner hidden></div>
+        </header>
+
+        {/* FOTO */}
+        <fieldset class="ep__group">
+          <legend>Profilfoto</legend>
+          <div class="ep__foto">
+            <div class="ep__foto-preview" data-foto-preview>
+              <span data-foto-initials>—</span>
+            </div>
+            <div class="ep__foto-actions">
+              <label class="btn btn-outline">
+                <input type="file" accept="image/jpeg,image/png,image/webp,image/heic,image/heif" hidden data-foto-input />
+                Foto auswählen
+              </label>
+              <p class="ep__hint">JPG, PNG, WEBP oder HEIC — max. 8 MB. Wird sofort gespeichert.</p>
+              <p class="ep__msg" data-foto-msg></p>
+            </div>
+          </div>
+        </fieldset>
+
+        {/* HEADLINE */}
+        <fieldset class="ep__group">
+          <legend>Überschrift / Claim <span class="ep__req">Pflicht</span></legend>
+          <input type="text" data-f="headline" placeholder="z. B. Ihr Partner für Vorsorge & Absicherung" />
+          <p class="ep__counter"><span data-count-for="headline">0</span> / <span data-max-for="headline">80</span></p>
+        </fieldset>
+
+        {/* BIO */}
+        <fieldset class="ep__group">
+          <legend>Über mich <span class="ep__req">Pflicht</span></legend>
+          <textarea data-f="bio" rows="6" placeholder="Erzähle in ein paar Sätzen, wer du bist, wofür du stehst und wie du deine Kundinnen und Kunden begleitest."></textarea>
+          <p class="ep__counter"><span data-count-for="bio">0</span> / <span data-max-for="bio">1500</span></p>
+          <p class="ep__hint">Tipp: Leerzeile = neuer Absatz.</p>
+        </fieldset>
+
+        {/* SKILLS */}
+        <fieldset class="ep__group">
+          <legend>Schwerpunkte</legend>
+          <textarea data-f="skills" rows="5" placeholder="Ein Schwerpunkt pro Zeile, z. B.:&#10;Altersvorsorge&#10;Berufsunfähigkeit&#10;Sachversicherung"></textarea>
+          <p class="ep__hint">Ein Eintrag pro Zeile · max. 12.</p>
+        </fieldset>
+
+        {/* QUALIFIKATIONEN */}
+        <fieldset class="ep__group">
+          <legend>Ausbildung & Qualifikationen</legend>
+          <textarea data-f="qualifikationen" rows="5" placeholder="Ein Eintrag pro Zeile, z. B.:&#10;Versicherungsfachmann (IHK)&#10;Diplom-Betriebswirt"></textarea>
+          <p class="ep__hint">Ein Eintrag pro Zeile · max. 12.</p>
+        </fieldset>
+
+        {/* BÜROZEITEN */}
+        <fieldset class="ep__group">
+          <legend>Bürozeiten</legend>
+          <div class="ep__zeiten">
+            {wochentage.map((t) => (
+              <div class="ep__zeit-row" data-zeit-row={t.key}>
+                <label class="ep__zeit-toggle">
+                  <input type="checkbox" data-zeit-on={t.key} />
+                  <span>{t.label}</span>
+                </label>
+                <div class="ep__zeit-times">
+                  <input type="time" data-zeit-von={t.key} disabled />
+                  <span class="ep__zeit-sep">bis</span>
+                  <input type="time" data-zeit-bis={t.key} disabled />
+                </div>
+              </div>
+            ))}
+          </div>
+        </fieldset>
+
+        {/* FOKUS */}
+        <fieldset class="ep__group">
+          <legend>Spezialisierung</legend>
+          <label class="ep__check">
+            <input type="checkbox" data-fokus-aktiv />
+            <span>Ich möchte einen Schwerpunkt besonders hervorheben</span>
+          </label>
+          <input type="text" data-fokus-wert placeholder="z. B. Altersvorsorge" disabled />
+          <p class="ep__hint">Wird oben als Badge angezeigt: „Spezialist für …".</p>
+        </fieldset>
+
+        {/* KONTAKT */}
+        <fieldset class="ep__group">
+          <legend>Kontakt (optional)</legend>
+          <p class="ep__hint">Leer lassen = die im System hinterlegten Daten werden verwendet.</p>
+          <div class="ep__kontakt-grid">
+            <div>
+              <label class="ep__label" for="kTel">Telefon</label>
+              <input id="kTel" type="tel" data-kontakt="telefon" data-ph-default placeholder="" />
+            </div>
+            <div>
+              <label class="ep__label" for="kMail">E-Mail</label>
+              <input id="kMail" type="email" data-kontakt="email" data-ph-default placeholder="" />
+            </div>
+            <div>
+              <label class="ep__label" for="kWeb">Website</label>
+              <input id="kWeb" type="url" data-kontakt="website" placeholder="https://…" />
+            </div>
+          </div>
+        </fieldset>
+
+        {/* RECHTLICHES */}
+        <fieldset class="ep__group">
+          <legend>Zusätzliche rechtliche Hinweise (optional)</legend>
+          <textarea data-f="rechtliches" rows="4" placeholder="Nur falls du eigene ergänzende Hinweise anzeigen möchtest."></textarea>
+        </fieldset>
+
+        <div class="ep__save-bar">
+          <p class="ep__msg" data-save-msg></p>
+          <button type="submit" class="btn btn-accent btn-lg" data-save-submit>
+            <span data-save-label>Profil speichern</span>
+          </button>
+        </div>
+      </form>
+
+      {/* UNGÜLTIG (Server-Fehler etc.) */}
+      <div class="ep__state ep__card" data-state="error" hidden>
+        <span class="ep__kicker ep__kicker--err">Es ist etwas schiefgelaufen</span>
+        <h1 class="ep__title">Bitte später erneut versuchen</h1>
+        <p class="ep__lead">Falls das Problem bleibt, melde dich unter <a href="mailto:info@phoenix-maklerverbund.de">info@phoenix-maklerverbund.de</a>.</p>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .ep { background: var(--color-bg-warm); padding-block: clamp(3rem, 8vh, 6rem); min-height: 80vh; }
+  .ep__container { max-width: 760px; margin-inline: auto; padding-inline: var(--padding-x); }
+  .ep__card { background: #fff; border-radius: var(--radius-lg); padding: clamp(2rem, 5vw, 3rem); box-shadow: var(--shadow-md); }
+  .ep__state[data-state="loading"] { text-align: center; padding: 4rem 0; color: var(--color-text-muted); }
+
+  .ep__kicker { display: inline-block; font-family: var(--font-mono); font-size: 0.78rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--color-accent-dark); margin-bottom: 0.75rem; }
+  .ep__kicker--err { color: #c93c3c; }
+  .ep__title { font-family: var(--font-display); font-size: clamp(1.9rem, 4vw, 2.75rem); font-weight: 400; line-height: 1.05; margin: 0 0 1rem; }
+  .ep__lead { font-size: 1.05rem; line-height: 1.6; color: var(--color-text-muted); margin: 0 0 1.5rem; max-width: 60ch; }
+
+  .ep__editor { display: flex; flex-direction: column; gap: 1.5rem; }
+  .ep__head { background: #fff; border-radius: var(--radius-lg); padding: clamp(1.75rem, 4vw, 2.5rem); box-shadow: var(--shadow-sm); }
+  .ep__status-banner { margin-top: 1rem; padding: 0.9rem 1.1rem; border-radius: var(--radius-md); font-size: 0.92rem; line-height: 1.5; }
+  .ep__status-banner.is-pending { background: #faf6ee; border-left: 3px solid var(--color-accent); color: var(--color-accent-dark); }
+  .ep__status-banner.is-live { background: #eef6ee; border-left: 3px solid #4a9d5b; color: #2f6b3c; }
+
+  .ep__group { border: 1px solid var(--color-border); border-radius: var(--radius-lg); padding: 1.5rem; background: #fff; }
+  .ep__group legend { font-family: var(--font-body); font-weight: 600; font-size: 1rem; color: var(--color-ink); padding-inline: 0.4rem; }
+  .ep__req { display: inline-block; margin-left: 0.4rem; font-family: var(--font-mono); font-size: 0.68rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--color-accent-dark); }
+
+  .ep input[type="text"], .ep input[type="email"], .ep input[type="tel"], .ep input[type="url"], .ep textarea {
+    width: 100%;
+    margin-top: 0.75rem;
+    padding: 0.85rem 1rem;
+    border: 1.5px solid var(--color-border-strong);
+    border-radius: var(--radius-md);
+    background: #fff;
+    font-size: 1rem;
+    color: var(--color-ink);
+    font-family: var(--font-body);
+  }
+  .ep textarea { resize: vertical; line-height: 1.55; }
+  .ep input:focus, .ep textarea:focus { outline: none; border-color: var(--color-accent); box-shadow: 0 0 0 3px rgba(184,134,91,0.15); }
+
+  .ep__label { display: block; font-size: 0.85rem; color: var(--color-text-muted); }
+  .ep__counter { margin-top: 0.4rem; font-family: var(--font-mono); font-size: 0.75rem; color: var(--color-text-subtle); text-align: right; }
+  .ep__counter.is-over { color: #c93c3c; }
+  .ep__hint { margin-top: 0.5rem; font-size: 0.82rem; color: var(--color-text-subtle); line-height: 1.5; }
+  .ep__msg { margin-top: 0.5rem; font-size: 0.88rem; min-height: 1.1em; }
+  .ep__msg.is-error { color: #c93c3c; }
+  .ep__msg.is-ok { color: #2f6b3c; }
+  .ep__msg.is-info { color: var(--color-text-muted); }
+
+  /* Foto */
+  .ep__foto { display: flex; gap: 1.5rem; align-items: center; margin-top: 0.75rem; flex-wrap: wrap; }
+  .ep__foto-preview { flex-shrink: 0; width: 96px; height: 96px; border-radius: 999px; overflow: hidden; background: var(--color-primary-dark); color: #fff; display: flex; align-items: center; justify-content: center; position: relative; }
+  .ep__foto-preview img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .ep__foto-preview span { font-family: var(--font-display); font-size: 1.6rem; }
+  .ep__foto-actions { display: flex; flex-direction: column; gap: 0.4rem; }
+  .ep__foto-actions .btn { align-self: flex-start; cursor: pointer; }
+
+  /* Bürozeiten */
+  .ep__zeiten { margin-top: 0.75rem; display: flex; flex-direction: column; gap: 0.6rem; }
+  .ep__zeit-row { display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+  .ep__zeit-toggle { display: inline-flex; align-items: center; gap: 0.6rem; min-width: 9rem; }
+  .ep__zeit-times { display: inline-flex; align-items: center; gap: 0.5rem; }
+  .ep__zeit-times input[type="time"] { margin-top: 0; width: auto; padding: 0.5rem 0.6rem; }
+  .ep__zeit-times input:disabled { opacity: 0.4; }
+  .ep__zeit-sep { font-size: 0.85rem; color: var(--color-text-subtle); }
+
+  .ep__check { display: inline-flex; align-items: center; gap: 0.6rem; margin-top: 0.5rem; }
+  .ep__kontakt-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 0.5rem; }
+  .ep__kontakt-grid > div:last-child { grid-column: 1 / -1; }
+
+  .ep__save-bar { position: sticky; bottom: 0; display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 1rem 1.25rem; background: rgba(255,255,255,0.95); backdrop-filter: blur(6px); border: 1px solid var(--color-border); border-radius: var(--radius-lg); box-shadow: var(--shadow-md); flex-wrap: wrap; }
+  .ep__save-bar .ep__msg { margin: 0; }
+  .ep__save-bar .btn { margin-left: auto; }
+
+  .ep__request-form { display: flex; flex-direction: column; gap: 0.5rem; align-items: flex-start; }
+  .ep__request-form input { width: 100%; }
+  .ep__request-form .btn { margin-top: 0.75rem; }
+
+  button[disabled] { opacity: 0.55; cursor: not-allowed; }
+
+  @media (max-width: 560px) {
+    .ep__kontakt-grid { grid-template-columns: 1fr; }
+    .ep__kontakt-grid > div:last-child { grid-column: auto; }
+  }
+</style>
+
+<script>
+  type Limits = {
+    headline: number; bio: number;
+    skills: { count: number; len: number };
+    qualifikationen: { count: number; len: number };
+    buerozeiten: number; fokusWert: number; rechtliches: number;
+    telefon: number; email: number; website: number;
+  };
+  type Buerozeit = { tag: string; von: string; bis: string };
+  type ProfilData = {
+    headline: string; bio: string; skills: string[]; qualifikationen: string[];
+    buerozeiten: Buerozeit[]; fokus: { aktiv: boolean; wert: string };
+    rechtliches: string; kontakt: { telefon?: string; email?: string; website?: string };
+    published: boolean; everApproved: boolean; slug: string;
+  };
+  type InfoResp = {
+    ok?: boolean; error?: string;
+    uid?: number; name?: string; ort?: string; plz?: string; telefon?: string; email?: string;
+    hasPhoto?: boolean; uploadToken?: string; limits?: Limits; profil?: ProfilData | null;
+  };
+
+  const WEEKDAYS = ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'];
+
+  const $ = <T extends HTMLElement = HTMLElement>(sel: string) => document.querySelector<T>(sel);
+  const params = new URLSearchParams(window.location.search);
+  const token = params.get('token') ?? '';
+
+  let uploadToken = '';
+  let limits: Limits | null = null;
+
+  const setState = (s: 'loading' | 'request' | 'editor' | 'error') => {
+    document.querySelectorAll<HTMLElement>('[data-state]').forEach((el) => {
+      el.hidden = el.dataset.state !== s;
+    });
+  };
+
+  const setMsg = (el: HTMLElement | null, text: string, kind: '' | 'error' | 'ok' | 'info' = '') => {
+    if (!el) return;
+    el.textContent = text;
+    el.className = 'ep__msg' + (kind ? ` is-${kind}` : '');
+  };
+
+  // ---------- LINK ANFORDERN ----------
+  const setupRequestForm = () => {
+    const form = $('[data-request-form]') as HTMLFormElement | null;
+    const emailIn = $('[data-req-email]') as HTMLInputElement | null;
+    const msg = $('[data-req-msg]');
+    const done = $('[data-request-done]');
+    const submit = $('[data-req-submit]') as HTMLButtonElement | null;
+    const label = $('[data-req-label]');
+    form?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = emailIn?.value.trim() ?? '';
+      if (!email) return;
+      if (submit) submit.disabled = true;
+      if (label) label.textContent = 'Wird gesendet …';
+      setMsg(msg, '');
+      try {
+        await fetch('/api/profil-link-request', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email }),
+        });
+        form.hidden = true;
+        if (done) done.hidden = false;
+      } catch {
+        setMsg(msg, 'Netzwerkfehler — bitte erneut versuchen.', 'error');
+        if (submit) submit.disabled = false;
+        if (label) label.textContent = 'Link anfordern';
+      }
+    });
+  };
+
+  // ---------- EDITOR ----------
+  const fieldVal = (name: string): string => ($(`[data-f="${name}"]`) as HTMLInputElement | HTMLTextAreaElement | null)?.value ?? '';
+  const setField = (name: string, v: string) => {
+    const el = $(`[data-f="${name}"]`) as HTMLInputElement | HTMLTextAreaElement | null;
+    if (el) el.value = v;
+  };
+
+  const wireCounter = (name: string, max: number) => {
+    const el = $(`[data-f="${name}"]`) as HTMLInputElement | HTMLTextAreaElement | null;
+    const count = $(`[data-count-for="${name}"]`);
+    const maxEl = $(`[data-max-for="${name}"]`);
+    if (maxEl) maxEl.textContent = String(max);
+    const upd = () => {
+      if (!el || !count) return;
+      const len = el.value.length;
+      count.textContent = String(len);
+      count.parentElement?.classList.toggle('is-over', len > max);
+    };
+    el?.addEventListener('input', upd);
+    upd();
+  };
+
+  const linesToList = (name: string, maxCount: number): string[] =>
+    fieldVal(name).split('\n').map((s) => s.trim()).filter(Boolean).slice(0, maxCount);
+
+  const populate = (info: InfoResp) => {
+    limits = info.limits ?? null;
+    uploadToken = info.uploadToken ?? '';
+
+    const greeting = $('[data-editor-greeting]');
+    if (greeting && info.name) greeting.textContent = `Hallo ${info.name.split(' ')[0]}, das ist deine Profilseite`;
+
+    // Foto-Vorschau
+    const initials = (info.name ?? '').split(' ').map((n) => n[0]).slice(0, 2).join('').toUpperCase();
+    const initEl = $('[data-foto-initials]');
+    if (initEl) initEl.textContent = initials || '—';
+    if (info.hasPhoto && info.uid) showFotoPreview(`/api/vermittler-foto?uid=${info.uid}`);
+
+    // Kontakt-Platzhalter aus PW
+    const telPh = $('[data-kontakt="telefon"]') as HTMLInputElement | null;
+    if (telPh && info.telefon) telPh.placeholder = info.telefon;
+    const mailPh = $('[data-kontakt="email"]') as HTMLInputElement | null;
+    if (mailPh && info.email) mailPh.placeholder = info.email;
+
+    const p = info.profil;
+    if (p) {
+      setField('headline', p.headline ?? '');
+      setField('bio', p.bio ?? '');
+      setField('skills', (p.skills ?? []).join('\n'));
+      setField('qualifikationen', (p.qualifikationen ?? []).join('\n'));
+      setField('rechtliches', p.rechtliches ?? '');
+      (['telefon', 'email', 'website'] as const).forEach((k) => {
+        const el = $(`[data-kontakt="${k}"]`) as HTMLInputElement | null;
+        if (el && p.kontakt && p.kontakt[k]) el.value = p.kontakt[k] as string;
+      });
+      // Bürozeiten
+      (p.buerozeiten ?? []).forEach((z) => {
+        const on = $(`[data-zeit-on="${z.tag}"]`) as HTMLInputElement | null;
+        const von = $(`[data-zeit-von="${z.tag}"]`) as HTMLInputElement | null;
+        const bis = $(`[data-zeit-bis="${z.tag}"]`) as HTMLInputElement | null;
+        if (on && von && bis && !on.checked) {
+          on.checked = true; von.disabled = false; bis.disabled = false;
+          von.value = z.von; bis.value = z.bis;
+        }
+      });
+      // Fokus
+      const fAktiv = $('[data-fokus-aktiv]') as HTMLInputElement | null;
+      const fWert = $('[data-fokus-wert]') as HTMLInputElement | null;
+      if (fAktiv && fWert && p.fokus) {
+        fAktiv.checked = !!p.fokus.aktiv;
+        fWert.disabled = !p.fokus.aktiv;
+        fWert.value = p.fokus.wert ?? '';
+      }
+      // Status-Banner
+      const banner = $('[data-status-banner]');
+      if (banner) {
+        banner.hidden = false;
+        if (p.published) {
+          banner.className = 'ep__status-banner is-live';
+          banner.textContent = 'Dein Profil ist online. Änderungen gehen nach dem Speichern sofort live.';
+        } else if (p.everApproved) {
+          banner.className = 'ep__status-banner is-pending';
+          banner.textContent = 'Dein Profil ist derzeit offline. Nach dem Speichern wird es wieder veröffentlicht.';
+        } else {
+          banner.className = 'ep__status-banner is-pending';
+          banner.textContent = 'Dein Profil wartet auf die erste Freigabe durch Phönix. Nach dem Speichern prüft das Team es kurz.';
+        }
+      }
+    }
+
+    if (limits) {
+      wireCounter('headline', limits.headline);
+      wireCounter('bio', limits.bio);
+    }
+
+    setupZeitToggles();
+    setupFokusToggle();
+    setupFotoUpload(info.uid ?? 0);
+    setupSave();
+    setState('editor');
+  };
+
+  const setupZeitToggles = () => {
+    WEEKDAYS.forEach((d) => {
+      const on = $(`[data-zeit-on="${d}"]`) as HTMLInputElement | null;
+      const von = $(`[data-zeit-von="${d}"]`) as HTMLInputElement | null;
+      const bis = $(`[data-zeit-bis="${d}"]`) as HTMLInputElement | null;
+      on?.addEventListener('change', () => {
+        const en = on.checked;
+        if (von) { von.disabled = !en; if (en && !von.value) von.value = '09:00'; }
+        if (bis) { bis.disabled = !en; if (en && !bis.value) bis.value = '17:00'; }
+      });
+    });
+  };
+
+  const setupFokusToggle = () => {
+    const aktiv = $('[data-fokus-aktiv]') as HTMLInputElement | null;
+    const wert = $('[data-fokus-wert]') as HTMLInputElement | null;
+    aktiv?.addEventListener('change', () => { if (wert) wert.disabled = !aktiv.checked; });
+  };
+
+  const showFotoPreview = (src: string) => {
+    const box = $('[data-foto-preview]');
+    if (!box) return;
+    let img = box.querySelector('img');
+    if (!img) { img = document.createElement('img'); img.alt = ''; box.appendChild(img); }
+    img.src = src;
+  };
+
+  const setupFotoUpload = (uid: number) => {
+    const input = $('[data-foto-input]') as HTMLInputElement | null;
+    const msg = $('[data-foto-msg]');
+    input?.addEventListener('change', async () => {
+      const file = input.files?.[0];
+      if (!file) return;
+      if (file.size > 8 * 1024 * 1024) { setMsg(msg, 'Datei größer als 8 MB.', 'error'); return; }
+      if (!file.type.startsWith('image/')) { setMsg(msg, 'Bitte eine Bilddatei wählen.', 'error'); return; }
+      showFotoPreview(URL.createObjectURL(file));
+      setMsg(msg, 'Foto wird hochgeladen …', 'info');
+      const fd = new FormData();
+      fd.append('token', uploadToken);
+      fd.append('file', file);
+      try {
+        const r = await fetch('/api/foto-upload', { method: 'POST', body: fd });
+        if (r.ok) { setMsg(msg, 'Foto gespeichert ✓', 'ok'); if (uid) showFotoPreview(`/api/vermittler-foto?uid=${uid}&t=${Date.now()}`); }
+        else setMsg(msg, 'Foto-Upload fehlgeschlagen — bitte erneut versuchen.', 'error');
+      } catch {
+        setMsg(msg, 'Netzwerkfehler beim Foto-Upload.', 'error');
+      }
+    });
+  };
+
+  const collectData = (): ProfilData => {
+    const buerozeiten: Buerozeit[] = [];
+    WEEKDAYS.forEach((d) => {
+      const on = $(`[data-zeit-on="${d}"]`) as HTMLInputElement | null;
+      const von = ($(`[data-zeit-von="${d}"]`) as HTMLInputElement | null)?.value ?? '';
+      const bis = ($(`[data-zeit-bis="${d}"]`) as HTMLInputElement | null)?.value ?? '';
+      if (on?.checked && von && bis) buerozeiten.push({ tag: d, von, bis });
+    });
+    const fAktiv = ($('[data-fokus-aktiv]') as HTMLInputElement | null)?.checked ?? false;
+    const fWert = ($('[data-fokus-wert]') as HTMLInputElement | null)?.value.trim() ?? '';
+    const kontakt: ProfilData['kontakt'] = {};
+    (['telefon', 'email', 'website'] as const).forEach((k) => {
+      const v = ($(`[data-kontakt="${k}"]`) as HTMLInputElement | null)?.value.trim() ?? '';
+      if (v) kontakt[k] = v;
+    });
+    return {
+      headline: fieldVal('headline').trim(),
+      bio: fieldVal('bio').trim(),
+      skills: linesToList('skills', limits?.skills.count ?? 12),
+      qualifikationen: linesToList('qualifikationen', limits?.qualifikationen.count ?? 12),
+      buerozeiten,
+      fokus: { aktiv: fAktiv, wert: fWert },
+      rechtliches: fieldVal('rechtliches').trim(),
+      kontakt,
+      published: false, everApproved: false, slug: '',
+    };
+  };
+
+  const setupSave = () => {
+    const form = $('.ep__editor') as HTMLFormElement | null;
+    const submit = $('[data-save-submit]') as HTMLButtonElement | null;
+    const label = $('[data-save-label]');
+    const msg = $('[data-save-msg]');
+    form?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const data = collectData();
+      if (!data.headline) { setMsg(msg, 'Bitte eine Überschrift angeben.', 'error'); return; }
+      if (!data.bio) { setMsg(msg, 'Bitte eine Kurzbiografie angeben.', 'error'); return; }
+      if (submit) submit.disabled = true;
+      if (label) label.textContent = 'Speichern …';
+      setMsg(msg, '');
+      try {
+        const r = await fetch('/api/profil-save', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ token, data }),
+        });
+        const res = await r.json().catch(() => ({}));
+        if (r.ok && res.ok) {
+          if (res.live && res.slug && msg) {
+            msg.className = 'ep__msg is-ok';
+            msg.innerHTML = 'Gespeichert ✓ — deine Seite ist online: <a href="/makler/' + res.slug + '" target="_blank" rel="noopener">/makler/' + res.slug + '</a>';
+          } else if (res.live) {
+            setMsg(msg, 'Gespeichert ✓ — deine Änderungen sind jetzt online.', 'ok');
+          } else {
+            setMsg(msg, 'Gespeichert ✓ — Phönix prüft dein Profil und schaltet es frei.', 'ok');
+          }
+        } else if (res.errors?.length) {
+          setMsg(msg, res.errors.join(' '), 'error');
+        } else if (res.error === 'invalid_or_expired') {
+          setMsg(msg, 'Dein Link ist abgelaufen. Bitte fordere unten einen neuen an.', 'error');
+        } else {
+          setMsg(msg, 'Speichern fehlgeschlagen — bitte erneut versuchen.', 'error');
+        }
+      } catch {
+        setMsg(msg, 'Netzwerkfehler — bitte erneut versuchen.', 'error');
+      } finally {
+        if (submit) submit.disabled = false;
+        if (label) label.textContent = 'Profil speichern';
+      }
+    });
+  };
+
+  // ---------- INIT ----------
+  setupRequestForm();
+  if (!token) {
+    setState('request');
+  } else {
+    fetch('/api/profil-info?token=' + encodeURIComponent(token))
+      .then(async (r) => {
+        if (r.status >= 500) { setState('error'); return; }
+        const info = (await r.json()) as InfoResp;
+        if (r.ok && info.ok) populate(info);
+        else setState('request');
+      })
+      .catch(() => setState('error'));
+  }
+</script>

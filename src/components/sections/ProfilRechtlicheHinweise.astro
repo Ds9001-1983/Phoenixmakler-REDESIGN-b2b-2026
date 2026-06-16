@@ -1,0 +1,65 @@
+---
+// Pflichtblock auf jeder Makler-Profilseite (Haftung/Transparenz).
+// Fester Disclaimer + optionaler Makler-Text + Pflicht-Links zu den bestehenden Rechtsseiten.
+interface Props {
+  name: string;
+  rechtliches?: string;
+}
+const { name, rechtliches = '' } = Astro.props;
+const zusatz = rechtliches
+  .split(/\n{1,}/)
+  .map((p) => p.trim())
+  .filter(Boolean);
+---
+
+<section class="prechts section-sm bg-soft">
+  <div class="container-narrow">
+    <span class="eyebrow">Rechtliche Hinweise</span>
+    <p class="prechts__disclaimer">
+      Diese Profilseite gibt persönliche Angaben von {name} im Rahmen des Phönix
+      Maklerverbunds wieder. Maßgeblich für rechtliche und aufsichtsrechtliche Informationen
+      sind die Angaben in Impressum und Erstinformation des Phönix Maklerverbunds.
+    </p>
+
+    {zusatz.length > 0 && (
+      <div class="prechts__zusatz">
+        {zusatz.map((p) => <p>{p}</p>)}
+      </div>
+    )}
+
+    <ul class="prechts__links">
+      <li><a href="/impressum">Impressum</a></li>
+      <li><a href="/erstinformation">Erstinformation</a></li>
+      <li><a href="/datenschutz">Datenschutz</a></li>
+      <li><a href="/beschwerdemanagement">Beschwerdemanagement</a></li>
+    </ul>
+  </div>
+</section>
+
+<style>
+  .prechts__disclaimer {
+    margin-top: 1.25rem;
+    font-size: 0.92rem;
+    line-height: 1.65;
+    color: var(--color-text-muted);
+    max-width: 70ch;
+  }
+  .prechts__zusatz { margin-top: 1rem; display: flex; flex-direction: column; gap: 0.75rem; }
+  .prechts__zusatz p { font-size: 0.92rem; line-height: 1.65; color: var(--color-text-muted); max-width: 70ch; }
+  .prechts__links {
+    list-style: none;
+    margin-top: 1.5rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.5rem;
+  }
+  .prechts__links a {
+    font-family: var(--font-mono);
+    font-size: 0.82rem;
+    letter-spacing: 0.03em;
+    color: var(--color-accent-dark);
+    border-bottom: 1px solid transparent;
+    transition: border-color 180ms;
+  }
+  .prechts__links a:hover { border-bottom-color: var(--color-accent-dark); }
+</style>
