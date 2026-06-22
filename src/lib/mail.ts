@@ -10,14 +10,19 @@ interface SmtpEnv {
 
 let cached: Transporter | null = null;
 
+// In Astro/Vite ist import.meta.env das Laufzeit-env-Objekt. Außerhalb (z.B. im
+// tsx-Bulk-Mail-Script) ist es undefined → Fallback auf process.env, damit
+// dieselbe Sende-Funktion serverseitig und im Script genutzt werden kann.
+const ENV: Record<string, string | undefined> = (import.meta as any).env ?? process.env;
+
 const readSmtp = (): SmtpEnv | null => {
-  const host = import.meta.env.SMTP_HOST;
-  const port = Number(import.meta.env.SMTP_PORT ?? 587);
-  const user = import.meta.env.SMTP_USER;
-  const pass = import.meta.env.SMTP_PASS;
-  const from = import.meta.env.MAIL_FROM ?? user;
+  const host = ENV.SMTP_HOST;
+  const port = Number(ENV.SMTP_PORT ?? 587);
+  const user = ENV.SMTP_USER;
+  const pass = ENV.SMTP_PASS;
+  const from = ENV.MAIL_FROM ?? user;
   if (!host || !user || !pass) return null;
-  return { host, port, user, pass, from };
+  return { host, port, user, pass, from: from as string };
 };
 
 const transport = (cfg: SmtpEnv): Transporter => {
