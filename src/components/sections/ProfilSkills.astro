@@ -38,5 +38,11 @@ const { skills } = Astro.props;
     font-size: 0.95rem;
     font-weight: 500;
     letter-spacing: -0.005em;
+    /* Längere Schwerpunkte (kurze Sätze) brechen sauber mehrzeilig um, statt aus dem
+       Container zu laufen oder gekappt zu wirken. Kurze Tags bleiben einzeilige Pills. */
+    max-width: min(100%, 46ch);
+    line-height: 1.4;
+    text-align: left;
+    overflow-wrap: anywhere;
   }
 </style>

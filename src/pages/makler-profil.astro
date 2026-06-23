@@ -100,7 +100,7 @@ const wochentage: { key: string; label: string }[] = [
           <legend>Schwerpunkte</legend>
           <p class="ep__caption">Trag ein paar Themen ein, bei denen du stark bist — z. B. Altersvorsorge, Berufsunfähigkeit oder Sachversicherung. Schon drei bis fünf Schwerpunkte wirken überzeugend.</p>
           <textarea data-f="skills" rows="5" placeholder="Ein Schwerpunkt pro Zeile, z. B.:&#10;Altersvorsorge&#10;Berufsunfähigkeit&#10;Sachversicherung"></textarea>
-          <p class="ep__hint">Ein Eintrag pro Zeile · max. 12.</p>
+          <p class="ep__hint" data-listhint="skills">Ein Eintrag pro Zeile · max. 12.</p>
         </fieldset>
 
         {/* QUALIFIKATIONEN */}
@@ -108,7 +108,7 @@ const wochentage: { key: string; label: string }[] = [
           <legend>Ausbildung & Qualifikationen</legend>
           <p class="ep__caption">Zeig deine Abschlüsse und Weiterbildungen — z. B. „Versicherungsfachmann (IHK)" oder „Fachwirt für Finanzberatung". Das unterstreicht deine Kompetenz.</p>
           <textarea data-f="qualifikationen" rows="5" placeholder="Ein Eintrag pro Zeile, z. B.:&#10;Versicherungsfachmann (IHK)&#10;Diplom-Betriebswirt"></textarea>
-          <p class="ep__hint">Ein Eintrag pro Zeile · max. 12.</p>
+          <p class="ep__hint" data-listhint="qualifikationen">Ein Eintrag pro Zeile · max. 12.</p>
         </fieldset>
 
         {/* BÜROZEITEN */}
@@ -222,6 +222,7 @@ const wochentage: { key: string; label: string }[] = [
   .ep__counter { margin-top: 0.4rem; font-family: var(--font-mono); font-size: 0.75rem; color: var(--color-text-subtle); text-align: right; }
   .ep__counter.is-over { color: #c93c3c; }
   .ep__hint { margin-top: 0.5rem; font-size: 0.82rem; color: var(--color-text-subtle); line-height: 1.5; }
+  .ep__hint.is-warn { color: #c93c3c; }
   /* Einladende Erklärzeile direkt unter der Überschrift (vor dem Eingabefeld). */
   .ep__caption { margin: 0.5rem 0 0.25rem; font-size: 0.9rem; line-height: 1.5; color: var(--color-text-muted); }
   .ep__msg { margin-top: 0.5rem; font-size: 0.88rem; min-height: 1.1em; }
@@ -361,6 +362,32 @@ const wochentage: { key: string; label: string }[] = [
     upd();
   };
 
+  // Listen-Felder (skills/qualifikationen): zeigt die Zeichen-Obergrenze je Eintrag und warnt,
+  // wenn etwas gekürzt würde — statt dass der Server still per slice() Text wegwirft.
+  const wireListHint = (name: string, maxCount: number, maxLen: number) => {
+    const el = $(`[data-f="${name}"]`) as HTMLTextAreaElement | null;
+    const hint = $(`[data-listhint="${name}"]`);
+    if (!el || !hint) return;
+    const base = `Ein Eintrag pro Zeile · max. ${maxCount} · bis zu ${maxLen} Zeichen je Eintrag.`;
+    const upd = () => {
+      const lines = el.value.split('\n').map((s) => s.trim()).filter(Boolean);
+      const tooLong = lines.filter((l) => l.length > maxLen).length;
+      const tooMany = lines.length > maxCount;
+      if (tooLong || tooMany) {
+        hint.classList.add('is-warn');
+        const parts: string[] = [];
+        if (tooMany) parts.push(`Nur die ersten ${maxCount} Einträge werden übernommen.`);
+        if (tooLong) parts.push(`${tooLong === 1 ? 'Ein Eintrag ist' : tooLong + ' Einträge sind'} länger als ${maxLen} Zeichen und ${tooLong === 1 ? 'wird' : 'werden'} beim Speichern gekürzt.`);
+        hint.textContent = '⚠ ' + parts.join(' ');
+      } else {
+        hint.classList.remove('is-warn');
+        hint.textContent = base;
+      }
+    };
+    el.addEventListener('input', upd);
+    upd();
+  };
+
   const linesToList = (name: string, maxCount: number): string[] =>
     fieldVal(name).split('\n').map((s) => s.trim()).filter(Boolean).slice(0, maxCount);
 
@@ -431,6 +458,8 @@ const wochentage: { key: string; label: string }[] = [
     if (limits) {
       wireCounter('headline', limits.headline);
       wireCounter('bio', limits.bio);
+      wireListHint('skills', limits.skills.count, limits.skills.len);
+      wireListHint('qualifikationen', limits.qualifikationen.count, limits.qualifikationen.len);
     }
 
     setupZeitToggles();
