@@ -63,8 +63,10 @@ export interface MaklerProfil extends ProfilContent {
 export const LIMITS = {
   headline: 80,
   bio: 1500,
-  skills: { count: 12, len: 50 },
-  qualifikationen: { count: 12, len: 120 },
+  // len großzügig: Schwerpunkte/Qualifikationen dürfen kurze Sätze tragen, ohne dass
+  // validateProfil sie still per slice() kürzt (Pills brechen mehrzeilig um, s. ProfilSkills).
+  skills: { count: 12, len: 200 },
+  qualifikationen: { count: 12, len: 220 },
   buerozeiten: 7,
   fokusWert: 60,
   telefon: 40,
