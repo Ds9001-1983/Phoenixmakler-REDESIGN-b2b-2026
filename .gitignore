@@ -28,3 +28,7 @@ pnpm-debug.log*
 # editor/tooling backups
 *.astro.bak
 **/*.astro.bak
+.vercel
+
+# bulk-mail idempotency log (scripts/dashboard-mail.mjs)
+scripts/.dashboard-mail-sent.json
