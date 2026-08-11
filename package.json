@@ -13,6 +13,7 @@
   "dependencies": {
     "@astrojs/vercel": "^7.8.2",
     "@types/nodemailer": "^8.0.0",
+    "@vercel/analytics": "^2.0.1",
     "@vercel/blob": "^2.3.3",
     "astro": "^4.16.18",
     "gsap": "^3.15.0",

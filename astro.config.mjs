@@ -7,7 +7,11 @@ export default defineConfig({
   site: 'https://www.phoenix-maklerverbund.de',
   trailingSlash: 'never',
   output: 'hybrid',
-  adapter: vercel(),
+  adapter: vercel({
+    webAnalytics: {
+      enabled: true,
+    },
+  }),
   build: {
     format: 'directory',
   },
