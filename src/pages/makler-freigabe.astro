@@ -5,7 +5,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import MaklerProfilContent from '../components/sections/MaklerProfilContent.astro';
 import { verifyToken } from '../lib/token';
 import { loadProfilByUid, type MaklerProfil } from '../lib/profil';
-import { loadVermittler, type PublicVermittler } from '../lib/vermittler';
+import { loadEditorBerechtigte, type PublicVermittler } from '../lib/vermittler';
 
 // Phönix-interne Vorschau- & Freigabe-Seite. Tokengeschützt (profil-admin), zeigt das
 // vom Makler eingereichte Profil 1:1 — AUCH wenn es noch nicht veröffentlicht ist.
@@ -20,7 +20,7 @@ let pwInaktiv = false;
 if (payload) {
   profil = await loadProfilByUid(payload.uid);
   if (profil) {
-    const vermittler = await loadVermittler();
+    const vermittler = await loadEditorBerechtigte();
     me = vermittler.find((v) => v.id === payload.uid) ?? null;
     if (!me) {
       // Tokengeschützt & nur für Phönix → Vorschau trotzdem zeigen, aber warnen.

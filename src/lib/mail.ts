@@ -1,4 +1,5 @@
 import nodemailer, { type Transporter } from 'nodemailer';
+import { PROFIL_TTL_DAYS } from './token';
 
 interface SmtpEnv {
   host: string;
@@ -145,7 +146,7 @@ export const sendApplicantPhoto = async (to: string, firstName: string, uploadLi
 
 // --- Self-Service-Profil ---------------------------------------------------
 
-const profilInviteHtml = (firstName: string, profilLink: string): string => `
+const profilInviteHtml = (firstName: string, profilLink: string, gueltigBis: string): string => `
 <!doctype html>
 <html lang="de"><body style="margin:0;background:#f4f1eb;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;color:#1a1a1a">
 <div style="max-width:560px;margin:0 auto;padding:24px">
@@ -161,10 +162,13 @@ const profilInviteHtml = (firstName: string, profilLink: string): string => `
       Klick einfach auf den Button, um dein Profil auszufüllen:
     </p>
     <a href="${profilLink}" style="display:inline-block;background:#b8865b;color:#fff;text-decoration:none;padding:14px 32px;border-radius:6px;font-weight:500;font-size:15px">Profil gestalten →</a>
-    <p style="font-size:13px;line-height:1.6;color:#777;margin-top:28px">
-      Dein persönlicher Link ist 60 Tage gültig. Sollte er ablaufen, kannst du dir auf
-      <a href="${esc(profilLink.split('?')[0])}" style="color:#b8865b">der Profil-Seite</a> jederzeit
-      einen neuen schicken lassen. Deine Seite wird erst nach einer kurzen Prüfung durch Phönix öffentlich sichtbar.
+    <p style="font-size:15px;line-height:1.6;color:#333;margin-top:28px">
+      Der Link gilt ${PROFIL_TTL_DAYS} Tage, also bis zum ${gueltigBis}. Danach ist er nicht verloren:
+      Auf <a href="${esc(profilLink.split('?')[0])}" style="color:#b8865b;font-weight:500">der Profil-Seite</a>
+      trägst du einfach deine E-Mail-Adresse ein und bekommst sofort einen neuen geschickt.
+    </p>
+    <p style="font-size:13px;line-height:1.6;color:#777;margin-top:16px">
+      Deine Seite wird erst nach einer kurzen Prüfung durch Phönix öffentlich sichtbar.
     </p>
     <div style="margin-top:24px;padding-top:20px;border-top:1px solid #eee;font-size:11px;color:#999">
       Phönix Maklerverbund GmbH · Zum weißen Stein 17 · 56587 Oberhonnefeld-Gierend
@@ -233,14 +237,21 @@ const profilRejectHtml = (firstName: string, editLink: string, reason: string): 
 </div>
 </body></html>`;
 
-export const sendProfilEinladung = async (to: string, firstName: string, profilLink: string): Promise<void> => {
+export const sendProfilEinladung = async (
+  to: string,
+  firstName: string,
+  profilLink: string,
+  opts?: { gueltigBis?: Date },
+): Promise<void> => {
   const cfg = readSmtp();
   if (!cfg) throw new Error('smtp_not_configured');
+  const bis = opts?.gueltigBis ?? new Date(Date.now() + PROFIL_TTL_DAYS * 86400 * 1000);
+  const bisText = bis.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' });
   await transport(cfg).sendMail({
     from: cfg.from,
     to,
     subject: 'Gestalte dein Profil im Phönix-Maklerverbund',
-    html: profilInviteHtml(firstName, profilLink),
+    html: profilInviteHtml(firstName, profilLink, bisText),
   });
 };
 
@@ -271,5 +282,22 @@ export const sendProfilRevision = async (
     to,
     subject: 'Dein Profil im Phönix-Maklerverbund braucht noch eine kleine Überarbeitung',
     html: profilRejectHtml(firstName, opts.editLink, opts.reason),
+  });
+};
+
+// Schlichte interne Benachrichtigung (Status-Wächter, Betriebsmeldungen).
+// Bewusst ohne Layout — das liest nur das Phoenix-Team bzw. der Betreiber.
+export const sendInternalNotice = async (
+  to: string,
+  subject: string,
+  lines: string[],
+): Promise<void> => {
+  const cfg = readSmtp();
+  if (!cfg) throw new Error('smtp_not_configured');
+  await transport(cfg).sendMail({
+    from: cfg.from,
+    to,
+    subject,
+    text: lines.join('\n'),
   });
 };

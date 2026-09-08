@@ -1,7 +1,6 @@
 import type { APIRoute } from 'astro';
-import { buildProfilToken } from '../../lib/token';
-import { loadVermittler } from '../../lib/vermittler';
-import { sendProfilEinladung } from '../../lib/mail';
+import { loadEditorBerechtigte } from '../../lib/vermittler';
+import { issueProfilLink } from '../../lib/profil-link';
 
 export const prerender = false;
 
@@ -44,12 +43,15 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
   if (rateLimited(key)) return generic;
 
   try {
-    const vermittler = await loadVermittler();
+    const vermittler = await loadEditorBerechtigte();
     const me = vermittler.find((v) => v.email.trim().toLowerCase() === email);
     if (me) {
-      const token = buildProfilToken(me.id, null, me.email, me.name, secret);
-      const link = `${base}/makler-profil?token=${encodeURIComponent(token)}`;
-      await sendProfilEinladung(me.email, firstNameOf(me.name), link);
+      // CRM-Ablage läuft mit: Fordert ein Makler seinen Link an, dessen Eintrag
+      // noch fehlt (z. B. Neuzugang), wird er dabei nachgetragen.
+      await issueProfilLink(
+        { uid: me.id, cid: null, email: me.email, name: me.name },
+        { sendMail: true, writeCrm: true },
+      );
     }
   } catch (e) {
     console.error('profil-link-request failed', (e as Error).message);

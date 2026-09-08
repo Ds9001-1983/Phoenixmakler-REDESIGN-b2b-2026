@@ -47,6 +47,24 @@ const wochentage: { key: string; label: string }[] = [
         </div>
       </div>
 
+      {/* NEUER LINK ÜBER DEN DAUERHAFTEN CRM-LINK (?m=…) */}
+      <div class="ep__state ep__card" data-state="resend" hidden>
+        <span class="ep__kicker">Profil-Zugang</span>
+        <h1 class="ep__title" data-resend-title>Neuen Bearbeitungs-Link anfordern</h1>
+        <p class="ep__lead">
+          Wir schicken den persönlichen Bearbeitungs-Link an die im Phönix-Maklerverbund
+          hinterlegte Adresse <strong data-resend-mail></strong>. Der Link gilt 14 Tage und
+          lässt sich hier jederzeit erneut anfordern.
+        </p>
+        <p class="ep__msg" data-resend-msg></p>
+        <button type="button" class="btn btn-accent btn-lg" data-resend-submit>
+          <span data-resend-label>Neuen Link senden</span>
+        </button>
+        <div class="ep__request-done" data-resend-done hidden>
+          <p>Der Link ist unterwegs an <strong data-resend-mail2></strong>. Schau gleich in dein Postfach. 📬</p>
+        </div>
+      </div>
+
       {/* EDITOR */}
       <form class="ep__editor" data-state="editor" hidden>
         <header class="ep__head">
@@ -297,7 +315,7 @@ const wochentage: { key: string; label: string }[] = [
   let uploadToken = '';
   let limits: Limits | null = null;
 
-  const setState = (s: 'loading' | 'request' | 'editor' | 'error') => {
+  const setState = (s: 'loading' | 'request' | 'resend' | 'editor' | 'error') => {
     document.querySelectorAll<HTMLElement>('[data-state]').forEach((el) => {
       el.hidden = el.dataset.state !== s;
     });
@@ -606,9 +624,59 @@ const wochentage: { key: string; label: string }[] = [
     });
   };
 
+  // ---------- DAUERHAFTER LINK (?m=…) ----------
+  // Dieser Link liegt im CRM in der Vermittlerakte. Er gewährt selbst keinen
+  // Zugang, sondern schickt auf Knopfdruck einen frischen Editor-Link an die
+  // im CRM hinterlegte Adresse. Bewusst per Klick und nicht beim Aufruf, damit
+  // Mail-Scanner und Link-Vorschauen keinen Versand auslösen.
+  const setupResend = (mToken: string, name: string, emailMasked: string) => {
+    const setText = (sel: string, v: string) =>
+      document.querySelectorAll<HTMLElement>(sel).forEach((el) => { el.textContent = v; });
+    setText('[data-resend-mail]', emailMasked);
+    setText('[data-resend-mail2]', emailMasked);
+    const title = $('[data-resend-title]');
+    if (title && name) title.textContent = `Hallo ${name}, hier geht es weiter`;
+
+    const btn = $('[data-resend-submit]') as HTMLButtonElement | null;
+    const label = $('[data-resend-label]');
+    const msg = $('[data-resend-msg]');
+    const done = $('[data-resend-done]');
+    btn?.addEventListener('click', async () => {
+      btn.disabled = true;
+      if (label) label.textContent = 'Wird gesendet …';
+      setMsg(msg, '');
+      try {
+        const r = await fetch('/api/profil-link-resend', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ m: mToken }),
+        });
+        if (!r.ok) throw new Error('failed');
+        btn.hidden = true;
+        if (done) done.hidden = false;
+      } catch {
+        setMsg(msg, 'Das hat nicht geklappt — bitte in ein paar Minuten erneut versuchen.', 'error');
+        btn.disabled = false;
+        if (label) label.textContent = 'Neuen Link senden';
+      }
+    });
+    setState('resend');
+  };
+
   // ---------- INIT ----------
   setupRequestForm();
-  if (!token) {
+  const mToken = new URLSearchParams(location.search).get('m');
+  if (!token && mToken) {
+    fetch('/api/profil-link-resend?m=' + encodeURIComponent(mToken))
+      .then(async (r) => {
+        const info = (await r.json()) as { ok?: boolean; name?: string; emailMasked?: string };
+        // Kein gültiger Makler hinter dem Link → normales Anforderungs-Formular,
+        // damit der Weg nie in einer Sackgasse endet.
+        if (r.ok && info.ok && info.emailMasked) setupResend(mToken, info.name ?? '', info.emailMasked);
+        else setState('request');
+      })
+      .catch(() => setState('request'));
+  } else if (!token) {
     setState('request');
   } else {
     fetch('/api/profil-info?token=' + encodeURIComponent(token))

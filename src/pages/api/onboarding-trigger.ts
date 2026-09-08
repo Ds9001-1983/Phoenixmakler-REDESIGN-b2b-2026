@@ -1,6 +1,7 @@
 import type { APIRoute } from 'astro';
-import { verifyToken, buildUploadToken, buildProfilToken } from '../../lib/token';
-import { sendApplicantPhoto, sendProfilEinladung } from '../../lib/mail';
+import { verifyToken, buildUploadToken } from '../../lib/token';
+import { sendApplicantPhoto } from '../../lib/mail';
+import { issueProfilLink } from '../../lib/profil-link';
 
 export const prerender = false;
 
@@ -70,9 +71,12 @@ export const GET: APIRoute = async ({ url }) => {
   // 2b) Zusätzlich: Einladung zur Profilgestaltung (Self-Service). Best-Effort, beeinflusst
   // den Onboarding-Status nicht — Foto-Upload bleibt der maßgebliche Schritt.
   try {
-    const profilToken = buildProfilToken(payload.uid, payload.cid, payload.email, firstName, secret);
-    const profilLink = `${appBaseUrl.replace(/\/+$/, '')}/makler-profil?token=${encodeURIComponent(profilToken)}`;
-    await sendProfilEinladung(payload.email, prettyFirst, profilLink);
+    // Einladung + dauerhafter CRM-Eintrag in einem Schritt — damit ein neu
+    // angelegter Makler seinen Link automatisch auch in der Vermittlerakte hat.
+    await issueProfilLink(
+      { uid: payload.uid, cid: payload.cid, email: payload.email, name: payload.name ?? firstName },
+      { sendMail: true, writeCrm: true },
+    );
   } catch (e) {
     console.error('Profil invite mail failed', (e as Error).message);
   }

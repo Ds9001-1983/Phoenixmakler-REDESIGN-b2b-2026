@@ -1,6 +1,6 @@
 import { createHmac, timingSafeEqual } from 'node:crypto';
 
-export type TokenKind = 'trigger' | 'upload' | 'profil' | 'profil-admin';
+export type TokenKind = 'trigger' | 'upload' | 'profil' | 'profil-admin' | 'profil-request';
 
 export interface TokenPayload {
   uid: number;
@@ -10,6 +10,12 @@ export interface TokenPayload {
   kind: TokenKind;
   exp: number;
 }
+
+// Gültigkeit des Editor-Links. Bewusst kurz: Ein abgelaufener Link ist kein
+// Problem mehr, seit sich jeder Makler über den dauerhaften Selbstbedienungs-Link
+// (kind 'profil-request') mit einem Klick einen frischen schicken lassen kann.
+// Wird auch im Mail-Text gerendert — die Zahl steht nur hier.
+export const PROFIL_TTL_DAYS = 14;
 
 const b64u = (buf: Buffer | string) =>
   Buffer.from(buf).toString('base64').replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
@@ -49,7 +55,11 @@ export function verifyToken(token: string, kind: TokenKind, secret: string): Tok
     return null;
   }
   if (payload.kind !== kind) return null;
-  if (typeof payload.exp !== 'number' || Date.now() / 1000 > payload.exp) return null;
+  if (typeof payload.exp !== 'number') return null;
+  // exp === 0 bedeutet "läuft nie ab" — ausschließlich für 'profil-request' gedacht,
+  // der im CRM dauerhaft hinterlegt wird. Dieser Token gewährt selbst keinen Zugang,
+  // sondern löst nur den Versand an die im CRM hinterlegte Adresse aus.
+  if (payload.exp !== 0 && Date.now() / 1000 > payload.exp) return null;
   return payload;
 }
 
@@ -67,9 +77,9 @@ export function buildUploadToken(uid: number, cid: number | null, email: string,
   );
 }
 
-// Self-Service-Profil: Edit-Link für den Makler (lange Gültigkeit, da selten bearbeitet wird;
-// abgelaufene Links lassen sich über /makler-profil neu anfordern).
-export function buildProfilToken(uid: number, cid: number | null, email: string, name: string, secret: string, ttlDays = 60): string {
+// Self-Service-Profil: Edit-Link für den Makler. Kurze Laufzeit (PROFIL_TTL_DAYS),
+// Neuanforderung jederzeit über /makler-profil oder den dauerhaften Link.
+export function buildProfilToken(uid: number, cid: number | null, email: string, name: string, secret: string, ttlDays = PROFIL_TTL_DAYS): string {
   return signToken(
     { uid, cid, email, name, kind: 'profil', exp: Math.floor(Date.now() / 1000) + ttlDays * 86400 },
     secret,
@@ -83,4 +93,20 @@ export function buildProfilAdminToken(uid: number, cid: number | null, email: st
     { uid, cid, email, name, kind: 'profil-admin', exp: Math.floor(Date.now() / 1000) + ttlDays * 86400 },
     secret,
   );
+}
+
+// Dauerhafter Selbstbedienungs-Link, der im CRM in der Vermittlerakte hinterlegt wird.
+//
+// Der Payload enthält BEWUSST nur die uid — kein Name, keine E-Mail, kein Ablaufdatum.
+// Dadurch ist der Token deterministisch: derselbe Makler ergibt immer denselben Token
+// und damit dieselbe URL. Das ist zwingend, weil die PW-API Benutzer-Dateien nur
+// anlegen kann (kein PUT/DELETE) — ein abweichender Token bei einem zweiten Lauf
+// würde einen zweiten, nicht mehr entfernbaren Eintrag erzeugen.
+export function buildProfilRequestToken(uid: number, secret: string): string {
+  return signToken({ uid, cid: null, email: '', kind: 'profil-request', exp: 0 }, secret);
+}
+
+// Gültig-bis-Datum passend zum Editor-Token — für Mail-Text und CRM-Notiz.
+export function profilTokenExpiry(ttlDays = PROFIL_TTL_DAYS): Date {
+  return new Date(Date.now() + ttlDays * 86400 * 1000);
 }

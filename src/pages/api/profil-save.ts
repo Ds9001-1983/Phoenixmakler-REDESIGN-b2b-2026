@@ -1,6 +1,6 @@
 import type { APIRoute } from 'astro';
 import { verifyToken, buildProfilAdminToken } from '../../lib/token';
-import { loadVermittler } from '../../lib/vermittler';
+import { loadEditorBerechtigte } from '../../lib/vermittler';
 import { validateProfil, saveProfilFromContent } from '../../lib/profil';
 import { sendProfilReviewNotice } from '../../lib/mail';
 
@@ -25,8 +25,8 @@ export const POST: APIRoute = async ({ request }) => {
   const payload = verifyToken(String(body.token ?? ''), 'profil', secret);
   if (!payload) return j({ error: 'invalid_or_expired' }, 410);
 
-  // Zugang nur für aktive Makler; uid stammt ausschließlich aus dem signierten Token.
-  const vermittler = await loadVermittler();
+  // Zugang für aktive Makler und neue Partner; uid stammt ausschließlich aus dem signierten Token.
+  const vermittler = await loadEditorBerechtigte();
   const me = vermittler.find((v) => v.id === payload.uid);
   if (!me) return j({ error: 'not_active' }, 403);
 

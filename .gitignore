@@ -32,3 +32,4 @@ pnpm-debug.log*
 
 # bulk-mail idempotency log (scripts/dashboard-mail.mjs)
 scripts/.dashboard-mail-sent.json
+scripts/.profil-crm-sync.json

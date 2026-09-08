@@ -1,6 +1,6 @@
 import type { APIRoute } from 'astro';
 import { verifyToken, buildUploadToken } from '../../lib/token';
-import { loadVermittler } from '../../lib/vermittler';
+import { loadEditorBerechtigte } from '../../lib/vermittler';
 import { loadProfilByUid, LIMITS } from '../../lib/profil';
 
 export const prerender = false;
@@ -19,8 +19,9 @@ export const GET: APIRoute = async ({ url }) => {
   const payload = verifyToken(token, 'profil', secret);
   if (!payload) return j({ error: 'invalid_or_expired' }, 410);
 
-  // Nur aktive Makler (PW status_id=1) bekommen Zugang.
-  const vermittler = await loadVermittler();
+  // Zugang für aktive Makler (Status 1) UND neue Partner (Status 5) —
+  // Letztere sollen ihr Profil vorbereiten können, während Phoenix sie prüft.
+  const vermittler = await loadEditorBerechtigte();
   const me = vermittler.find((v) => v.id === payload.uid);
   if (!me) return j({ error: 'not_active' }, 403);
 
