@@ -1,5 +1,5 @@
 import type { APIRoute } from 'astro';
-import { verifyToken, buildProfilToken } from '../../lib/token';
+import { verifyToken } from '../../lib/token';
 import { setPublished } from '../../lib/profil';
 import { sendProfilRevision } from '../../lib/mail';
 import { loadEditorBerechtigte } from '../../lib/vermittler';

@@ -19,8 +19,6 @@ const rateLimited = (key: string): boolean => {
   return arr.length > MAX_HITS;
 };
 
-const firstNameOf = (full: string): string => full.trim().split(/\s+/)[0] || 'Hallo';
-
 export const POST: APIRoute = async ({ request, clientAddress }) => {
   const secret = import.meta.env.TRIGGER_SECRET;
   const base = (import.meta.env.APP_BASE_URL ?? '').replace(/\/+$/, '');
