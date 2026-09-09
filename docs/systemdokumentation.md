@@ -3,11 +3,8 @@
 **Projekt:** Phönix Maklerverbund — Website-Redesign 2026
 **Stand:** 09.09.2026
 **Erstellt von:** SUPERBRAND.marketing für die Phönix Maklerverbund GmbH
-
-Diese Dokumentation beschreibt den **aktuellen Stand** des Systems. Sie ersetzt die
-Fassung vom 22.06.2026 vollständig; damals umfasste das Modul nur die Self-Service-Profile.
-Inzwischen kommen der interne Team-Bereich, die Sichtbarkeitssteuerung und ein
-Automatismus für neue Partner hinzu.
+**Quelle:** `docs/systemdokumentation.md` im Projekt-Repository; das PDF entsteht daraus
+mit `scripts/doku-pdf.py`.
 
 Wo eine Lösung ungewöhnlich aussieht, steht die Begründung daneben. Das ist Absicht: Fast
 jeder Umweg in diesem System hat einen konkreten Anlass, und ohne die Begründung wird er
@@ -49,12 +46,9 @@ bei der nächsten Überarbeitung „vereinfachend" wieder ausgebaut.
 
 **Teil VII — Betrieb**
 19. Umgebungsvariablen
-20. Werkzeuge und Skripte
-21. E-Mails
-22. Deployment und Prüfschritte
-23. Bekannte Einschränkungen
-
-**Anhang** — Dateiübersicht · Entscheidungshistorie
+20. E-Mails
+21. Deployment und Prüfschritte
+22. Bekannte Einschränkungen
 
 ---
 ---
@@ -82,11 +76,10 @@ Drei Gruppen arbeiten mit dem System:
 > der Makler. Die **Profilinhalte** liegen als eigene Schicht daneben. Wer **öffentlich
 > erscheint**, entscheidet das interne Dashboard — nicht mehr der CRM-Status.
 
-Der letzte Halbsatz ist neu seit dem 09.09.2026 und der wichtigste Unterschied zur
-Vorfassung. Der Anlass war praktisch: Phoenix führt Makler unter dem Status „passiv", die
-tatsächlich arbeiten, aber nach außen anonym bleiben müssen, weil sie hauptberuflich
-woanders tätig sind. Solange die Veröffentlichung am Status hing, ließ sich beides nicht
-trennen.
+Der letzte Halbsatz ist der Kern des Ganzen. Phoenix führt Makler unter dem Status
+„passiv", die tatsächlich arbeiten, aber nach außen anonym bleiben müssen, weil sie
+hauptberuflich woanders tätig sind. Hinge die Veröffentlichung am Status, ließe sich beides
+nicht trennen.
 
 ## 3. Architektur
 
@@ -159,8 +152,8 @@ Zurückwerfen mit Hinweistext und Offline-Nehmen.
 
 ### 4.4 Internes Dashboard — `/intern`
 
-Seit 08./09.09.2026. Anmeldung per Magic Link an eine feste Team-Liste. Zeigt alle
-geführten Makler mit Suchfeld und je Zeile:
+Anmeldung per Magic Link an eine feste Team-Liste. Zeigt alle geführten Makler mit
+Suchfeld und je Zeile:
 
 - **Status** — Profil-Ampel, ob ein Foto vorliegt, ob er öffentlich ist
 - **Senden** — verschickt die Einladung an die im CRM hinterlegte Adresse
@@ -203,10 +196,9 @@ tägliche Cron-Lauf. Ein Schalter, den jemand im Dashboard umlegt, darf nicht vo
 Automatismus überschrieben werden können.
 
 **Die Voreinstellung ist „nicht sichtbar".** Ein Makler ohne Kennzeichen erscheint nicht.
-Das ist die sichere Richtung: Wenn Phoenix — wie geplant — die passiven Makler im CRM auf
-„aktiv" umstellt, werden sie dadurch nicht versehentlich öffentlich. Die Kehrseite: Ein neu
-angelegter Makler erscheint **nicht mehr automatisch** in der Maklersuche, sondern erst
-nach einem Klick im Dashboard.
+Das ist die sichere Richtung: Eine Statusänderung im CRM kann niemanden versehentlich
+öffentlich machen. Die Kehrseite: Ein neu angelegter Makler erscheint **nicht automatisch**
+in der Maklersuche, sondern erst nach einem Klick im Dashboard.
 
 ## 6. Alle Ausgabewege und ihre Bedingungen
 
@@ -253,8 +245,7 @@ erkannt, der zeitunabhängig erfolgt.
 | `team-session` | Team-Sitzung (Cookie) | 30 Tage, gleitend |
 
 **Warum der Editor-Link nur 14 Tage gilt:** Weil sich jeder Makler jederzeit selbst einen
-neuen holen kann, ist eine lange Laufzeit unnötiges Risiko. Bis Anfang September waren es
-60 Tage.
+neuen holen kann, ist eine lange Laufzeit unnötiges Risiko.
 
 **Der dauerhafte Link (`profil-request`)** ist der Gegenentwurf: Er läuft nie ab, gewährt
 aber **selbst keinen Zugang**. Wer ihn öffnet, sieht nur die maskierte Zieladresse und
@@ -418,14 +409,10 @@ Vercel Blob liefert eine Datei nach dem Überschreiben **für kurze Zeit weiterh
 alten Fassung** aus, und speichert sie ohne Zutun einen Monat lang zwischen. Für einen
 Zustandsspeicher ist beides gefährlich.
 
-Konkret aufgetreten sind zwei Fehler:
-
-- **Der Status-Wächter hätte doppelt versendet.** Ein veralteter Zustand ließ bereits
-  versorgte Makler erneut als „neu aktiviert" erscheinen. Beim Testen ging dadurch eine
-  echte E-Mail an eine Maklerin heraus.
-- **Eine Freigabe wirkte erst nach Minuten.** Nach dem Schreiben wurde das Profil neu
-  gelesen, dabei der alte Stand geholt und anschließend fünf Minuten zwischengespeichert.
-  Für Thorsten sah es aus, als sei die Freigabe wirkungslos.
+Ohne Gegenmaßnahme führt das zu zwei Fehlerbildern, die beide nicht wie Fehler aussehen:
+Der Status-Wächter hält bereits versorgte Makler erneut für „neu aktiviert" und verschickt
+doppelt — und eine Freigabe scheint wirkungslos, weil direkt nach dem Schreiben der alte
+Stand gelesen und dann minutenlang zwischengespeichert wird.
 
 **Drei Gegenmaßnahmen, angewandt auf alle drei Zustandsdateien** (Profile,
 Sichtbarkeits-Kennzeichen, Zustand des Status-Wächters):
@@ -481,8 +468,8 @@ unerheblich; wer eine Änderung sofort auf einem anderen Gerät prüfen will, so
 Makler, der noch auf „storniert" steht, ist nicht zugangsberechtigt — der Foto-Upload würde
 funktionieren, der Profil-Link aber ins Leere laufen.
 
-**Schritt 8 ist neu.** Früher war ein aktiver Makler automatisch sichtbar. Das ist der Preis
-dafür, dass Phoenix die Veröffentlichung jetzt unabhängig vom CRM-Status steuern kann.
+**Schritt 8 lässt sich nicht überspringen.** Er ist der Preis dafür, dass die
+Veröffentlichung unabhängig vom CRM-Status steuerbar ist.
 
 ## 14. Profil pflegen und freigeben
 
@@ -593,17 +580,16 @@ könnte sie theoretisch schalten.
 
 ## 18. Was im CRM nicht geht — und warum
 
-Ursprünglich sollte der Profil-Link im CRM beim Makler hinterlegt werden. Das wurde
-gründlich geprüft und **verworfen**. Die Begründung gehört hierher, damit sie nicht erneut
-untersucht werden muss:
+Der Profil-Link lässt sich **nicht** im CRM beim Makler hinterlegen. Vier Gründe, jeder für
+sich ausreichend — sie stehen hier, damit die Frage nicht erneut untersucht wird:
 
 - **Die vorgesehene Stelle ist gesperrt.** Vermittler-Stammdaten → Dokumente ist der
   einzige dafür gedachte Ort. Sowohl Lesen als auch Schreiben antworten mit „Token hat
   nicht die nötigen Rechte". Die Freigabe liegt bei Professional.Works.
-- **Alle anderen Felder am Vermittler scheiden aus.** Geprüft wurden alle zwanzig Felder:
-  Adresszusatz (nur 45 Zeichen, erscheint auf Briefen), Fax (bei 24 von 63 belegt),
-  Homepage (die eigene Webseite des Maklers), IHK- und Steuernummern, Bankkonto-Notiz. Ein
-  Feld „Hinweise", wie es die Oberfläche zeigt, existiert in der Schnittstelle nicht.
+- **Alle anderen Felder am Vermittler scheiden aus.** Sie sind entweder zu kurz, auf
+  Briefen sichtbar oder fachlich belegt: Adresszusatz, Fax, Homepage, IHK- und
+  Steuernummern, Bankkonto-Notiz. Ein Feld „Hinweise", wie es die CRM-Oberfläche zeigt,
+  existiert in der Schnittstelle nicht.
 - **Der URL-Endpunkt speichert keine URL.** Er lädt die angegebene Seite herunter und legt
   den Inhalt als Dokument ab. Die Herkunfts-URL wird verworfen. Selbst mit den fehlenden
   Rechten entstünde also kein anklickbarer Link, sondern eine eingefrorene HTML-Kopie.
@@ -648,25 +634,7 @@ Zwei Eigenheiten beim Setzen:
 - `BLOB_READ_WRITE_TOKEN` taucht im Code nirgends auf; die Blob-Bibliothek zieht ihn selbst
   aus der Prozessumgebung. Für jedes Skript muss er trotzdem gesourct sein.
 
-## 20. Werkzeuge und Skripte
-
-Die Skripte dieses Moduls liegen unter `scripts/` und werden mit `npx tsx` ausgeführt;
-vorher `set -a; . .env; set +a`.
-
-| Skript | Zweck |
-|---|---|
-| `profil-status.mjs` | Übersicht aller Profile mit Füllstand — nur lesend |
-| `profil-test.mjs` | Links für einen Makler erzeugen, Testprofile aufräumen |
-| `sichtbarkeit-seed.mjs` | einmalige Migration der Sichtbarkeits-Kennzeichen |
-| `dashboard-mail.mjs` | Sammelversand der Einladung an alle Makler |
-| `profil-crm-sync.mjs` | CRM-Ablage (ruht, siehe Kapitel 18) |
-| `doku-pdf.py` | erzeugt dieses PDF aus `docs/systemdokumentation.md` |
-
-Die schreibenden Skripte haben durchgehend dieselben Schutzmechanismen: einen Probelauf,
-Abbruch bei leerer oder lokaler Basis-URL, ein Protokoll gegen Doppelausführung und eine
-ausdrückliche Bestätigung.
-
-## 21. E-Mails
+## 20. E-Mails
 
 | Anlass | Empfänger |
 |---|---|
@@ -680,7 +648,7 @@ ausdrückliche Bestätigung.
 Alle Versände sind **nicht blockierend**: Schlägt der Versand fehl, bleibt die Kernaktion
 trotzdem erfolgreich; der Fehler wird nur protokolliert.
 
-## 22. Deployment und Prüfschritte
+## 21. Deployment und Prüfschritte
 
 Auslieferung über Vercel, ausgelöst durch einen Push nach `main`. Änderungen an
 Umgebungsvariablen brauchen einen **erneuten Deploy** — Vercel friert sie je Auslieferung ein.
@@ -699,7 +667,7 @@ Existiert das Verzeichnis, fehlt irgendwo `prerender = false` und die Makler-Lis
 keine Maklerdaten im Rumpf enthalten; `/makler-suche` muss dieselbe Anzahl Karten zeigen
 wie vorher.
 
-## 23. Bekannte Einschränkungen
+## 22. Bekannte Einschränkungen
 
 - **Verzögerung bis zu einer Minute** bei Änderungen über mehrere Instanzen hinweg (Kapitel 12).
 - **Mehrere Makler teilen sich eine E-Mail-Adresse.** Bei der Selbstanforderung über das
@@ -723,63 +691,3 @@ wie vorher.
   kennt. Sauber ist: beim Ausscheiden auch den Schalter umlegen.
 
 ---
----
-
-# Anhang A — Dateiübersicht
-
-**Bausteine (`src/lib/`)**
-
-| Datei | Aufgabe |
-|---|---|
-| `token.ts` | Signieren und Prüfen aller Zugangs-Token |
-| `team-auth.ts` | Anmeldung und Sitzung des Team-Bereichs |
-| `pw.ts` | Zugriff auf das CRM (Zeitbegrenzung, Seitenweise, Rechte) |
-| `vermittler.ts` | Vermittler-Listen: öffentlich und zugangsberechtigt |
-| `profil.ts` | Profil-Datenmodell, Validierung, Speicherung, Moderation |
-| `makler-flags.ts` | Sichtbarkeits-Kennzeichen |
-| `makler-state.ts` | Zustand des Status-Wächters |
-| `profil-link.ts` | Link erzeugen, verschicken, ablegen — an einer Stelle |
-| `pw-userfile.ts` | CRM-Ablage (ruht) |
-| `mail.ts` | alle E-Mail-Vorlagen und der Versand |
-| `telefon.ts` | Nummern für `tel:` und WhatsApp aufbereiten |
-
-**Seiten**
-
-| Seite | Zweck |
-|---|---|
-| `makler-profil.astro` | Profil-Editor |
-| `makler/[slug].astro` | öffentliche Profilseite |
-| `makler-suche.astro` | öffentliche Maklersuche |
-| `makler-freigabe.astro` | Freigabe über signierten Link |
-| `intern/index.astro` | internes Dashboard |
-| `intern/login.astro`, `intern/anmelden.astro` | Anmeldung |
-| `intern/vorschau/[uid].astro` | Profil-Vorschau |
-| `foto-upload.astro` | eigenständiger Foto-Upload |
-
-**Schnittstellen** — 21 Endpunkte unter `src/pages/api/`: sechs für den internen Bereich,
-einer für den täglichen Lauf, die übrigen für Profil-Editor, Foto-Upload, Moderation,
-Bewerbung und Maklersuche.
-
----
-
-# Anhang B — Entscheidungshistorie
-
-| Datum | Änderung | Anlass |
-|---|---|---|
-| 22.06.2026 | Self-Service-Profile live, Sammelversand an 44 Makler | Erstausbau |
-| 08.09.2026 | Editor-Link von 60 auf 14 Tage; dauerhafter Selbstbedienungs-Link; zentraler CRM-Zugriff mit Zeitbegrenzung und Seitenweise-Abruf; Status-Wächter | Sync mit Thorsten: Links sollten auffindbar und erneut versendbar sein |
-| 08.09.2026 | Interner Team-Bereich mit Anmeldung, Liste, Senden und Kopieren | CRM-Ablage nicht möglich (Kapitel 18) — die Anlaufstelle entsteht auf der eigenen Seite |
-| 09.09.2026 | Sichtbarkeitssteuerung, Profil-Ampel, Vorschau, Freigabe und WhatsApp im Dashboard | Webcall mit Thorsten: Veröffentlichung soll unabhängig vom CRM-Status steuerbar sein |
-
-**Behobene Fehler am 08./09.09.2026**
-
-- Gespeichertes Schadskript über die Profil-Überschrift auf den öffentlichen Profilseiten.
-- Vermittlerliste und Suche schnitten ab hundert Maklern still ab.
-- Die Suche im Dashboard filterte nicht, weil das Verstecken durch eine Layout-Regel
-  überschrieben wurde.
-- Eine Freigabe wirkte erst nach Minuten (Kapitel 12).
-- Nach dem Offline-Nehmen stand fälschlich „Erstfreigabe ausstehend".
-- Die Sitemap listete Profile nicht mehr sichtbarer Makler, deren Adressen 404 lieferten.
-- Zwei Systemkonten standen als Makler in der öffentlichen Suche.
-- Ein Typfehler in der Freigabe-Seite, entstanden beim Ergänzen der Mobilnummer.
-  `astro check` meldet jetzt null Fehler und null Warnungen.

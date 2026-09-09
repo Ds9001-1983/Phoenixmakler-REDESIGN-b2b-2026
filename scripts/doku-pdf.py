@@ -136,16 +136,18 @@ body {{ font-family: -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
   font-size: 9.6pt; line-height: 1.62; color: #16191d; margin: 0; }}
 h1, h2, h3 {{ line-height: 1.25; }}
 h1 {{ font-size: 20pt; font-weight: 700; margin: 0 0 1.2em; color: {DUNKEL}; }}
-h1.teil {{ page-break-before: always; border-bottom: 3px solid {GRUEN};
-  padding-bottom: .35em; margin-bottom: 1.4em; }}
+h1.teil {{ border-bottom: 3px solid {GRUEN}; padding-bottom: .35em;
+  margin: 2.6em 0 1.3em; page-break-after: avoid; page-break-inside: avoid; }}
+h1.teil:first-of-type {{ margin-top: 0; }}
 h2 {{ font-size: 13.5pt; font-weight: 700; margin: 2em 0 .7em; color: {DUNKEL};
-  display: flex; align-items: center; gap: .6em; page-break-after: avoid; }}
+  display: flex; align-items: center; gap: .6em;
+  page-break-after: avoid; page-break-inside: avoid; }}
 h2.ohne-nr {{ display: block; }}
 h2 .nr {{ display: inline-flex; align-items: center; justify-content: center;
   width: 1.7em; height: 1.7em; border-radius: 50%; background: {GRUEN};
   color: #fff; font-size: .78em; flex: none; }}
 h3 {{ font-size: 11pt; font-weight: 700; margin: 1.5em 0 .5em;
-  color: {GRUEN_D}; page-break-after: avoid; }}
+  color: {GRUEN_D}; page-break-after: avoid; page-break-inside: avoid; }}
 p {{ margin: 0 0 .85em; }}
 ul, ol {{ margin: 0 0 .95em; padding-left: 1.25em; }}
 li {{ margin-bottom: .3em; }}
@@ -230,9 +232,9 @@ DECKEL = f"""
     <div><div class="l">Dokumenttyp</div><div class="w">Technische Systemdoku</div></div>
   </div>
   <div class="pillen">
-    <div class="pille voll">Ersetzt die Fassung vom 22.06.2026</div>
-    <div class="pille">Interner Bereich live seit 08.09.2026</div>
-    <div class="pille">Sichtbarkeitssteuerung seit 09.09.2026</div>
+    <div class="pille voll">Self-Service-Profile</div>
+    <div class="pille">Interner Team-Bereich</div>
+    <div class="pille">Steuerung der Sichtbarkeit</div>
   </div>
   <div class="fuss">
     <div class="marke">
