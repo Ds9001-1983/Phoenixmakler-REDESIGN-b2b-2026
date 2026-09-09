@@ -5,17 +5,18 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import FooterCinematic from '../../components/sections/FooterCinematic.astro';
 import MaklerProfilContent from '../../components/sections/MaklerProfilContent.astro';
 import { loadProfilBySlug } from '../../lib/profil';
-import { loadVermittler, type PublicVermittler } from '../../lib/vermittler';
+import { loadOeffentlicheVermittler, type PublicVermittler } from '../../lib/vermittler';
 
 const slug = Astro.params.slug ?? '';
 const slugOk = /^[a-z0-9-]+$/.test(slug);
 
 const profil = slugOk ? await loadProfilBySlug(slug) : null;
 
-// Nur veröffentlichte Profile aktiver Makler sind sichtbar — sonst 404 (kein Leak).
+// Sichtbar nur, wenn das Profil freigegeben IST und der Makler im Dashboard auf
+// sichtbar steht — sonst 404 (kein Leak).
 let me: PublicVermittler | null = null;
 if (profil && profil.published) {
-  const vermittler = await loadVermittler();
+  const vermittler = await loadOeffentlicheVermittler();
   me = vermittler.find((v) => v.id === profil.uid) ?? null;
 }
 

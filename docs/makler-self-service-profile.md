@@ -580,3 +580,94 @@ deployen → `probe` gegen einen Test-Makler → **Thorsten kontrolliert im PW-U
   10278 (Firmen-Sammelkonto), 33774 (Vertriebspartnerabrechnung), 62159 (Superbrand).
   Bewusst eine Liste statt eines Rollen-Filters — `role.id === 1` würde auch echte
   Personen ausschließen (Innendienst/Hauptvermittler sind teils reguläre Makler).
+
+---
+
+## 16. Nachtrag 09.09.2026 — Dashboard-Ausbau und Sichtbarkeitssteuerung
+
+Aus dem Webcall mit Thorsten vom 09.09.2026.
+
+### 16.1 Die Veröffentlichung hängt nicht mehr am CRM-Status
+
+**Vorher:** Wer in der Maklersuche erschien, entschied allein der PW-Status (nur „aktiv").
+**Jetzt:** Ein Kennzeichen im internen Dashboard (`src/lib/makler-flags.ts`,
+Blob-Datei `makler-flags/state.json`).
+
+Anlass: Phoenix führt Makler unter „passiv", die arbeiten, aber anonym bleiben müssen.
+Künftig soll im CRM nur noch zwischen aktiv und storniert unterschieden werden.
+
+**Zwei getrennte Schalter:**
+
+| Schalter | Gespeichert in | Wirkt auf |
+|---|---|---|
+| In der Maklersuche zeigen | `makler-flags` (neu) | Karte in `/makler-suche`, Voraussetzung für alles Öffentliche |
+| Profilseite öffentlich | `profil.published` | `/makler/{slug}`, Sitemap, Profil-Link in der Suche |
+
+**Ein Makler ohne Kennzeichen gilt als NICHT sichtbar.** Dadurch macht eine
+Statusänderung im CRM niemanden versehentlich öffentlich — aber ein neu angelegter
+Makler erscheint auch nicht mehr automatisch, sondern erst nach einem Klick im Dashboard.
+
+**Fünf öffentliche Ausgabewege** mussten den Filter bekommen — die letzten beiden werden
+leicht übersehen:
+`makler-suche.astro` · `makler/[slug].astro` · `sitemap.xml.ts` ·
+**`api/vermittler-search.ts`** (gibt ohne Anmeldung Maklernamen aus, speist die
+„Empfohlen von"-Liste) · **`api/vermittler-foto.ts`** (liefert Fotos allein anhand der uid).
+Beim Foto-Endpunkt dürfen angemeldete Teammitglieder auch unsichtbare Fotos sehen — sonst
+wäre die Vorschau vor der Freigabe leer. In dem Fall wird `private, no-store` gesendet,
+damit das Bild nicht im geteilten CDN landet.
+
+**Migration:** `npx tsx scripts/sichtbarkeit-seed.mjs dry|seed` setzte die damals aktiven
+Makler auf sichtbar, alle übrigen auf unsichtbar — die Webseite sah danach aus wie vorher.
+Das Skript bricht ab, wenn bereits Kennzeichen gesetzt sind (`--force` überschreibt).
+Nebeneffekt der Migration: Die Systemkonten „Superbrand" und „Phönix-Maklerverbund"
+standen bis dahin als Makler in der öffentlichen Suche und sind jetzt draußen.
+
+### 16.2 Dashboard-Erweiterungen
+
+Je Zeile: Profil-Ampel (kein Profil / unvollständig / wartet auf Freigabe / offline
+genommen / online), Foto vorhanden, Sichtbarkeit — dazu Knöpfe für Senden, WhatsApp,
+Link kopieren, Vorschau, Freigeben bzw. vom Netz nehmen und Sichtbarkeit umschalten.
+
+Geführt werden jetzt Status **1, 2 und 5**; `loadEditorBerechtigte()` wurde entsprechend
+erweitert, damit auch passive Makler ihr Profil pflegen können.
+
+**Vorschau** unter `/intern/vorschau/{uid}` rendert dieselbe Komponente wie die
+öffentliche Seite (`MaklerProfilContent`), ohne Token und ohne JSON-LD.
+
+**Freigeben/Depublizieren** über `/api/intern/profil-status` statt über die bestehenden
+`profil-publish`/`profil-unpublish`: Jene verlangen einen signierten `profil-admin`-Token,
+den man je Zeile ins HTML legen müsste — rund 94 Moderations-Zugänge auf einer Seite.
+`/makler-freigabe` bleibt unverändert nutzbar.
+
+**WhatsApp:** `src/lib/telefon.ts` normalisiert die Mobilnummer
+(`communication.phone_mobile`) auf die internationale Form. Der Knopf öffnet
+`whatsapp://send?…` — nur dieses Protokoll führt direkt in die Desktop-Anwendung;
+`wa.me` geht immer über den Browser. Ist das Protokoll nicht registriert, passiert nichts,
+deshalb der Hinweis auf `web.whatsapp.com` unter der Liste. Versendet wird der dauerhafte
+Selbstbedienungs-Link, nicht der 14-Tage-Editor-Link.
+
+### 16.3 Behobene Fehler
+
+- **Suche im Dashboard filterte nicht.** Die Zeilen wurden über `hidden` versteckt, aber
+  `.iv-row` hat `display: flex`, was `[hidden] { display: none }` überschreibt. Der Zähler
+  sprang korrekt, die Zeilen blieben stehen. Jetzt `style.display` wie in `makler-suche.astro`.
+- **Freigabe wirkte verzögert.** `writeProfil()` leerte nur den Cache; der folgende
+  Lesevorgang holte wegen der Blob-CDN-Verzögerung den **alten** Stand und cachte ihn fünf
+  Minuten. Jetzt wird der geschriebene Stand durchgeschrieben. Betraf auch die bestehende
+  Freigabe über `/makler-freigabe`.
+- **„Erstfreigabe ausstehend" nach dem Offline-Nehmen.** `setPublished(false)` setzt
+  `everApproved` zurück; ein einmal freigegebenes Profil ist danach nur an `freigegebenAm`
+  zu erkennen. Die Anzeige prüft das jetzt mit.
+- **Sitemap** listete Profile nicht mehr sichtbarer Makler, deren URL 404 lieferte.
+
+### 16.4 Zu beachten
+
+- **Der Team-Zugang läuft über die E-Mail-Adresse** (`TEAM_ALLOWLIST`), nicht über die
+  CRM-ID. Ändert ein Teammitglied seine Adresse, muss die Liste angepasst werden, sonst
+  sperrt es sich aus.
+- **Änderungen brauchen bis zu ~60 Sekunden**, um auf allen Serverless-Instanzen
+  anzukommen — Vercel Blob liefert nach einem Überschreiben kurz die alte Fassung aus. Auf
+  der bedienenden Instanz wirkt eine Änderung sofort.
+- Die 141 **stornierten** Makler sind bewusst nicht im Dashboard. Thorsten hatte im Call
+  erwähnt, dass auch dort Fälle für eine Veröffentlichung denkbar wären — wäre ein Filter
+  „auch ehemalige zeigen" im Dashboard.

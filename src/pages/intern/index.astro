@@ -3,8 +3,11 @@ export const prerender = false;
 
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { readSession, SESSION_COOKIE } from '../../lib/team-auth';
-import { loadEditorBerechtigte, SYSTEM_ACCOUNT_UIDS, STATUS_AKTIV } from '../../lib/vermittler';
+import { loadEditorBerechtigte, SYSTEM_ACCOUNT_UIDS, STATUS_AKTIV, STATUS_PASSIV } from '../../lib/vermittler';
+import { loadAllProfiles, type MaklerProfil } from '../../lib/profil';
+import { sichtbareUids } from '../../lib/makler-flags';
 import { profilRequestLink } from '../../lib/profil-link';
+import { toWaNummer } from '../../lib/telefon';
 
 // Eigene Prüfung ZUSÄTZLICH zur Middleware. Bewusste Redundanz: Bei output:'hybrid'
 // würde eine vergessene prerender-Flagge die Seite zur Bauzeit backen und die
@@ -15,26 +18,66 @@ if (!session) return Astro.redirect('/intern/login', 302);
 Astro.response.headers.set('Cache-Control', 'private, no-store');
 Astro.response.headers.set('X-Robots-Tag', 'noindex, nofollow');
 
+type Ampel = 'kein-profil' | 'unvollstaendig' | 'wartet' | 'offline' | 'online';
+
+const ampelFuer = (p: MaklerProfil | undefined): Ampel => {
+  if (!p) return 'kein-profil';
+  if (!p.headline?.trim() || !p.bio?.trim()) return 'unvollstaendig';
+  if (p.published) return 'online';
+  return p.freigegebenAm ? 'offline' : 'wartet';
+};
+
+const AMPEL_TEXT: Record<Ampel, string> = {
+  'kein-profil': 'kein Profil',
+  unvollstaendig: 'unvollständig',
+  wartet: 'wartet auf Freigabe',
+  offline: 'offline genommen',
+  online: 'online',
+};
+
 let ladeFehler = false;
-let makler: { id: number; name: string; email: string; ort: string; status: number; link: string }[] = [];
+let makler: {
+  id: number; name: string; email: string; ort: string; status: number;
+  link: string; wa: string | null; hasPhoto: boolean;
+  ampel: Ampel; hatProfil: boolean; published: boolean; sichtbar: boolean;
+}[] = [];
+
 try {
-  makler = (await loadEditorBerechtigte())
+  const [liste, profile, sichtbar] = await Promise.all([
+    loadEditorBerechtigte(),
+    loadAllProfiles(),
+    sichtbareUids(),
+  ]);
+  const profilMap = new Map(profile.map((p) => [p.uid, p]));
+
+  makler = liste
     .filter((v) => !SYSTEM_ACCOUNT_UIDS.has(v.id) && v.name)
-    .map((v) => ({
-      id: v.id,
-      name: v.name,
-      email: v.email,
-      ort: v.ort,
-      status: v.status,
-      // Der DAUERHAFTE Link — er gewährt selbst keinen Zugang, sondern löst nur den
-      // Versand an die im CRM hinterlegte Adresse aus. Der 14-Tage-Editor-Link steht
-      // bewusst NICHT im Quelltext: Das wären ~75 aktive Zugänge auf einer Seite.
-      link: profilRequestLink(v.id),
-    }));
+    .map((v) => {
+      const p = profilMap.get(v.id);
+      return {
+        id: v.id,
+        name: v.name,
+        email: v.email,
+        ort: v.ort,
+        status: v.status,
+        // Der DAUERHAFTE Link — gewährt selbst keinen Zugang, sondern löst nur den
+        // Versand an die im CRM hinterlegte Adresse aus. Der 14-Tage-Editor-Link
+        // steht bewusst NICHT im Quelltext.
+        link: profilRequestLink(v.id),
+        wa: toWaNummer(v.mobil),
+        hasPhoto: v.hasPhoto,
+        ampel: ampelFuer(p),
+        hatProfil: !!p,
+        published: !!p?.published,
+        sichtbar: sichtbar.has(v.id),
+      };
+    });
 } catch (e) {
   console.error('intern: Maklerliste nicht ladbar', (e as Error).message);
   ladeFehler = true;
 }
+
+const anzSichtbar = makler.filter((m) => m.sichtbar).length;
 ---
 
 <BaseLayout title="Makler-Links — intern" noindex hideFooter>
@@ -43,10 +86,11 @@ try {
       <header class="iv-head">
         <div>
           <span class="eyebrow">Phönix intern</span>
-          <h1 class="iv-title">Makler-Links</h1>
+          <h1 class="iv-title">Makler-Verwaltung</h1>
           <p class="iv-lead">
-            Persönlicher Bearbeitungs-Link je Makler. „Senden“ verschickt eine
-            Einladung an die im CRM hinterlegte Adresse — der Link darin gilt 14 Tage.
+            Persönlicher Bearbeitungs-Link, Profilstatus und Sichtbarkeit auf der Webseite.
+            „Senden“ verschickt eine Einladung an die im CRM hinterlegte Adresse — der Link
+            darin gilt 14 Tage.
           </p>
         </div>
         <form method="POST" action="/api/intern/logout" class="iv-logout">
@@ -64,7 +108,7 @@ try {
           <div class="iv-tools">
             <label class="visually-hidden" for="ivSearch">Makler suchen</label>
             <input id="ivSearch" type="search" placeholder="Name, Ort oder Nummer …" data-iv-search />
-            <span class="iv-count" data-iv-count>{makler.length} Makler</span>
+            <span class="iv-count" data-iv-count>{makler.length} Makler · {anzSichtbar} auf der Webseite</span>
           </div>
 
           <ul class="iv-list" data-iv-list>
@@ -73,17 +117,44 @@ try {
                 <div class="iv-row__main">
                   <span class="iv-row__name">
                     {m.name}
-                    {m.status !== STATUS_AKTIV && <span class="iv-tag">neuer Partner</span>}
+                    {m.status === STATUS_PASSIV && <span class="iv-tag">passiv</span>}
+                    {m.status !== STATUS_AKTIV && m.status !== STATUS_PASSIV && <span class="iv-tag">neuer Partner</span>}
                   </span>
                   <span class="iv-row__meta">
                     Nr. {m.id}{m.ort && <> · {m.ort}</>}{m.email && <> · {m.email}</>}
                   </span>
+                  <span class="iv-row__status">
+                    <span class={`iv-dot is-${m.ampel}`} data-iv-ampel>{AMPEL_TEXT[m.ampel]}</span>
+                    <span class={m.hasPhoto ? 'iv-chip is-ja' : 'iv-chip'}>{m.hasPhoto ? 'Foto ✓' : 'kein Foto'}</span>
+                    <span class={m.sichtbar ? 'iv-chip is-ja' : 'iv-chip'} data-iv-sicht-chip>
+                      {m.sichtbar ? 'auf der Webseite' : 'nicht öffentlich'}
+                    </span>
+                  </span>
                   <p class="iv-row__msg" data-iv-msg></p>
                 </div>
+
                 <div class="iv-row__actions">
-                  <button type="button" class="btn btn-outline" data-iv-copy data-link={m.link}>Link kopieren</button>
                   <button type="button" class="btn btn-accent" data-iv-send disabled={!m.email}>
                     <span data-iv-send-label>{m.email ? 'Senden' : 'Keine E-Mail'}</span>
+                  </button>
+                  {m.wa ? (
+                    <a class="btn btn-outline iv-wa" href={`whatsapp://send?phone=${m.wa}&text=${encodeURIComponent(`Hallo ${m.name.split(' ')[0]}, hier ist dein persönlicher Link zur Profilseite im Phönix-Maklerverbund: ${m.link}`)}`} data-iv-wa>
+                      WhatsApp
+                    </a>
+                  ) : (
+                    <button type="button" class="btn btn-outline" disabled title="Keine Mobilnummer im CRM hinterlegt">WhatsApp</button>
+                  )}
+                  <button type="button" class="btn btn-outline" data-iv-copy data-link={m.link}>Link kopieren</button>
+                  {m.hatProfil && (
+                    <>
+                      <a class="btn btn-outline" href={`/intern/vorschau/${m.id}`}>Vorschau</a>
+                      <button type="button" class="btn btn-outline" data-iv-pub data-published={String(m.published)}>
+                        <span data-iv-pub-label>{m.published ? 'Vom Netz nehmen' : 'Freigeben'}</span>
+                      </button>
+                    </>
+                  )}
+                  <button type="button" class="btn btn-outline" data-iv-sicht data-sichtbar={String(m.sichtbar)}>
+                    <span data-iv-sicht-label>{m.sichtbar ? 'Aus der Suche' : 'In die Suche'}</span>
                   </button>
                 </div>
               </li>
@@ -91,6 +162,14 @@ try {
           </ul>
 
           <p class="iv-empty" data-iv-empty hidden>Kein Makler gefunden.</p>
+
+          {makler.some((m) => m.wa) && (
+            <p class="iv-hinweis">
+              Öffnet sich WhatsApp beim Klick nicht, ist das Protokoll auf dem Rechner nicht
+              registriert — dann hilft der Umweg über
+              <a href="https://web.whatsapp.com" target="_blank" rel="noopener"> web.whatsapp.com</a>.
+            </p>
+          )}
         </>
       )}
     </div>
@@ -100,7 +179,7 @@ try {
 <style>
   .iv-head { display: flex; flex-wrap: wrap; gap: 1.5rem; justify-content: space-between; align-items: flex-start; margin-bottom: 2rem; }
   .iv-title { font-family: var(--font-display); font-size: 2rem; font-weight: 400; margin: 0 0 0.5rem; }
-  .iv-lead { font-size: 1rem; line-height: 1.6; color: var(--color-text-muted); margin: 0; max-width: 60ch; }
+  .iv-lead { font-size: 1rem; line-height: 1.6; color: var(--color-text-muted); margin: 0; max-width: 62ch; }
   .iv-logout { display: flex; align-items: center; gap: 0.75rem; }
   .iv-user { font-family: var(--font-mono); font-size: 0.8rem; color: var(--color-text-subtle); }
 
@@ -118,14 +197,28 @@ try {
     background: #fff; border: 1px solid var(--color-border); border-radius: var(--radius-md);
     padding: 1rem 1.25rem;
   }
-  .iv-row__main { min-width: 16rem; flex: 1 1 auto; }
+  .iv-row__main { min-width: 18rem; flex: 1 1 auto; }
   .iv-row__name { display: block; font-weight: 600; font-size: 1.02rem; }
   .iv-row__meta { display: block; font-size: 0.85rem; color: var(--color-text-muted); margin-top: 0.15rem; }
+  .iv-row__status { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.45rem; align-items: center; }
   .iv-row__msg { margin: 0.35rem 0 0; font-size: 0.85rem; min-height: 0; }
   .iv-row__msg.is-ok { color: #2f6b3c; }
   .iv-row__msg.is-error { color: #c93c3c; }
-  .iv-row__actions { display: flex; gap: 0.5rem; flex-wrap: wrap; }
-  .iv-row__actions .btn { padding: 0.6rem 1.1rem; font-size: 0.9rem; min-height: 40px; }
+  .iv-row__actions { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+  .iv-row__actions .btn { padding: 0.55rem 0.95rem; font-size: 0.875rem; min-height: 38px; }
+
+  .iv-dot { font-size: 0.78rem; font-weight: 600; padding: 0.15rem 0.55rem; border-radius: 999px; }
+  .iv-dot.is-online { background: #e3f2e7; color: #2f6b3c; }
+  .iv-dot.is-wartet { background: var(--color-accent-light); color: var(--color-accent-dark); }
+  .iv-dot.is-offline { background: #fde8e8; color: #a33; }
+  .iv-dot.is-unvollstaendig { background: #fff4e0; color: #8a5a00; }
+  .iv-dot.is-kein-profil { background: var(--color-bg-soft); color: var(--color-text-subtle); }
+
+  .iv-chip {
+    font-size: 0.74rem; padding: 0.15rem 0.5rem; border-radius: 999px;
+    background: var(--color-bg-soft); color: var(--color-text-subtle); border: 1px solid var(--color-border);
+  }
+  .iv-chip.is-ja { background: #eef4ff; color: var(--color-primary); border-color: #d3e0f8; }
 
   .iv-tag {
     display: inline-block; margin-left: 0.5rem; padding: 0.1rem 0.5rem; border-radius: 999px;
@@ -133,6 +226,7 @@ try {
     font-size: 0.7rem; font-weight: 600; letter-spacing: 0.04em; vertical-align: middle;
   }
   .iv-empty { margin-top: 1.5rem; color: var(--color-text-muted); }
+  .iv-hinweis { margin-top: 1.5rem; font-size: 0.85rem; color: var(--color-text-subtle); }
   .iv-msg.is-error { color: #c93c3c; }
 </style>
 
@@ -150,13 +244,52 @@ try {
     el.className = 'iv-row__msg' + (kind ? ` is-${kind}` : '');
   };
 
+  /** Ruft einen /api/intern-Endpunkt auf. Gibt null zurück, wenn die Sitzung weg ist. */
+  const post = async (url: string, body: unknown, row: HTMLElement) => {
+    const r = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    });
+    if (r.status === 401) {
+      setMsg(row, 'Sitzung abgelaufen — bitte neu anmelden.', 'error');
+      return null;
+    }
+    const d = await r.json().catch(() => ({}));
+    if (!r.ok || !d.ok) {
+      setMsg(row, d.hinweis ?? 'Hat nicht geklappt. Bitte später erneut versuchen.', 'error');
+      return null;
+    }
+    return d;
+  };
+
+  /** Knopf sperren, Beschriftung tauschen, im finally zurücksetzen. */
+  const mitLadezustand = async (
+    btn: HTMLButtonElement, labelEl: HTMLElement | null, ladeText: string, fn: () => Promise<void>,
+  ) => {
+    const alt = labelEl?.textContent ?? '';
+    btn.disabled = true;
+    if (labelEl) labelEl.textContent = ladeText;
+    try {
+      await fn();
+    } catch {
+      const row = btn.closest('.iv-row') as HTMLElement;
+      setMsg(row, 'Netzwerkfehler — bitte erneut versuchen.', 'error');
+    } finally {
+      btn.disabled = false;
+      if (labelEl && labelEl.textContent === ladeText) labelEl.textContent = alt;
+    }
+  };
+
   // --- Suche ---------------------------------------------------------------
+  // style.display statt hidden: .iv-row hat display:flex, was die Browser-Regel
+  // [hidden]{display:none} überschreibt — die Zeilen blieben dadurch sichtbar.
   suchfeld?.addEventListener('input', () => {
     const q = suchfeld.value.trim().toLowerCase();
     let treffer = 0;
     for (const row of rows) {
       const passt = !q || (row.dataset.such ?? '').includes(q);
-      row.hidden = !passt;
+      row.style.display = passt ? '' : 'none';
       if (passt) treffer++;
     }
     if (zaehler) zaehler.textContent = `${treffer} Makler`;
@@ -172,45 +305,66 @@ try {
         await navigator.clipboard.writeText(link);
         setMsg(row, 'Link kopiert.', 'ok');
       } catch {
-        // Zwischenablage kann blockiert sein (Berechtigung, unsicherer Kontext)
         window.prompt('Link kopieren:', link);
       }
       setTimeout(() => setMsg(row, ''), 4000);
     });
   }
 
-  // --- Link senden ---------------------------------------------------------
+  // --- Einladung per E-Mail ------------------------------------------------
   for (const btn of document.querySelectorAll<HTMLButtonElement>('[data-iv-send]')) {
-    btn.addEventListener('click', async () => {
+    btn.addEventListener('click', () => {
       const row = btn.closest('.iv-row') as HTMLElement;
-      const uid = Number(row.dataset.uid);
       const label = btn.querySelector('[data-iv-send-label]') as HTMLElement | null;
-      const alt = label?.textContent ?? 'Senden';
-      btn.disabled = true;
-      if (label) label.textContent = 'Sendet …';
-      setMsg(row, '');
-      try {
-        const r = await fetch('/api/intern/makler-mail', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ uid }),
-        });
-        const d = await r.json();
-        if (r.status === 401) {
-          setMsg(row, 'Sitzung abgelaufen — bitte neu anmelden.', 'error');
-          return;
+      mitLadezustand(btn, label, 'Sendet …', async () => {
+        setMsg(row, '');
+        const d = await post('/api/intern/makler-mail', { uid: Number(row.dataset.uid) }, row);
+        if (d) setMsg(row, `Gesendet an ${d.emailMasked} · Link gilt bis ${d.gueltigBis}`, 'ok');
+      });
+    });
+  }
+
+  // --- Profil freigeben / vom Netz nehmen ----------------------------------
+  for (const btn of document.querySelectorAll<HTMLButtonElement>('[data-iv-pub]')) {
+    btn.addEventListener('click', () => {
+      const row = btn.closest('.iv-row') as HTMLElement;
+      const label = btn.querySelector('[data-iv-pub-label]') as HTMLElement | null;
+      const jetztOnline = btn.dataset.published === 'true';
+      mitLadezustand(btn, label, jetztOnline ? 'Nimmt offline …' : 'Gibt frei …', async () => {
+        setMsg(row, '');
+        const d = await post('/api/intern/profil-status', { uid: Number(row.dataset.uid), published: !jetztOnline }, row);
+        if (!d) return;
+        btn.dataset.published = String(d.published);
+        if (label) label.textContent = d.published ? 'Vom Netz nehmen' : 'Freigeben';
+        const ampel = row.querySelector('[data-iv-ampel]') as HTMLElement | null;
+        if (ampel) {
+          ampel.textContent = d.published ? 'online' : 'offline genommen';
+          ampel.className = `iv-dot is-${d.published ? 'online' : 'offline'}`;
         }
-        if (!r.ok || !d.ok) {
-          setMsg(row, 'Versand fehlgeschlagen. Bitte später erneut versuchen.', 'error');
-          return;
+        setMsg(row, d.published ? 'Profil ist jetzt öffentlich.' : 'Profil ist vom Netz genommen.', 'ok');
+      });
+    });
+  }
+
+  // --- Sichtbarkeit in der Maklersuche -------------------------------------
+  for (const btn of document.querySelectorAll<HTMLButtonElement>('[data-iv-sicht]')) {
+    btn.addEventListener('click', () => {
+      const row = btn.closest('.iv-row') as HTMLElement;
+      const label = btn.querySelector('[data-iv-sicht-label]') as HTMLElement | null;
+      const jetztSichtbar = btn.dataset.sichtbar === 'true';
+      mitLadezustand(btn, label, 'Ändert …', async () => {
+        setMsg(row, '');
+        const d = await post('/api/intern/sichtbarkeit', { uid: Number(row.dataset.uid), inSuche: !jetztSichtbar }, row);
+        if (!d) return;
+        btn.dataset.sichtbar = String(d.inSuche);
+        if (label) label.textContent = d.inSuche ? 'Aus der Suche' : 'In die Suche';
+        const chip = row.querySelector('[data-iv-sicht-chip]') as HTMLElement | null;
+        if (chip) {
+          chip.textContent = d.inSuche ? 'auf der Webseite' : 'nicht öffentlich';
+          chip.className = d.inSuche ? 'iv-chip is-ja' : 'iv-chip';
         }
-        setMsg(row, `Gesendet an ${d.emailMasked} · Link gilt bis ${d.gueltigBis}`, 'ok');
-      } catch {
-        setMsg(row, 'Netzwerkfehler — bitte erneut versuchen.', 'error');
-      } finally {
-        btn.disabled = false;
-        if (label) label.textContent = alt;
-      }
+        setMsg(row, d.inSuche ? 'Erscheint jetzt in der Maklersuche.' : 'Nicht mehr in der Maklersuche.', 'ok');
+      });
     });
   }
 </script>

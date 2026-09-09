@@ -144,8 +144,8 @@ export async function loadProfilByUid(uid: number): Promise<MaklerProfil | null>
   }
 }
 
-export async function loadAllProfiles(): Promise<MaklerProfil[]> {
-  if (allCache && Date.now() - allCache.ts < TTL_MS) return allCache.list;
+/** Liest alle Profile ohne Cache — Basis für loadAllProfiles und writeProfil. */
+async function ladeAlleProfileRoh(): Promise<MaklerProfil[]> {
   const out: MaklerProfil[] = [];
   try {
     const result = await list({ prefix: PREFIX });
@@ -153,6 +153,17 @@ export async function loadAllProfiles(): Promise<MaklerProfil[]> {
     for (const p of profiles) if (p) out.push(p);
   } catch (e) {
     console.error('loadAllProfiles failed', (e as Error).message);
+    throw e;
+  }
+  return out;
+}
+
+export async function loadAllProfiles(): Promise<MaklerProfil[]> {
+  if (allCache && Date.now() - allCache.ts < TTL_MS) return allCache.list;
+  let out: MaklerProfil[];
+  try {
+    out = await ladeAlleProfileRoh();
+  } catch {
     return allCache?.list ?? [];
   }
   allCache = { ts: Date.now(), list: out };
@@ -315,8 +326,23 @@ async function writeProfil(profil: MaklerProfil): Promise<void> {
     addRandomSuffix: false,
     contentType: 'application/json',
     allowOverwrite: true,
+    // Ohne Angabe cached Vercel Blob einen Monat.
+    cacheControlMaxAge: 60,
   });
-  invalidateProfilCache();
+
+  // Den frisch geschriebenen Stand DURCHSCHREIBEN statt nur den Cache zu leeren.
+  // Vercel Blob liefert nach einem Überschreiben für kurze Zeit noch die alte
+  // Fassung aus. Vorher wurde genau die neu gelesen und anschließend fünf Minuten
+  // gecacht — eine Freigabe wirkte dadurch erst mit spürbarer Verzögerung.
+  try {
+    const liste = allCache?.list ?? (await ladeAlleProfileRoh());
+    const i = liste.findIndex((p) => p.uid === profil.uid);
+    if (i >= 0) liste[i] = profil;
+    else liste.push(profil);
+    allCache = { ts: Date.now(), list: liste };
+  } catch {
+    invalidateProfilCache();
+  }
 }
 
 // Phoenix-Moderation: Freigabe / Offline nehmen.

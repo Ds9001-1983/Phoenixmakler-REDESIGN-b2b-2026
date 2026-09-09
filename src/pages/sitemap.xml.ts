@@ -1,5 +1,6 @@
 import type { APIRoute } from 'astro';
 import { loadPublishedSlugMap } from '../lib/profil';
+import { sichtbareUids } from '../lib/makler-flags';
 
 // SSR, damit veröffentlichte Makler-Profile zur Laufzeit ergänzt werden können.
 export const prerender = false;
@@ -31,8 +32,14 @@ export const GET: APIRoute = async ({ site }) => {
   // Veröffentlichte Makler-Profile additiv ergänzen (Fehler dürfen die Sitemap nicht brechen).
   let maklerPages: { url: string; changefreq: string; priority: number }[] = [];
   try {
+    // Nur Profile, die freigegeben UND im Dashboard sichtbar sind. Vorher wurde hier
+    // allein published geprüft — dadurch standen Profile inaktiver Makler in der
+    // Sitemap, deren URL 404 lieferte.
     const slugMap = await loadPublishedSlugMap();
-    maklerPages = [...slugMap.values()].map((slug) => ({
+    const sichtbar = await sichtbareUids();
+    maklerPages = [...slugMap.entries()]
+      .filter(([uid]) => sichtbar.has(uid))
+      .map(([, slug]) => ({
       url: `/makler/${slug}`,
       changefreq: 'weekly',
       priority: 0.6,

@@ -48,7 +48,10 @@ const fehler: 'config' | 'token' | 'kein-profil' | null = !secret
       : null;
 
 const istLive = !!profil?.published;
-const istErstfreigabe = !!profil && !profil.everApproved;
+// setPublished() setzt beim Offline-Nehmen auch everApproved zurück. Ein Profil, das
+// schon einmal live war, ist danach nur noch an freigegebenAm zu erkennen — ohne
+// diese Zusatzprüfung stünde hier fälschlich "Erstfreigabe ausstehend".
+const istErstfreigabe = !!profil && !profil.everApproved && !profil.freigegebenAm;
 
 // Suchmaschinen sicher fernhalten (zusätzlich zu noindex-Meta).
 Astro.response.headers.set('X-Robots-Tag', 'noindex, nofollow');

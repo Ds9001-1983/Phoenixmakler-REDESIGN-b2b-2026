@@ -1,7 +1,5 @@
 import type { APIRoute } from 'astro';
-import { pwFetchAll } from '../../lib/pw';
-import type { PwUser } from '../../lib/vermittler';
-import { STATUS_AKTIV } from '../../lib/vermittler';
+import { loadOeffentlicheVermittler } from '../../lib/vermittler';
 
 export const prerender = false;
 
@@ -21,20 +19,21 @@ const json = (data: unknown, status = 200) =>
     },
   });
 
+// Speist die "Empfohlen von"-Liste im öffentlichen Partner-Formular.
+//
+// ACHTUNG: Dieser Endpunkt ist ohne Anmeldung erreichbar und gibt Maklernamen aus.
+// Er MUSS deshalb dieselbe Sichtbarkeitsprüfung haben wie die Maklersuche — sonst
+// erscheinen hier Makler namentlich, die bewusst anonym bleiben sollen.
 export const GET: APIRoute = async () => {
   if (cache && Date.now() - cache.ts < TTL_MS) {
     return json({ vermittler: cache.list });
   }
 
-  // pwFetchAll paginiert — vorher wurde hart bei 100 abgeschnitten.
-  const users = await pwFetchAll<PwUser>('users', { status_id: STATUS_AKTIV });
-  if (users.length === 0) return json({ vermittler: cache?.list ?? [] });
+  const sichtbare = await loadOeffentlicheVermittler();
+  if (sichtbare.length === 0) return json({ vermittler: cache?.list ?? [] });
 
-  const list = users
-    .map((u) => ({
-      id: u.id,
-      name: [u.first_name, u.last_name].filter(Boolean).join(' ').trim(),
-    }))
+  const list = sichtbare
+    .map((v) => ({ id: v.id, name: v.name }))
     .filter((x) => x.name.length > 0)
     .sort((a, b) => a.name.localeCompare(b.name, 'de'));
 

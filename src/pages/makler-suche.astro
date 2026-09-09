@@ -4,7 +4,7 @@ export const prerender = false;
 import BaseLayout from '../layouts/BaseLayout.astro';
 import FooterCinematic from '../components/sections/FooterCinematic.astro';
 import staticMakler from '../data/makler.json';
-import { loadVermittler, type PublicVermittler } from '../lib/vermittler';
+import { loadOeffentlicheVermittler, type PublicVermittler } from '../lib/vermittler';
 import { loadPublishedSlugMap } from '../lib/profil';
 import { getPlzCoords } from '../lib/plz';
 
@@ -13,7 +13,7 @@ const q = Astro.url.searchParams.get('q') ?? '';
 // Live aus PW (1h server-cached). Bei Fehler fallback auf statische Liste.
 let makler: PublicVermittler[] = [];
 try {
-  makler = await loadVermittler();
+  makler = await loadOeffentlicheVermittler();
 } catch (e) {
   console.error('makler-suche: vermittler load failed', (e as Error).message);
 }
@@ -24,6 +24,7 @@ if (makler.length === 0) {
     plz: m.plz,
     ort: m.ort === '—' ? '' : m.ort,
     telefon: m.telefon,
+    mobil: '',
     email: m.email,
     hasPhoto: false,
     status: 0,

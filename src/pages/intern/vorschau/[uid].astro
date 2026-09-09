@@ -1,0 +1,61 @@
+---
+export const prerender = false;
+
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import MaklerProfilContent from '../../../components/sections/MaklerProfilContent.astro';
+import { readSession, SESSION_COOKIE } from '../../../lib/team-auth';
+import { loadEditorBerechtigte, type PublicVermittler } from '../../../lib/vermittler';
+import { loadProfilByUid } from '../../../lib/profil';
+
+// Eigene Prüfung zusätzlich zur Middleware — bewusste Redundanz, siehe intern/index.astro.
+const session = readSession(Astro.cookies.get(SESSION_COOKIE)?.value);
+if (!session) return Astro.redirect('/intern/login', 302);
+
+Astro.response.headers.set('Cache-Control', 'private, no-store');
+Astro.response.headers.set('X-Robots-Tag', 'noindex, nofollow');
+
+const uid = Number(Astro.params.uid);
+const profil = uid && !Number.isNaN(uid) ? await loadProfilByUid(uid) : null;
+
+let me: PublicVermittler | null = null;
+if (profil) {
+  me = (await loadEditorBerechtigte()).find((v) => v.id === profil.uid) ?? null;
+  if (!me) {
+    // Makler nicht mehr in den Dashboard-Status — Vorschau trotzdem zeigen, aber warnen.
+    me = { id: profil.uid, name: '', plz: '', ort: '', telefon: '', mobil: '', email: '', hasPhoto: false, status: 0 };
+  }
+}
+
+// Bewusst KEIN 404-Status: Astro ersetzt die Seite dann durch die globale
+// 404-Seite und der Hinweis "noch kein Profil" wäre nie zu sehen.
+---
+
+<BaseLayout title="Profil-Vorschau — intern" noindex hideFooter>
+  <div class="iv-ribbon">
+    <span>Vorschau · nur für das Phönix-Team sichtbar{profil && !profil.published ? ' · dieses Profil ist derzeit NICHT öffentlich' : ''}</span>
+    <a href="/intern" class="iv-ribbon__back">← zurück zur Übersicht</a>
+  </div>
+
+  {profil ? (
+    <MaklerProfilContent profil={profil} me={me!} />
+  ) : (
+    <section class="section-sm bg-soft">
+      <div class="container-narrow">
+        <span class="eyebrow">Vorschau</span>
+        <h1 class="iv-leer">Für diesen Makler gibt es noch kein Profil.</h1>
+        <p>Er hat seine Seite bisher nicht ausgefüllt. <a href="/intern">Zurück zur Übersicht</a></p>
+      </div>
+    </section>
+  )}
+</BaseLayout>
+
+<style>
+  .iv-ribbon {
+    position: sticky; top: 0; z-index: 50;
+    display: flex; flex-wrap: wrap; gap: 1rem; justify-content: space-between; align-items: center;
+    background: var(--color-primary-dark); color: #fff;
+    padding: 0.6rem var(--padding-x); font-size: 0.85rem;
+  }
+  .iv-ribbon__back { color: var(--color-accent-light); text-decoration: underline; }
+  .iv-leer { font-family: var(--font-display); font-size: 1.6rem; font-weight: 400; margin: 0.5rem 0 1rem; }
+</style>
