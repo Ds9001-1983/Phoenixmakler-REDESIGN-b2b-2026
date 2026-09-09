@@ -110,3 +110,51 @@ export function buildProfilRequestToken(uid: number, secret: string): string {
 export function profilTokenExpiry(ttlDays = PROFIL_TTL_DAYS): Date {
   return new Date(Date.now() + ttlDays * 86400 * 1000);
 }
+
+// ---------------------------------------------------------------------------
+// Generische Variante für Nutzlasten, die keine Makler-uid haben
+// (Team-Anmeldung, Team-Sitzung). Bewusst NEBEN signToken/verifyToken gelegt
+// statt diese umzubauen — an ihnen hängen die produktiven Makler-Links.
+// Nutzt dieselben Primitiven, also dasselbe Signaturverfahren.
+// ---------------------------------------------------------------------------
+
+export interface AnyPayload {
+  kind: string;
+  /** Unix-Sekunden. 0 bedeutet "läuft nie ab". */
+  exp: number;
+}
+
+export function signAny<T extends AnyPayload>(payload: T, secret: string): string {
+  const head = b64u(JSON.stringify(payload));
+  return `${head}.${b64u(sign(head, secret))}`;
+}
+
+export function verifyAny<T extends AnyPayload>(
+  token: string | undefined | null,
+  kind: string,
+  secret: string,
+): T | null {
+  if (!token || !secret || !token.includes('.')) return null;
+  const [head, sig] = token.split('.');
+  if (!head || !sig) return null;
+
+  const expected = sign(head, secret);
+  let actual: Buffer;
+  try {
+    actual = b64uDecode(sig);
+  } catch {
+    return null;
+  }
+  if (expected.length !== actual.length || !timingSafeEqual(expected, actual)) return null;
+
+  let payload: T;
+  try {
+    payload = JSON.parse(b64uDecode(head).toString('utf-8')) as T;
+  } catch {
+    return null;
+  }
+  if (!payload || payload.kind !== kind) return null;
+  if (typeof payload.exp !== 'number') return null;
+  if (payload.exp !== 0 && Date.now() / 1000 > payload.exp) return null;
+  return payload;
+}

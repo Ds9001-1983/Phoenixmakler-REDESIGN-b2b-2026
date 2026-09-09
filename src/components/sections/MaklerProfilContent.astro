@@ -28,6 +28,12 @@ const email = profil.kontakt?.email || me.email || '';
 const website = profil.kontakt?.website || '';
 const siteOrigin = Astro.site?.origin ?? 'https://www.phoenix-maklerverbund.de';
 
+// Sichere JSON-LD-Einbettung: Inhalte stammen teils vom Makler selbst (headline).
+// Ohne Maskierung von "<" könnte eine Überschrift mit </script> aus dem Script-Element
+// ausbrechen — das wäre gespeichertes XSS auf der öffentlichen Profilseite.
+const jsonLdSafe = (o: unknown): string =>
+  JSON.stringify(o).replace(/</g, '\\u003c').replace(/\u2028/g, '\\u2028').replace(/\u2029/g, '\\u2029');
+
 const ld = jsonLd
   ? {
       '@context': 'https://schema.org',
@@ -44,7 +50,7 @@ const ld = jsonLd
   : null;
 ---
 
-{ld && <script type="application/ld+json" set:html={JSON.stringify(ld)} />}
+{ld && <script type="application/ld+json" set:html={jsonLdSafe(ld)} />}
 
 <MaklerProfilHero
   name={name}

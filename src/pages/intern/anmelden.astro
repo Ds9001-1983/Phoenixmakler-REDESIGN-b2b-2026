@@ -1,0 +1,63 @@
+---
+export const prerender = false;
+
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { verifyLoginToken } from '../../lib/team-auth';
+
+Astro.response.headers.set('Cache-Control', 'private, no-store');
+Astro.response.headers.set('X-Robots-Tag', 'noindex, nofollow');
+
+// Diese Seite setzt BEWUSST kein Cookie. Sicherheits-Gateways und Link-Vorschauen
+// rufen Links ausschließlich per GET ab — würde der Aufruf allein die Anmeldung
+// auslösen, wäre der Link verbraucht, bevor der Empfänger ihn sieht. Deshalb ist
+// die Einlösung ein POST, den nur ein echter Klick auslöst.
+const token = Astro.url.searchParams.get('t');
+const email = verifyLoginToken(token);
+if (!email) Astro.response.status = 410;
+---
+
+<BaseLayout title="Anmeldung bestätigen" noindex hideFooter>
+  <section class="section-sm bg-soft">
+    <div class="container-narrow">
+      <div class="iv-card">
+        <span class="eyebrow">Phönix intern</span>
+        {email ? (
+          <>
+            <h1 class="iv-title">Anmeldung bestätigen</h1>
+            <p class="iv-lead">
+              Du meldest dich als <strong>{email}</strong> an. Danach bleibst du
+              30 Tage angemeldet.
+            </p>
+            <form method="POST" action="/api/intern/callback">
+              <input type="hidden" name="t" value={token} />
+              <button type="submit" class="btn btn-accent btn-lg">Anmeldung bestätigen</button>
+            </form>
+          </>
+        ) : (
+          <>
+            <h1 class="iv-title">Link abgelaufen</h1>
+            <p class="iv-lead">
+              Dieser Anmelde-Link ist nicht mehr gültig — er gilt nur 10 Minuten.
+              Fordere einfach einen neuen an.
+            </p>
+            <a href="/intern/login" class="btn btn-accent btn-lg">Neuen Link anfordern</a>
+          </>
+        )}
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .iv-card {
+    background: #fff;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: 2.5rem;
+    box-shadow: var(--shadow-sm);
+    max-width: 34rem;
+    margin: 0 auto;
+  }
+  .iv-title { font-family: var(--font-display); font-size: 1.9rem; font-weight: 400; margin: 0 0 1rem; }
+  .iv-lead { font-size: 1.02rem; line-height: 1.6; color: var(--color-text-muted); margin: 0 0 1.5rem; }
+</style>

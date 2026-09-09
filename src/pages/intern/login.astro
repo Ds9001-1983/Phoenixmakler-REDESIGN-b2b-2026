@@ -1,0 +1,132 @@
+---
+export const prerender = false;
+
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { teamAuthConfigured, readSession, SESSION_COOKIE } from '../../lib/team-auth';
+
+Astro.response.headers.set('Cache-Control', 'private, no-store');
+Astro.response.headers.set('X-Robots-Tag', 'noindex, nofollow');
+
+// Wer schon angemeldet ist, soll nicht auf dem Login-Formular landen.
+if (readSession(Astro.cookies.get(SESSION_COOKIE)?.value)) return Astro.redirect('/intern', 302);
+
+const eingerichtet = teamAuthConfigured();
+const fehler = Astro.url.searchParams.get('fehler');
+const abgemeldet = Astro.url.searchParams.get('abgemeldet') === '1';
+---
+
+<BaseLayout title="Interner Bereich — Anmeldung" noindex hideFooter>
+  <section class="section-sm bg-soft">
+    <div class="container-narrow">
+      <div class="iv-card">
+        <span class="eyebrow">Phönix intern</span>
+        <h1 class="iv-title">Anmeldung</h1>
+
+        {!eingerichtet ? (
+          <p class="iv-lead">
+            Der interne Bereich ist noch nicht eingerichtet. Bitte den Administrator informieren.
+          </p>
+        ) : (
+          <>
+            <p class="iv-lead">
+              Gib deine dienstliche E-Mail-Adresse ein. Du bekommst einen Anmelde-Link
+              geschickt und bleibst danach 30 Tage angemeldet.
+            </p>
+
+            {fehler === 'abgelaufen' && (
+              <p class="iv-msg is-error">
+                Der Anmelde-Link war ungültig oder ist abgelaufen. Fordere einfach einen neuen an.
+              </p>
+            )}
+            {abgemeldet && <p class="iv-msg is-ok">Du wurdest abgemeldet.</p>}
+
+            <form class="iv-form" data-login-form>
+              <label class="iv-label" for="loginEmail">E-Mail-Adresse</label>
+              <input
+                id="loginEmail"
+                type="email"
+                name="email"
+                autocomplete="email"
+                required
+                placeholder="name@phoenix-maklerverbund.de"
+                data-login-email
+              />
+              <p class="iv-msg" data-login-msg></p>
+              <button type="submit" class="btn btn-accent btn-lg" data-login-submit>
+                <span data-login-label>Anmelde-Link anfordern</span>
+              </button>
+            </form>
+
+            <div class="iv-done" data-login-done hidden>
+              <p>
+                Wenn die Adresse hinterlegt ist, ist der Anmelde-Link unterwegs.
+                Er gilt 10 Minuten. 📬
+              </p>
+            </div>
+          </>
+        )}
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .iv-card {
+    background: #fff;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: 2.5rem;
+    box-shadow: var(--shadow-sm);
+    max-width: 34rem;
+    margin: 0 auto;
+  }
+  .iv-title { font-family: var(--font-display); font-size: 1.9rem; font-weight: 400; margin: 0 0 1rem; }
+  .iv-lead { font-size: 1.02rem; line-height: 1.6; color: var(--color-text-muted); margin: 0 0 1.5rem; }
+  .iv-form { display: flex; flex-direction: column; gap: 0.5rem; align-items: flex-start; }
+  .iv-label { font-size: 0.85rem; font-weight: 600; color: var(--color-text); }
+  .iv-form input {
+    width: 100%;
+    padding: 0.75rem 0.9rem;
+    border: 1px solid var(--color-border-strong);
+    border-radius: var(--radius-sm);
+    font: inherit;
+    background: #fff;
+  }
+  .iv-form input:focus-visible { outline: var(--focus-outline); outline-offset: var(--focus-offset); }
+  .iv-msg { margin: 0.25rem 0 0.5rem; font-size: 0.88rem; min-height: 1.1em; }
+  .iv-msg.is-error { color: #c93c3c; }
+  .iv-msg.is-ok { color: #2f6b3c; }
+  .iv-done p { font-size: 1rem; line-height: 1.6; }
+</style>
+
+<script>
+  const $ = (s: string) => document.querySelector(s);
+  const form = $('[data-login-form]') as HTMLFormElement | null;
+  const input = $('[data-login-email]') as HTMLInputElement | null;
+  const msg = $('[data-login-msg]') as HTMLElement | null;
+  const done = $('[data-login-done]') as HTMLElement | null;
+  const submit = $('[data-login-submit]') as HTMLButtonElement | null;
+  const label = $('[data-login-label]') as HTMLElement | null;
+
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const email = input?.value.trim() ?? '';
+    if (!email) return;
+    if (submit) submit.disabled = true;
+    if (label) label.textContent = 'Wird gesendet …';
+    if (msg) { msg.textContent = ''; msg.className = 'iv-msg'; }
+    try {
+      await fetch('/api/intern/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+      form.hidden = true;
+      if (done) done.hidden = false;
+    } catch {
+      if (msg) { msg.textContent = 'Netzwerkfehler — bitte erneut versuchen.'; msg.className = 'iv-msg is-error'; }
+      if (submit) submit.disabled = false;
+      if (label) label.textContent = 'Anmelde-Link anfordern';
+    }
+  });
+</script>

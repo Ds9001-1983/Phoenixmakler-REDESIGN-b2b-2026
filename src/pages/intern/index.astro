@@ -1,0 +1,216 @@
+---
+export const prerender = false;
+
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { readSession, SESSION_COOKIE } from '../../lib/team-auth';
+import { loadEditorBerechtigte, SYSTEM_ACCOUNT_UIDS, STATUS_AKTIV } from '../../lib/vermittler';
+import { profilRequestLink } from '../../lib/profil-link';
+
+// Eigene Prüfung ZUSÄTZLICH zur Middleware. Bewusste Redundanz: Bei output:'hybrid'
+// würde eine vergessene prerender-Flagge die Seite zur Bauzeit backen und die
+// Middleware liefe nie — diese Zeile ist die zweite Sicherung dagegen.
+const session = readSession(Astro.cookies.get(SESSION_COOKIE)?.value);
+if (!session) return Astro.redirect('/intern/login', 302);
+
+Astro.response.headers.set('Cache-Control', 'private, no-store');
+Astro.response.headers.set('X-Robots-Tag', 'noindex, nofollow');
+
+let ladeFehler = false;
+let makler: { id: number; name: string; email: string; ort: string; status: number; link: string }[] = [];
+try {
+  makler = (await loadEditorBerechtigte())
+    .filter((v) => !SYSTEM_ACCOUNT_UIDS.has(v.id) && v.name)
+    .map((v) => ({
+      id: v.id,
+      name: v.name,
+      email: v.email,
+      ort: v.ort,
+      status: v.status,
+      // Der DAUERHAFTE Link — er gewährt selbst keinen Zugang, sondern löst nur den
+      // Versand an die im CRM hinterlegte Adresse aus. Der 14-Tage-Editor-Link steht
+      // bewusst NICHT im Quelltext: Das wären ~75 aktive Zugänge auf einer Seite.
+      link: profilRequestLink(v.id),
+    }));
+} catch (e) {
+  console.error('intern: Maklerliste nicht ladbar', (e as Error).message);
+  ladeFehler = true;
+}
+---
+
+<BaseLayout title="Makler-Links — intern" noindex hideFooter>
+  <section class="section-sm bg-soft">
+    <div class="container">
+      <header class="iv-head">
+        <div>
+          <span class="eyebrow">Phönix intern</span>
+          <h1 class="iv-title">Makler-Links</h1>
+          <p class="iv-lead">
+            Persönlicher Bearbeitungs-Link je Makler. „Senden“ verschickt eine
+            Einladung an die im CRM hinterlegte Adresse — der Link darin gilt 14 Tage.
+          </p>
+        </div>
+        <form method="POST" action="/api/intern/logout" class="iv-logout">
+          <span class="iv-user">{session.sub}</span>
+          <button type="submit" class="btn btn-ghost">Abmelden</button>
+        </form>
+      </header>
+
+      {ladeFehler ? (
+        <p class="iv-msg is-error">
+          Die Maklerliste konnte gerade nicht geladen werden. Bitte die Seite neu laden.
+        </p>
+      ) : (
+        <>
+          <div class="iv-tools">
+            <label class="visually-hidden" for="ivSearch">Makler suchen</label>
+            <input id="ivSearch" type="search" placeholder="Name, Ort oder Nummer …" data-iv-search />
+            <span class="iv-count" data-iv-count>{makler.length} Makler</span>
+          </div>
+
+          <ul class="iv-list" data-iv-list>
+            {makler.map((m) => (
+              <li class="iv-row" data-uid={m.id} data-such={`${m.name} ${m.ort} ${m.id}`.toLowerCase()}>
+                <div class="iv-row__main">
+                  <span class="iv-row__name">
+                    {m.name}
+                    {m.status !== STATUS_AKTIV && <span class="iv-tag">neuer Partner</span>}
+                  </span>
+                  <span class="iv-row__meta">
+                    Nr. {m.id}{m.ort && <> · {m.ort}</>}{m.email && <> · {m.email}</>}
+                  </span>
+                  <p class="iv-row__msg" data-iv-msg></p>
+                </div>
+                <div class="iv-row__actions">
+                  <button type="button" class="btn btn-outline" data-iv-copy data-link={m.link}>Link kopieren</button>
+                  <button type="button" class="btn btn-accent" data-iv-send disabled={!m.email}>
+                    <span data-iv-send-label>{m.email ? 'Senden' : 'Keine E-Mail'}</span>
+                  </button>
+                </div>
+              </li>
+            ))}
+          </ul>
+
+          <p class="iv-empty" data-iv-empty hidden>Kein Makler gefunden.</p>
+        </>
+      )}
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .iv-head { display: flex; flex-wrap: wrap; gap: 1.5rem; justify-content: space-between; align-items: flex-start; margin-bottom: 2rem; }
+  .iv-title { font-family: var(--font-display); font-size: 2rem; font-weight: 400; margin: 0 0 0.5rem; }
+  .iv-lead { font-size: 1rem; line-height: 1.6; color: var(--color-text-muted); margin: 0; max-width: 60ch; }
+  .iv-logout { display: flex; align-items: center; gap: 0.75rem; }
+  .iv-user { font-family: var(--font-mono); font-size: 0.8rem; color: var(--color-text-subtle); }
+
+  .iv-tools { display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem; flex-wrap: wrap; }
+  .iv-tools input {
+    flex: 1 1 20rem; padding: 0.7rem 0.9rem; border: 1px solid var(--color-border-strong);
+    border-radius: var(--radius-sm); font: inherit; background: #fff;
+  }
+  .iv-tools input:focus-visible { outline: var(--focus-outline); outline-offset: var(--focus-offset); }
+  .iv-count { font-size: 0.85rem; color: var(--color-text-subtle); font-family: var(--font-mono); }
+
+  .iv-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.5rem; }
+  .iv-row {
+    display: flex; flex-wrap: wrap; gap: 1rem; align-items: center; justify-content: space-between;
+    background: #fff; border: 1px solid var(--color-border); border-radius: var(--radius-md);
+    padding: 1rem 1.25rem;
+  }
+  .iv-row__main { min-width: 16rem; flex: 1 1 auto; }
+  .iv-row__name { display: block; font-weight: 600; font-size: 1.02rem; }
+  .iv-row__meta { display: block; font-size: 0.85rem; color: var(--color-text-muted); margin-top: 0.15rem; }
+  .iv-row__msg { margin: 0.35rem 0 0; font-size: 0.85rem; min-height: 0; }
+  .iv-row__msg.is-ok { color: #2f6b3c; }
+  .iv-row__msg.is-error { color: #c93c3c; }
+  .iv-row__actions { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+  .iv-row__actions .btn { padding: 0.6rem 1.1rem; font-size: 0.9rem; min-height: 40px; }
+
+  .iv-tag {
+    display: inline-block; margin-left: 0.5rem; padding: 0.1rem 0.5rem; border-radius: 999px;
+    background: var(--color-accent-light); color: var(--color-accent-dark);
+    font-size: 0.7rem; font-weight: 600; letter-spacing: 0.04em; vertical-align: middle;
+  }
+  .iv-empty { margin-top: 1.5rem; color: var(--color-text-muted); }
+  .iv-msg.is-error { color: #c93c3c; }
+</style>
+
+<script>
+  const $ = (s: string) => document.querySelector(s);
+  const rows = Array.from(document.querySelectorAll<HTMLElement>('.iv-row'));
+  const suchfeld = $('[data-iv-search]') as HTMLInputElement | null;
+  const zaehler = $('[data-iv-count]') as HTMLElement | null;
+  const leer = $('[data-iv-empty]') as HTMLElement | null;
+
+  const setMsg = (row: HTMLElement, text: string, kind: '' | 'ok' | 'error' = '') => {
+    const el = row.querySelector('[data-iv-msg]') as HTMLElement | null;
+    if (!el) return;
+    el.textContent = text;
+    el.className = 'iv-row__msg' + (kind ? ` is-${kind}` : '');
+  };
+
+  // --- Suche ---------------------------------------------------------------
+  suchfeld?.addEventListener('input', () => {
+    const q = suchfeld.value.trim().toLowerCase();
+    let treffer = 0;
+    for (const row of rows) {
+      const passt = !q || (row.dataset.such ?? '').includes(q);
+      row.hidden = !passt;
+      if (passt) treffer++;
+    }
+    if (zaehler) zaehler.textContent = `${treffer} Makler`;
+    if (leer) leer.hidden = treffer > 0;
+  });
+
+  // --- Link kopieren -------------------------------------------------------
+  for (const btn of document.querySelectorAll<HTMLButtonElement>('[data-iv-copy]')) {
+    btn.addEventListener('click', async () => {
+      const row = btn.closest('.iv-row') as HTMLElement;
+      const link = btn.dataset.link ?? '';
+      try {
+        await navigator.clipboard.writeText(link);
+        setMsg(row, 'Link kopiert.', 'ok');
+      } catch {
+        // Zwischenablage kann blockiert sein (Berechtigung, unsicherer Kontext)
+        window.prompt('Link kopieren:', link);
+      }
+      setTimeout(() => setMsg(row, ''), 4000);
+    });
+  }
+
+  // --- Link senden ---------------------------------------------------------
+  for (const btn of document.querySelectorAll<HTMLButtonElement>('[data-iv-send]')) {
+    btn.addEventListener('click', async () => {
+      const row = btn.closest('.iv-row') as HTMLElement;
+      const uid = Number(row.dataset.uid);
+      const label = btn.querySelector('[data-iv-send-label]') as HTMLElement | null;
+      const alt = label?.textContent ?? 'Senden';
+      btn.disabled = true;
+      if (label) label.textContent = 'Sendet …';
+      setMsg(row, '');
+      try {
+        const r = await fetch('/api/intern/makler-mail', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ uid }),
+        });
+        const d = await r.json();
+        if (r.status === 401) {
+          setMsg(row, 'Sitzung abgelaufen — bitte neu anmelden.', 'error');
+          return;
+        }
+        if (!r.ok || !d.ok) {
+          setMsg(row, 'Versand fehlgeschlagen. Bitte später erneut versuchen.', 'error');
+          return;
+        }
+        setMsg(row, `Gesendet an ${d.emailMasked} · Link gilt bis ${d.gueltigBis}`, 'ok');
+      } catch {
+        setMsg(row, 'Netzwerkfehler — bitte erneut versuchen.', 'error');
+      } finally {
+        btn.disabled = false;
+        if (label) label.textContent = alt;
+      }
+    });
+  }
+</script>
