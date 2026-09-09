@@ -3,7 +3,7 @@
  * Listet ALLE makler-profile/*.json mit Füllstand + Moderationslage.
  * Nutzt den produktiven Lese-Pfad (loadAllProfiles) für private Blobs.
  *
- *   set -a; . /tmp/phoenix.env.pull; set +a   # BLOB_READ_WRITE_TOKEN
+ *   set -a; . .env; set +a          # braucht BLOB_READ_WRITE_TOKEN
  *   npx tsx scripts/profil-status.mjs
  */
 import { loadAllProfiles } from '../src/lib/profil.ts';
